@@ -1,0 +1,167 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.leadHeadings {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #7eb6ff;
+  text-decoration: underline;
+}
+.productCard {
+  background-color: rgb(255, 255, 255);
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-left: 20px;
+  margin-top: 15px;
+  border: 1px solid #ccc;
+}
+.productImage {
+  width: 200px;
+  height: 200px;
+}
+.productname {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.productDescription {
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.productPrice {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.handlersBtn {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 10px;
+  border: 1px solid #7eb6ff;
+  background-color: #7eb6ff;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+  width: 100px;
+  &:hover {
+    background-color: #fff;
+    color: #7eb6ff;
+    transform: translate(0, -5px);
+  }
+}
+.addProductBtn {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #7eb6ff;
+  background-color: #7eb6ff;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+  margin: 10px;
+  &:hover {
+    background-color: #fff;
+    color: #7eb6ff;
+    transform: translate(0, -5px);
+  }
+}
+.glassBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.addProductForm {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input[type="file"],
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  background: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

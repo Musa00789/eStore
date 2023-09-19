@@ -1,0 +1,89 @@
+* {
+  box-sizing: border-box;
+  padding: 0%;
+  margin: 0%;
+}
+.main {
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(to bottom, #0000ff, #6b3c3c);
+  align-items: center;
+  height: 100vh;
+}
+.glassView {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  width: 600px;
+  height: 500px;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.heading {
+  text-align: center;
+  font-size: 50px;
+  font-weight: 800;
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to bottom, #0000ff, #6b3c3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.input {
+  margin: 10px;
+  padding: 8px;
+  width: 300px;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.input:focus {
+  box-shadow: 0px 0px 10px 0px cadetblue;
+  border: 1px solid grey;
+  outline: none;
+}
+.btn {
+  padding: 5px;
+  font-size: 17px;
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 40px;
+  width: 110px;
+  margin-top: 20px;
+  border: 1px solid grey;
+  background: linear-gradient(to bottom, #8f62e2, #6b3c3c);
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover {
+  box-shadow: 0px 0px 10px 0px cadetblue;
+  transition: 0.5s;
+}
+.signup {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-top: 10px;
+}
+.signupBtn {
+  font-size: 15px;
+  cursor: pointer;
+  color: rgb(136, 191, 255);
+  text-decoration: underline;
+}
+.signupBtn:hover {
+  color: cadetblue;
+  transition: 0.5s;
+}

@@ -13,15 +13,29 @@ import Profile from "../Profile/Profile";
 import Dashboard from "../Dashboard/Dashboard";
 import AddProducts from "../AddProducts/AddProducts";
 import Analytics from "../Analytics/Analytics";
-import { auth } from "../../../firebase";
+import { auth, firestore } from "../../../firebase";
+import { doc, getDoc } from "@firebase/firestore";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
+    const getStatus = async () => {
+      const statusRef = await doc(firestore, "Users", auth.currentUser?.uid);
+      const statusSnapshot = await getDoc(statusRef);
+      if (statusSnapshot.exists()) {
+        if (statusSnapshot.data().status === "User") {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    };
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user && (await getStatus())) {
         navigate(location.pathname);
       } else {
         navigate("/Login");

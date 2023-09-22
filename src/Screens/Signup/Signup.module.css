@@ -39,7 +39,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.input {
+.inputFields {
   margin: 10px;
   padding: 8px;
   width: 300px;
@@ -48,7 +48,7 @@
   font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
 }
-.input:focus {
+.inputFileds:focus {
   box-shadow: 0px 0px 10px 0px cadetblue;
   border: 1px solid grey;
   outline: none;

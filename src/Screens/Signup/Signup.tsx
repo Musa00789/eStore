@@ -48,8 +48,7 @@ const Signup = () => {
         <h1 className={styles.heading}>Sign Up</h1>
         <form className={styles.inputContainer} onSubmit={handleSubmit}>
           <input
-            className={styles.input}
-            type="text"
+            className={styles.inputFields}
             name="name"
             placeholder="Enter your name"
             required
@@ -57,7 +56,7 @@ const Signup = () => {
             onChange={getUserData}
           />
           <input
-            className={styles.input}
+            className={styles.inputFields}
             type="tel"
             name="phone"
             placeholder="Enter your phone number"
@@ -66,7 +65,7 @@ const Signup = () => {
             onChange={getUserData}
           />
           <input
-            className={styles.input}
+            className={styles.inputFields}
             type="email"
             name="email"
             placeholder="Enter your email"
@@ -75,7 +74,7 @@ const Signup = () => {
             onChange={getUserData}
           />
           <input
-            className={styles.input}
+            className={styles.inputFields}
             type="password"
             name="password"
             placeholder="Enter your password"

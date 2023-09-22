@@ -10,6 +10,8 @@ import {
 } from "@firebase/storage";
 import { FaPlus, FaPencil, FaTrashCan, FaCartShopping } from "react-icons/fa6";
 
+// TODO: Add unique id for all product
+
 const AddProducts = () => {
   const [file, setFile] = useState([]);
   const [isFormVisible, setIsFormVisible] = useState(false);

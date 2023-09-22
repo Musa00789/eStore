@@ -4,6 +4,7 @@ import { auth, firestore } from "../../firebase";
 import styles from "./Login.module.css";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "@firebase/firestore";
+import { FaGoogle, FaFacebook } from "react-icons/fa6";
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -84,6 +85,14 @@ const Login = () => {
             Sign Up
           </span>
         </p>
+        <div>
+          <button className={styles.loginWithBtn}>
+            <FaGoogle className={styles.loginWithIcon} />
+          </button>
+          <button className={styles.loginWithBtn}>
+            <FaFacebook className={styles.loginWithIcon} />
+          </button>
+        </div>
       </div>
     </div>
   );

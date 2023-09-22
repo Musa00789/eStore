@@ -87,3 +87,13 @@
   color: cadetblue;
   transition: 0.5s;
 }
+.loginWithBtn {
+  align-items: center;
+  margin-top: 20px;
+  margin: 15px;
+  background: linear-gradient(to bottom, #8f62e2, #6b3c3c);
+}
+.loginWithIcon {
+  font-size: 25px;
+  color: white;
+}

@@ -15,6 +15,8 @@ import {
 import styles from "./Home.module.css";
 import { auth, firestore } from "../../firebase";
 import { getDocs, collection, query, doc, getDoc } from "@firebase/firestore";
+import ProductDetails from "../../components/ProductDetails/ProductDetails";
+import { addToCart } from "../../components/addToCart";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ const Home = () => {
   ]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showProductDetails, setShowProductDetails] = useState(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -67,10 +70,10 @@ const Home = () => {
   };
   const getUser = async () => {
     try {
-      const uid: any = await auth.currentUser?.uid;
+      const uid: string | undefined = await auth.currentUser?.uid;
       if (!uid) return;
       const docRef = doc(firestore, "Users", uid);
-      const docSnap = await getDoc(docRef);
+      const docSnap: any = await getDoc(docRef);
       console.log(docSnap.data());
       await setUser(docSnap.data());
     } catch (er) {
@@ -84,8 +87,15 @@ const Home = () => {
   const closeSidebar = () => {
     setSidebarVisible(false);
   };
-  const handleSearchInputChange = (e) => {
+  const handleSearchInputChange = (e: any) => {
     setSearchQuery(e.target.value);
+  };
+  const openProductDetails = (product) => {
+    setShowProductDetails(product);
+  };
+
+  const closeProductDetails = () => {
+    setShowProductDetails(null);
   };
 
   return (
@@ -151,7 +161,12 @@ const Home = () => {
               Logout <FaArrowRightFromBracket />
             </button>
           )}
-          <button className={styles.cartBtn}>
+          <button
+            onClick={() => {
+              navigate("/User/Cart");
+            }}
+            className={styles.cartBtn}
+          >
             <FaCartShopping className={styles.icon} />
           </button>
         </div>
@@ -212,7 +227,7 @@ const Home = () => {
       {/* Main body */}
       <div>
         {user.name && (
-          <h1 className={styles.userGreetings}>Welcome, {user.name}</h1>
+          <h1 className={styles.userGreetings}>Welcome, {user.name} . . !</h1>
         )}
         <h1 className={styles.bodyHeading}>Items</h1>
         <div className={styles.productsContainer}>
@@ -242,10 +257,24 @@ const Home = () => {
                       flexDirection: "row",
                     }}
                   >
-                    <button className={styles.handlersBtn}>
+                    <button
+                      onClick={() => openProductDetails(product)}
+                      className={styles.handlersBtn}
+                    >
                       <FaEye />
                     </button>
-                    <button className={styles.handlersBtn}>
+                    <button
+                      onClick={() => {
+                        addToCart({
+                          name: product.name,
+                          price: product.price,
+                          description: product.description,
+                          quantity: 1,
+                          images: product.images,
+                        });
+                      }}
+                      className={styles.handlersBtn}
+                    >
                       <FaCartPlus />
                     </button>
                   </div>
@@ -253,6 +282,12 @@ const Home = () => {
               );
             })}
         </div>
+        {showProductDetails && (
+          <ProductDetails
+            product={showProductDetails}
+            onClose={closeProductDetails}
+          />
+        )}
       </div>
     </div>
   );

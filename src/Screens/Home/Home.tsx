@@ -265,13 +265,7 @@ const Home = () => {
                     </button>
                     <button
                       onClick={() => {
-                        addToCart({
-                          name: product.name,
-                          price: product.price,
-                          description: product.description,
-                          quantity: 1,
-                          images: product.images,
-                        });
+                        addToCart(product);
                       }}
                       className={styles.handlersBtn}
                     >

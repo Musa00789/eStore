@@ -9,6 +9,7 @@ import {
   UploadTaskSnapshot,
 } from "@firebase/storage";
 import { FaPlus, FaPencil, FaTrashCan, FaCartShopping } from "react-icons/fa6";
+import { v4 as uuidv4 } from "uuid";
 
 // TODO: Add unique id for all product
 
@@ -53,7 +54,7 @@ const AddProducts = () => {
 
   const handleAddProduct = async () => {
     try {
-      const productId = Date.now().toString();
+      const productId = uuidv4();
       const downloadUrls = [];
       for (const selectedFile of file) {
         const storageRef = ref(
@@ -78,6 +79,7 @@ const AddProducts = () => {
               downloadUrls.push(downloadURL);
               if (downloadUrls.length === file.length) {
                 const productData = {
+                  id: productId,
                   name: productName,
                   price: productPrice,
                   description: productDescription,
@@ -130,7 +132,9 @@ const AddProducts = () => {
               <div className={styles.productDetails}>
                 <h3 className={styles.productName}>{product.name}</h3>
                 <p className={styles.productDescription}>
-                  {product.description}
+                  {product.description && product.description.length > 25
+                    ? `${product.description.substring(0, 25)}...`
+                    : product.description}
                 </p>
                 <p className={styles.productPrice}>Rs. {product.price}</p>
               </div>

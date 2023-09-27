@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { auth, firestore } from "../../../firebase";
 import { doc, getDocs, collection, updateDoc } from "@firebase/firestore";
 import styles from "./Cart.module.css";
-
-// TODO: enhance cart UI and add checkout button functionality
+import { FaArrowLeft, FaDeleteLeft, FaDumpster } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const [cart, setCart] = useState<any>([]);
+  const navigate = useNavigate();
+  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const Cart = () => {
       setLoading(false);
     }
   };
+
   const increaseQuantity = async (item) => {
     try {
       const itemRef = doc(
@@ -96,57 +98,92 @@ const Cart = () => {
     }
   };
 
+  function deleteFromCart(item: any) {
+    console.log(item);
+  }
+
   return (
     <div>
-      <h1>Cart</h1>
+      <button
+        onClick={() => {
+          navigate(-1);
+        }}
+      >
+        <FaArrowLeft />
+      </button>
+      <h1
+        style={{
+          textAlign: "center",
+          color: "#28a745",
+          fontWeight: "700",
+          textDecoration: "dotted underline",
+        }}
+      >
+        Wellcome to Cart
+      </h1>
       {cart.length > 0 ? (
-        <div className={styles.main}>
-          {cart.map((item) => (
+        <div className={styles.cartContainer}>
+          {cart.map((item: any) => (
             <div className={styles.productContainer} key={item.cartId}>
-              <img className={styles.productImg} src={item.images} />
-              <div>
+              <img
+                className={styles.productImg}
+                src={item.images}
+                alt={item.name}
+              />
+              <div className={styles.productInfo}>
                 <h3 className={styles.pName}>{item.name}</h3>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <h6 style={{ fontWeight: "600" }}>Price: </h6>
-                  <span className={styles.pPrice}> {item.price}</span>
-                </div>
-                <p>
+                <p className={styles.pDescription}>
                   {item.description && item.description.length > 75
-                    ? `${item.description.substring(0, 75)}...`
+                    ? `${item.description.substring(0, 70)} . . .`
                     : item.description}
                 </p>
-              </div>
-              <div>
-                <button className={styles.checkOutBtn}>Check Out</button>
-                <div className={styles.quantityControl}>
-                  <button
-                    className={styles.quantityButton}
-                    onClick={() => decreaseQuantity(item)}
-                  >
-                    -
-                  </button>
-                  <span className={styles.quantity}>{item.quantity}</span>
-                  <button
-                    className={styles.quantityButton}
-                    onClick={() => increaseQuantity(item)}
-                  >
-                    +
-                  </button>
+                <div className={styles.priceAndQuantity}>
+                  <div className={styles.price}>
+                    <h6>Price: </h6>
+                    <span className={styles.pPrice}>{item.price}</span>
+                  </div>
+                  <div className={styles.quantityControl}>
+                    <button
+                      className={styles.quantityButton}
+                      onClick={() => decreaseQuantity(item)}
+                    >
+                      -
+                    </button>
+                    <span className={styles.quantity}>{item.quantity}</span>
+                    <button
+                      className={styles.quantityButton}
+                      onClick={() => increaseQuantity(item)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
+              <button className={styles.checkOutBtn}>Check Out</button>
+              <button
+                onClick={() => {
+                  deleteFromCart(item);
+                }}
+                className={styles.delBtn}
+              >
+                <FaDeleteLeft />
+              </button>
             </div>
           ))}
         </div>
       ) : (
-        <p>Your cart is empty.</p>
+        <p
+          style={{
+            textAlign: "center",
+            color: "#28a745",
+            fontWeight: "700",
+          }}
+        >
+          Your cart is empty.
+        </p>
       )}
     </div>
   );
 };
+
 export default Cart;

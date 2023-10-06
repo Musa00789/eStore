@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { auth, firestore } from "../../../firebase";
-import { doc, getDocs, collection, updateDoc } from "@firebase/firestore";
+import {
+  doc,
+  getDocs,
+  collection,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+} from "@firebase/firestore";
 import styles from "./Cart.module.css";
-import { FaArrowLeft, FaDeleteLeft, FaDumpster } from "react-icons/fa6";
+import { FaArrowLeft, FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -75,11 +82,43 @@ const Cart = () => {
         console.error("Error decreasing quantity:", error);
       }
     } else {
-      removeFromCart(item);
+      try {
+        const itemRef = doc(
+          firestore,
+          "Users",
+          auth.currentUser.uid,
+          "Cart",
+          item.cartId
+        );
+        await updateDoc(itemRef, {
+          // cart: arrayRemove(item),
+          quantity: 0,
+        });
+        getItems(auth.currentUser?.uid);
+      } catch (error) {
+        console.error("Error removing from cart:", error);
+      }
     }
   };
 
-  const removeFromCart = async (item) => {
+  const checkOut = (item: any) => {
+    try {
+      const itemRef = doc(
+        firestore,
+        "Users",
+        auth.currentUser.uid,
+        "Orders",
+        item.cartId
+      );
+      setDoc(itemRef, item).then(async () => {
+        await deleteFromCart(item);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteFromCart = async (item: any) => {
     try {
       const itemRef = doc(
         firestore,
@@ -88,23 +127,17 @@ const Cart = () => {
         "Cart",
         item.cartId
       );
-      await updateDoc(itemRef, {
-        // cart: arrayRemove(item),
-        quantity: 0,
-      });
-      getItems(auth.currentUser.uid);
+      await deleteDoc(itemRef);
+      getItems(auth.currentUser?.uid);
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
   };
 
-  function deleteFromCart(item: any) {
-    console.log(item);
-  }
-
   return (
     <div>
       <button
+        className={styles.backNavigator}
         onClick={() => {
           navigate(-1);
         }}
@@ -159,14 +192,21 @@ const Cart = () => {
                   </div>
                 </div>
               </div>
-              <button className={styles.checkOutBtn}>Check Out</button>
+              <button
+                onClick={() => {
+                  checkOut(item);
+                }}
+                className={styles.checkOutBtn}
+              >
+                Check Out
+              </button>
               <button
                 onClick={() => {
                   deleteFromCart(item);
                 }}
                 className={styles.delBtn}
               >
-                <FaDeleteLeft />
+                <FaTrashCan />
               </button>
             </div>
           ))}

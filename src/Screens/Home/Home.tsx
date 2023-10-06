@@ -65,7 +65,8 @@ const Home = () => {
       setProducts(productsData);
       console.log("Products:", productsData);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      // alert("Error fetching products:", error);
+      navigate("/error");
     }
   };
   const getUser = async () => {
@@ -77,7 +78,8 @@ const Home = () => {
       console.log(docSnap.data());
       await setUser(docSnap.data());
     } catch (er) {
-      alert("Error fetching user data" + er);
+      // alert("Error fetching user data" + er);
+      navigate("/error");
     }
   };
 
@@ -105,13 +107,12 @@ const Home = () => {
           <FaListUl
             onClick={() => {
               toggleSidebar();
-              console.log("clicked");
             }}
             className={styles.menuBarIcon}
           />
           <h4
             onClick={() => {
-              navigate("/Home");
+              navigate("/");
             }}
             className={styles.logo}
           >
@@ -119,15 +120,15 @@ const Home = () => {
           </h4>
         </div>
         <div className={styles.searchBarContainer}>
+          <button className={styles.searchBtn}>
+            <FaMagnifyingGlass className={styles.icon} />
+          </button>
           <input
             className={styles.searchBar}
             placeholder="Search your needs . . ."
             value={searchQuery}
             onChange={handleSearchInputChange}
           />
-          <button className={styles.searchBtn}>
-            <FaMagnifyingGlass className={styles.icon} />
-          </button>
         </div>
         <div
           style={{
@@ -163,7 +164,7 @@ const Home = () => {
           )}
           <button
             onClick={() => {
-              navigate("/User/Cart");
+              navigate("/User/cart");
             }}
             className={styles.cartBtn}
           >
@@ -186,17 +187,27 @@ const Home = () => {
           <ul className={styles.sidebarLinks}>
             <li
               onClick={() => {
-                navigate("/Home");
+                navigate("/");
               }}
               className={styles.sidebarLink}
             >
               <FaHouse /> Home
             </li>
-            <li className={styles.sidebarLink}>
+            <li
+              onClick={() => {
+                navigate("/User/profile");
+              }}
+              className={styles.sidebarLink}
+            >
               {" "}
               <FaUser /> Profile
             </li>
-            <li className={styles.sidebarLink}>
+            <li
+              onClick={() => {
+                navigate("/User/settings");
+              }}
+              className={styles.sidebarLink}
+            >
               <FaGear /> Settings
             </li>
             {user.name === "" ? (
@@ -243,7 +254,11 @@ const Home = () => {
                     src={product.images[0]}
                   />
                   <div className={styles.productDetails}>
-                    <h3 className={styles.productName}>{product.name}</h3>
+                    <h3 className={styles.productName}>
+                      {product.name && product.name.length > 10
+                        ? `${product.name.substring(0, 10)}...`
+                        : product.name}
+                    </h3>
                     <p className={styles.productDescription}>
                       {product.description && product.description.length > 25
                         ? `${product.description.substring(0, 25)}...`

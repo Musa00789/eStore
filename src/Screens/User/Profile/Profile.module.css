@@ -1,0 +1,115 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+.backButton {
+  font-size: 24px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.profileContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profileImage {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-right: 20px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.userImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.noUserImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  align-items: center;
+  font-size: 44px;
+}
+.noUserImage span {
+  font-size: inherit;
+}
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.userName {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.userEmail,
+.userPhone {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 5px;
+}
+/* top right bottom left */
+.cartHeading {
+  margin-top: 60px;
+  margin-bottom: 20px;
+  font-size: 25px;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+.columnContainer {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+  width: 100%;
+}
+.scrollableContainer {
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  max-height: 400px;
+  width: 500px;
+}
+.cartTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tableRow {
+  background-color: #f2f2f2;
+}
+.tableHeader,
+.tableData {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+.tableHeader {
+  background-color: #333;
+  color: #fff;
+}
+.cartImage {
+  max-width: 100px;
+  max-height: 100px;
+  margin-bottom: 5px;
+}

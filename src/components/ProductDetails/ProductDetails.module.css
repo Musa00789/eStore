@@ -11,6 +11,7 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  overflow-y: scroll;
 }
 
 .productDetailsContent {
@@ -42,8 +43,8 @@
 }
 
 .productImage {
-  max-width: 600px;
-  height: auto;
+  max-width: 500px;
+  height: 500px;
   margin-bottom: 10px;
 }
 

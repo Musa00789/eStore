@@ -37,7 +37,7 @@ const Login = () => {
         if (userStatus === "Admin") {
           navigate("/Admin");
         } else {
-          navigate("/Home");
+          navigate("/");
         }
       } else {
         alert("User document does not exist");

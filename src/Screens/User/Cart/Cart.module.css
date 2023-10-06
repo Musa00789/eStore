@@ -1,3 +1,12 @@
+.backNavigator {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: #016fe6;
+  }
+}
 .cartContainer {
   display: flex;
   flex-direction: column;

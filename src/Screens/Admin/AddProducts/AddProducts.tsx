@@ -130,7 +130,11 @@ const AddProducts = () => {
             <div key={index} className={styles.productCard}>
               <img className={styles.productImage} src={product.images[0]} />
               <div className={styles.productDetails}>
-                <h3 className={styles.productName}>{product.name}</h3>
+                <h3 className={styles.productName}>
+                  {product.name && product.name.length > 10
+                    ? `${product.name.substring(0, 10)}...`
+                    : product.name}
+                </h3>
                 <p className={styles.productDescription}>
                   {product.description && product.description.length > 25
                     ? `${product.description.substring(0, 25)}...`
@@ -186,7 +190,7 @@ const AddProducts = () => {
               required
               onChange={(e) => setProductDescription(e.target.value)}
             />
-            <p>Upload Progress: {uploadProgress}%</p>
+            <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>
             <button onClick={handleAddProduct}>Add Product</button>
           </div>
         </div>

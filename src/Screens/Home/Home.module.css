@@ -64,7 +64,7 @@
   font-size: 16px;
   background-color: white;
   width: 75%;
-  margin-right: 10px;
+  margin-left: 10px;
   &:focus {
     outline: none;
   }

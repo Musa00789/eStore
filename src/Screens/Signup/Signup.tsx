@@ -34,7 +34,7 @@ const Signup = () => {
           email: user.email,
           status: "User",
         }).then(() => {
-          navigate("/Home");
+          navigate("/");
         });
       });
     } catch (error) {

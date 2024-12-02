@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 // TODO: Add unique id for all product
 
 const AddProducts = () => {
-  const [file, setFile] = useState([]);
+  const [file, setFile] = useState<File[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
@@ -47,15 +47,15 @@ const AddProducts = () => {
     setUploadProgress(0);
   };
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
+  const handleFileChange = (e: any) => {
+    const selectedFiles: any = Array.from(e.target.files);
     setFile(selectedFiles);
   };
 
   const handleAddProduct = async () => {
     try {
       const productId = uuidv4();
-      const downloadUrls = [];
+      const downloadUrls: any[] = [];
       for (const selectedFile of file) {
         const storageRef = ref(
           storage,
@@ -103,7 +103,7 @@ const AddProducts = () => {
       const productsCollectionRef = collection(firestore, "Products");
       const productsQuery = query(productsCollectionRef);
       const querySnapshot = await getDocs(productsQuery);
-      const productsArray = [];
+      const productsArray: any[] = [];
       querySnapshot.forEach((doc) => {
         productsArray.push(doc.data());
       });

@@ -156,14 +156,14 @@ const Cart = () => {
 
   return (
     <div>
-      <button
+      {/* <button
         className={styles.backNavigator}
         onClick={() => {
           navigate(-1);
         }}
       >
         <FaArrowLeft />
-      </button>
+      </button> */}
       <h1
         style={{
           textAlign: "center",

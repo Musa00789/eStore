@@ -139,19 +139,19 @@ const Home = () => {
             }}
             className={styles.logo}
           >
-            ReSellStore
+            RSS
           </h4>
         </div>
         <div className={styles.searchBarContainer}>
-          <button className={styles.searchBtn}>
-            <FaMagnifyingGlass className={styles.icon} />
-          </button>
           <input
             className={styles.searchBar}
             placeholder="Search your needs . . ."
             value={searchQuery}
             onChange={handleSearchInputChange}
           />
+          <button className={styles.searchBtn}>
+            <FaMagnifyingGlass className={styles.icon} />
+          </button>
         </div>
         <div
           style={{
@@ -259,7 +259,7 @@ const Home = () => {
       )}
 
       {/* Main body */}
-      <div>
+      <div className={styles.mainBodyContent}>
         {user.name && (
           <h1 className={styles.userGreetings}>Welcome, {user.name} . . !</h1>
         )}

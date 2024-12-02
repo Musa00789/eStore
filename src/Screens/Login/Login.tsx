@@ -42,7 +42,7 @@ const Login = () => {
       } else {
         alert("User document does not exist");
       }
-    } catch (error) {
+    } catch (error: any) {
       alert(`Error logging in: ${error.message}`);
     }
   };

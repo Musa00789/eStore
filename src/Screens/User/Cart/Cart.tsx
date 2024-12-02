@@ -7,6 +7,7 @@ import {
   updateDoc,
   deleteDoc,
   setDoc,
+  DocumentData,
 } from "@firebase/firestore";
 import styles from "./Cart.module.css";
 import { FaArrowLeft, FaTrashCan } from "react-icons/fa6";
@@ -14,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState<DocumentData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ const Cart = () => {
     };
   }, []);
 
-  const getItems = async (uid) => {
+  const getItems = async (uid: string) => {
     try {
       const collectionRef = collection(firestore, "Users", uid, "Cart");
       const querySnapshot = await getDocs(collectionRef);
@@ -48,53 +49,68 @@ const Cart = () => {
     }
   };
 
-  const increaseQuantity = async (item) => {
+  const increaseQuantity = async (item: {
+    cartId: string;
+    quantity: number;
+  }) => {
     try {
-      const itemRef = doc(
-        firestore,
-        "Users",
-        auth.currentUser.uid,
-        "Cart",
-        item.cartId
-      );
-      const updatedItem = { ...item, quantity: item.quantity + 1 };
-      await updateDoc(itemRef, updatedItem);
-      getItems(auth.currentUser?.uid);
+      if (auth.currentUser?.uid) {
+        const itemRef = doc(
+          firestore,
+          "Users",
+          auth.currentUser.uid,
+          "Cart",
+          item.cartId
+        );
+
+        const updatedItem = { ...item, quantity: item.quantity + 1 };
+        await updateDoc(itemRef, updatedItem);
+        getItems(auth.currentUser.uid);
+      }
     } catch (error) {
       console.error("Error increasing quantity:", error);
     }
   };
 
-  const decreaseQuantity = async (item) => {
+  const decreaseQuantity = async (item: {
+    cartId: string;
+    quantity: number;
+  }) => {
     if (item.quantity > 1) {
       try {
-        const itemRef = doc(
-          firestore,
-          "Users",
-          auth.currentUser.uid,
-          "Cart",
-          item.cartId
-        );
-        const updatedItem = { ...item, quantity: item.quantity - 1 };
-        await updateDoc(itemRef, updatedItem);
-        getItems(auth.currentUser?.uid);
+        if (auth.currentUser?.uid) {
+          const itemRef = doc(
+            firestore,
+            "Users",
+            auth.currentUser.uid,
+            "Cart",
+            item.cartId
+          );
+          const updatedItem = { ...item, quantity: item.quantity - 1 };
+          await updateDoc(itemRef, updatedItem);
+          getItems(auth.currentUser?.uid || "");
+        }
       } catch (error) {
         console.error("Error decreasing quantity:", error);
       }
     } else {
       try {
-        const itemRef = doc(
-          firestore,
-          "Users",
-          auth.currentUser.uid,
-          "Cart",
-          item.cartId
-        );
-        await updateDoc(itemRef, {
-          // cart: arrayRemove(item),
-          quantity: 0,
-        });
-        getItems(auth.currentUser?.uid);
+        if (auth.currentUser?.uid) {
+          const itemRef = doc(
+            firestore,
+            "Users",
+            auth.currentUser.uid,
+            "Cart",
+            item.cartId
+          );
+          await updateDoc(itemRef, {
+            // cart: arrayRemove(item),
+            quantity: 0,
+          });
+          getItems(auth.currentUser.uid);
+        } else {
+          console.error("User ID is undefined");
+        }
       } catch (error) {
         console.error("Error removing from cart:", error);
       }
@@ -103,16 +119,18 @@ const Cart = () => {
 
   const checkOut = (item: any) => {
     try {
-      const itemRef = doc(
-        firestore,
-        "Users",
-        auth.currentUser.uid,
-        "Orders",
-        item.cartId
-      );
-      setDoc(itemRef, item).then(async () => {
-        await deleteFromCart(item);
-      });
+      if (auth.currentUser?.uid) {
+        const itemRef = doc(
+          firestore,
+          "Users",
+          auth.currentUser?.uid,
+          "Orders",
+          item.cartId
+        );
+        setDoc(itemRef, item).then(async () => {
+          await deleteFromCart(item);
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -120,15 +138,17 @@ const Cart = () => {
 
   const deleteFromCart = async (item: any) => {
     try {
-      const itemRef = doc(
-        firestore,
-        "Users",
-        auth.currentUser.uid,
-        "Cart",
-        item.cartId
-      );
-      await deleteDoc(itemRef);
-      getItems(auth.currentUser?.uid);
+      if (auth.currentUser?.uid) {
+        const itemRef = doc(
+          firestore,
+          "Users",
+          auth.currentUser.uid,
+          "Cart",
+          item.cartId
+        );
+        await deleteDoc(itemRef);
+        getItems(auth.currentUser?.uid || "");
+      }
     } catch (error) {
       console.error("Error removing from cart:", error);
     }

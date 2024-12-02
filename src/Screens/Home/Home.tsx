@@ -17,6 +17,8 @@ import { auth, firestore } from "../../firebase";
 import { getDocs, collection, query, doc, getDoc } from "@firebase/firestore";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import { addToCart } from "../../components/addToCart";
+import ImageGallery from "../../components/ImageGallery/ImageGallery";
+import Categories from "../../components/Categories/Categories";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,14 +38,19 @@ const Home = () => {
   ]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showProductDetails, setShowProductDetails] = useState(null);
+  const [showProductDetails, setShowProductDetails] = useState<null | {
+    name: string;
+    price: string;
+    description: string;
+    images: string[];
+  }>(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         getUser();
       } else {
-        setUser({ name: "" });
+        setUser({ name: "", email: "", phone: "", status: "" });
       }
     });
 
@@ -56,12 +63,22 @@ const Home = () => {
     getProducts();
   }, [user]);
 
+  const defImg = "../../assets/images/logo.png";
+
   const getProducts = async () => {
     try {
       const productsCollectionRef = collection(firestore, "Products");
       const productsQuery = query(productsCollectionRef);
       const productsSnapshot = await getDocs(productsQuery);
-      const productsData = productsSnapshot.docs.map((doc) => doc.data());
+      const productsData = productsSnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          name: data.name || "",
+          price: data.price || "",
+          description: data.description || "",
+          images: data.images || [],
+        };
+      });
       setProducts(productsData);
       console.log("Products:", productsData);
     } catch (error) {
@@ -92,7 +109,12 @@ const Home = () => {
   const handleSearchInputChange = (e: any) => {
     setSearchQuery(e.target.value);
   };
-  const openProductDetails = (product) => {
+  const openProductDetails = (product: {
+    name: string;
+    price: string;
+    description: string;
+    images: string[];
+  }) => {
     setShowProductDetails(product);
   };
 
@@ -102,6 +124,7 @@ const Home = () => {
 
   return (
     <div className={styles.main}>
+      {/* header */}
       <div className={styles.header}>
         <div className={styles.menuLogoContainer}>
           <FaListUl
@@ -116,7 +139,7 @@ const Home = () => {
             }}
             className={styles.logo}
           >
-            M & D
+            ReSellStore
           </h4>
         </div>
         <div className={styles.searchBarContainer}>
@@ -240,6 +263,8 @@ const Home = () => {
         {user.name && (
           <h1 className={styles.userGreetings}>Welcome, {user.name} . . !</h1>
         )}
+        <ImageGallery />
+        <Categories />
         <h1 className={styles.bodyHeading}>Items</h1>
         <div className={styles.productsContainer}>
           {products

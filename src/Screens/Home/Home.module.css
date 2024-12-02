@@ -187,11 +187,11 @@
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
 }
 .bodyHeading {
-  font-size: 30px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   margin: 20px;
-  color: rgb(116, 116, 116);
-  text-decoration: double underline rgb(116, 116, 116);
+  color: rgb(0, 0, 0);
+  /* text-decoration: double underline rgb(116, 116, 116); */
 }
 .productsContainer {
   display: flex;

@@ -1,0 +1,55 @@
+.galleryContainer {
+  position: relative;
+  width: 80%; /* Adjust as needed */
+  margin: auto;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bannerContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.banner {
+  margin: 20px;
+  width: 90%;
+  border-radius: 5px;
+  height: 170px;
+  max-height: 170px; /* Adjust for your gallery size */
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+}
+
+.prevButton,
+.nextButton {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  /* padding: 15px; */
+  cursor: pointer;
+  z-index: 10;
+  font-size: 24px;
+  border-radius: 50%;
+}
+
+.prevButton {
+  left: 10px;
+}
+
+.nextButton {
+  right: 10px;
+}
+
+.prevButton:hover,
+.nextButton:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}

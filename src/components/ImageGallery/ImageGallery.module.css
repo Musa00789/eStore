@@ -1,6 +1,6 @@
 .galleryContainer {
   position: relative;
-  width: 80%; /* Adjust as needed */
+  width: 80%;
   margin: auto;
   overflow: hidden;
   display: flex;
@@ -19,8 +19,8 @@
   margin: 20px;
   width: 90%;
   border-radius: 5px;
-  height: 170px;
-  max-height: 170px; /* Adjust for your gallery size */
+  height: 250px;
+  max-height: 250px;
   object-fit: cover;
   transition: transform 0.5s ease-in-out;
 }

@@ -35,9 +35,9 @@ const ImageGallery = () => {
       onMouseEnter={() => clearInterval(autoSlideRef.current || undefined)}
       onMouseLeave={startAutoSlide}
     >
-      <button className={styles.prevButton} onClick={handlePrev}>
+      {/* <button className={styles.prevButton} onClick={handlePrev}>
         ❮
-      </button>
+      </button> */}
       <div className={styles.bannerContainer}>
         <img
           className={styles.banner}
@@ -45,9 +45,9 @@ const ImageGallery = () => {
           alt={`Slide ${currentIndex + 1}`}
         />
       </div>
-      <button className={styles.nextButton} onClick={handleNext}>
+      {/* <button className={styles.nextButton} onClick={handleNext}>
         ❯
-      </button>
+      </button> */}
     </div>
   );
 };

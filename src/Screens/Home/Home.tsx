@@ -131,7 +131,14 @@ const Home = () => {
                 </div>
                 <div style={{ display: "flex", flexDirection: "row" }}>
                   <button
-                    onClick={() => openProductDetails(product)}
+                    onClick={() => {
+                      // openProductDetails(product);
+                      navigate(`/product/${product.name}`, { state: product });
+                      // <ProductDetails
+                      //   product={showProductDetails}
+                      //   onClose={closeProductDetails}
+                      // />;
+                    }}
                     className={styles.handlersBtn}
                   >
                     <FaEye />
@@ -148,12 +155,12 @@ const Home = () => {
               </div>
             ))}
         </div>
-        {showProductDetails && (
+        {/* {showProductDetails && (
           <ProductDetails
             product={showProductDetails}
             onClose={closeProductDetails}
           />
-        )}
+        )} */}
       </div>
     </div>
   );

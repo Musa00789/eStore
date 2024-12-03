@@ -4,9 +4,7 @@ import {
   FaMagnifyingGlass,
   FaCartShopping,
   FaArrowRightFromBracket,
-  FaListUl,
   FaCircleUser,
-  FaFontAwesome,
   FaGear,
 } from "react-icons/fa6";
 import styles from "./Header.module.css";

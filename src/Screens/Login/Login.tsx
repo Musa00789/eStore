@@ -11,7 +11,6 @@ const Login = () => {
     email: "",
     password: "",
   });
-
   const [attempts, setAttempts] = useState(0);
   const navigate = useNavigate();
 
@@ -102,10 +101,10 @@ const Login = () => {
         </p>
         <div>
           <button className={styles.loginWithBtn}>
-            <FaGoogle className={styles.loginWithIcon} />
+            <FaGoogle className={styles.loginWithIcon} /> Login with Google
           </button>
           <button className={styles.loginWithBtn}>
-            <FaFacebook className={styles.loginWithIcon} />
+            <FaFacebook className={styles.loginWithIcon} /> Login with Facebook
           </button>
         </div>
       </div>

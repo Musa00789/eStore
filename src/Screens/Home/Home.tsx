@@ -1,24 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaMagnifyingGlass,
-  FaCartShopping,
-  FaListUl,
-  FaEye,
-  FaCartPlus,
-  FaX,
-  FaArrowRightFromBracket,
-  FaHouse,
-  FaUser,
-  FaGear,
-} from "react-icons/fa6";
-import styles from "./Home.module.css";
+import { collection, getDocs, query, doc, getDoc } from "@firebase/firestore";
 import { auth, firestore } from "../../firebase";
-import { getDocs, collection, query, doc, getDoc } from "@firebase/firestore";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
-import { addToCart } from "../../components/addToCart";
 import ImageGallery from "../../components/ImageGallery/ImageGallery";
 import Categories from "../../components/Categories/Categories";
+import Header from "../../components/Header/Header"; // Import new Header
+import styles from "./Home.module.css";
+import { addToCart } from "../../components/addToCart";
+import { FaCartPlus, FaEye } from "react-icons/fa6";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -28,22 +18,10 @@ const Home = () => {
     phone: "",
     status: "",
   });
-  const [products, setProducts] = useState([
-    {
-      name: "",
-      price: "",
-      description: "",
-      images: [],
-    },
-  ]);
+  const [products, setProducts] = useState<any>([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showProductDetails, setShowProductDetails] = useState<null | {
-    name: string;
-    price: string;
-    description: string;
-    images: string[];
-  }>(null);
+  const [showProductDetails, setShowProductDetails] = useState(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -63,7 +41,9 @@ const Home = () => {
     getProducts();
   }, [user]);
 
-  const defImg = "../../assets/images/logo.png";
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
 
   const getProducts = async () => {
     try {
@@ -82,39 +62,23 @@ const Home = () => {
       setProducts(productsData);
       console.log("Products:", productsData);
     } catch (error) {
-      // alert("Error fetching products:", error);
-      navigate("/error");
-    }
-  };
-  const getUser = async () => {
-    try {
-      const uid: string | undefined = await auth.currentUser?.uid;
-      if (!uid) return;
-      const docRef = doc(firestore, "Users", uid);
-      const docSnap: any = await getDoc(docRef);
-      console.log(docSnap.data());
-      await setUser(docSnap.data());
-    } catch (er) {
-      // alert("Error fetching user data" + er);
       navigate("/error");
     }
   };
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
+  const getUser = async () => {
+    try {
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      const docRef = doc(firestore, "Users", uid);
+      const docSnap: any = await getDoc(docRef);
+      setUser(docSnap.data());
+    } catch (error) {
+      navigate("/error");
+    }
   };
-  const closeSidebar = () => {
-    setSidebarVisible(false);
-  };
-  const handleSearchInputChange = (e: any) => {
-    setSearchQuery(e.target.value);
-  };
-  const openProductDetails = (product: {
-    name: string;
-    price: string;
-    description: string;
-    images: string[];
-  }) => {
+
+  const openProductDetails = (product: any) => {
     setShowProductDetails(product);
   };
 
@@ -124,139 +88,13 @@ const Home = () => {
 
   return (
     <div className={styles.main}>
-      {/* header */}
-      <div className={styles.header}>
-        <div className={styles.menuLogoContainer}>
-          <FaListUl
-            onClick={() => {
-              toggleSidebar();
-            }}
-            className={styles.menuBarIcon}
-          />
-          <h4
-            onClick={() => {
-              navigate("/");
-            }}
-            className={styles.logo}
-          >
-            RSS
-          </h4>
-        </div>
-        <div className={styles.searchBarContainer}>
-          <input
-            className={styles.searchBar}
-            placeholder="Search your needs . . ."
-            value={searchQuery}
-            onChange={handleSearchInputChange}
-          />
-          <button className={styles.searchBtn}>
-            <FaMagnifyingGlass className={styles.icon} />
-          </button>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {user.name === "" ? (
-            <button
-              className={styles.loginBtn}
-              onClick={() => {
-                navigate("/Login");
-              }}
-            >
-              Login <FaArrowRightFromBracket />
-            </button>
-          ) : (
-            <button
-              className={styles.loginBtn}
-              onClick={async () => {
-                await auth
-                  .signOut()
-                  .then(() => {
-                    navigate("/");
-                  })
-                  .catch((er) => {
-                    console.log(er);
-                  });
-              }}
-            >
-              Logout <FaArrowRightFromBracket />
-            </button>
-          )}
-          <button
-            onClick={() => {
-              navigate("/User/cart");
-            }}
-            className={styles.cartBtn}
-          >
-            <FaCartShopping className={styles.icon} />
-          </button>
-        </div>
-      </div>
-
-      {/* Sidebar */}
-      {sidebarVisible && (
-        <div
-          className={`${styles.sidebar} ${
-            sidebarVisible ? styles.visible : ""
-          }`}
-        >
-          <button className={styles.closeButton} onClick={closeSidebar}>
-            <FaX />
-          </button>
-          <h2 className={styles.userProfile}>{user.name[0]}</h2>
-          <ul className={styles.sidebarLinks}>
-            <li
-              onClick={() => {
-                navigate("/");
-              }}
-              className={styles.sidebarLink}
-            >
-              <FaHouse /> Home
-            </li>
-            <li
-              onClick={() => {
-                navigate("/User/profile");
-              }}
-              className={styles.sidebarLink}
-            >
-              {" "}
-              <FaUser /> Profile
-            </li>
-            <li
-              onClick={() => {
-                navigate("/User/settings");
-              }}
-              className={styles.sidebarLink}
-            >
-              <FaGear /> Settings
-            </li>
-            {user.name === "" ? (
-              <li
-                className={`${styles.sidebarLink}`}
-                onClick={() => {
-                  navigate("/Login");
-                }}
-              >
-                <FaArrowRightFromBracket /> Signin
-              </li>
-            ) : (
-              <li
-                className={`${styles.sidebarLink} ${styles.sidebarLinkSignout}`}
-                onClick={() => {
-                  auth.signOut().then(() => {
-                    navigate("/");
-                  });
-                }}
-              >
-                <FaArrowRightFromBracket /> Signout
-              </li>
-            )}
-          </ul>
-        </div>
-      )}
+      {/* Use the new Header component */}
+      <Header
+        user={user}
+        // toggleSidebar={toggleSidebar}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       {/* Main body */}
       <div className={styles.mainBodyContent}>
@@ -268,53 +106,47 @@ const Home = () => {
         <h1 className={styles.bodyHeading}>Items</h1>
         <div className={styles.productsContainer}>
           {products
-            .filter((product) =>
+            .filter((product: any) =>
               product.name.toLowerCase().includes(searchQuery.toLowerCase())
             )
-            .map((product, index) => {
-              return (
-                <div key={index} className={styles.productCard}>
-                  <img
-                    className={styles.productImage}
-                    src={product.images[0]}
-                  />
-                  <div className={styles.productDetails}>
-                    <h3 className={styles.productName}>
-                      {product.name && product.name.length > 10
-                        ? `${product.name.substring(0, 10)}...`
-                        : product.name}
-                    </h3>
-                    <p className={styles.productDescription}>
-                      {product.description && product.description.length > 25
-                        ? `${product.description.substring(0, 25)}...`
-                        : product.description}
-                    </p>
-                    <p className={styles.productPrice}>Rs. {product.price}</p>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <button
-                      onClick={() => openProductDetails(product)}
-                      className={styles.handlersBtn}
-                    >
-                      <FaEye />
-                    </button>
-                    <button
-                      onClick={() => {
-                        addToCart(product);
-                      }}
-                      className={styles.handlersBtn}
-                    >
-                      <FaCartPlus />
-                    </button>
-                  </div>
+            .map((product: any, index: any) => (
+              <div key={index} className={styles.productCard}>
+                <img
+                  className={styles.productImage}
+                  src={product.images[0]}
+                  alt={product.name}
+                />
+                <div className={styles.productDetails}>
+                  <h3 className={styles.productName}>
+                    {product.name.length > 10
+                      ? `${product.name.substring(0, 10)}...`
+                      : product.name}
+                  </h3>
+                  <p className={styles.productDescription}>
+                    {product.description.length > 25
+                      ? `${product.description.substring(0, 25)}...`
+                      : product.description}
+                  </p>
+                  <p className={styles.productPrice}>Rs. {product.price}</p>
                 </div>
-              );
-            })}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <button
+                    onClick={() => openProductDetails(product)}
+                    className={styles.handlersBtn}
+                  >
+                    <FaEye />
+                  </button>
+                  <button
+                    onClick={() => {
+                      addToCart(product);
+                    }}
+                    className={styles.handlersBtn}
+                  >
+                    <FaCartPlus />
+                  </button>
+                </div>
+              </div>
+            ))}
         </div>
         {showProductDetails && (
           <ProductDetails

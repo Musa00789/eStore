@@ -12,6 +12,7 @@ import {
 import styles from "./Cart.module.css";
 import { FaArrowLeft, FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -172,7 +173,7 @@ const Cart = () => {
           textDecoration: "dotted underline",
         }}
       >
-        Wellcome to Cart
+        Your Items
       </h1>
       {cart.length > 0 ? (
         <div className={styles.cartContainer}>
@@ -239,7 +240,11 @@ const Cart = () => {
             fontWeight: "700",
           }}
         >
-          Your cart is empty.
+          Lets add some items to the cart!{" "}
+          <button className={styles.homeButton} onClick={() => navigate(-1)}>
+            {" "}
+            <FaHome style={{ marginTop: "-5px" }} /> Home
+          </button>
         </p>
       )}
     </div>

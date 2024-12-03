@@ -6,12 +6,12 @@
 }
 
 .productImage {
-  width: 400px; /* Fixed width */
-  height: 400px; /* Fixed height */
-  object-fit: cover; /* Crops image if it's larger */
+  width: 500px;
+  height: 700px;
+  object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 90px;
+  margin-left: 190px;
   margin-top: 60px;
 }
 
@@ -25,22 +25,31 @@
 }
 
 .productName {
-  font-size: 1.8rem;
-  font-weight: bold;
+  margin-top: 50px;
+  font-size: 2.3rem;
+  font-weight: 600;
   margin-bottom: 10px;
+  text-transform: capitalize;
+  font-family: Helvetica, sans-serif;
 }
 
 .productPrice {
-  font-size: 1.5rem;
+  width: 450px;
+  max-width: 450px;
+  font-size: 1.8rem;
   color: #28a745;
   font-weight: bold;
   margin-bottom: 15px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid grey;
 }
 
 .productDescription {
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 20px;
+  color: #555;
+  text-transform: capitalize;
 }
 
 .buttonGroup {
@@ -58,6 +67,8 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  max-width: 200px;
+  width: 200px;
 }
 
 .addToCartButton:hover {
@@ -74,8 +85,69 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  max-width: 200px;
+  width: 200px;
+  margin-left: 29px;
 }
 
 .contactSellerButton:hover {
   background-color: #0056b3;
+}
+
+.features {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+  max-width: 450px;
+  width: 450px;
+}
+
+.feature {
+  text-align: left;
+  border-radius: 10px;
+  padding: 18px 18px 8px 18px;
+  background-color: #c7c6c6;
+}
+
+.feature h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.feature p {
+  font-size: 14px;
+  color: #555;
+}
+.sizeSection {
+  margin-top: 20px;
+  color: black;
+  font-size: 16px;
+}
+
+.sizeOptions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.sizeButton {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: black;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.sizeButton:hover {
+  background-color: #e0e0e0;
+}
+
+.selectedSizeButton {
+  /* background-color: #007bff; */
+  color: black;
+  border-color: #0056b3;
 }

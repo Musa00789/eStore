@@ -47,12 +47,11 @@
   border: 1px solid grey;
   font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
+  &:focus {
+    outline: none;
+  }
 }
-.input:focus {
-  box-shadow: 0px 0px 10px 0px cadetblue;
-  border: 1px solid grey;
-  outline: none;
-}
+
 .btn {
   padding: 5px;
   font-size: 17px;

@@ -4,15 +4,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "@firebase/firestore";
 import { useLocation } from "react-router-dom";
 import { firestore } from "../../firebase";
-import Header from "../Header/Header";
-import { FaMailBulk } from "react-icons/fa";
-import { FaCartPlus, FaMessage } from "react-icons/fa6";
+import { FaCartPlus, FaCreditCard, FaMessage, FaTruck } from "react-icons/fa6";
 
 const ProductDetails = () => {
   const location = useLocation();
   const { productName } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = React.useState(location.state || null);
+  const [selectedSize, setSelectedSize] = React.useState(null);
 
   React.useEffect(() => {
     if (!product) {
@@ -44,21 +43,23 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     console.log("Add to Cart clicked!", product);
-    // add-to-cart here
+    // Implement your add-to-cart logic here
+  };
+
+  const handleSizeChange = (size: any) => {
+    setSelectedSize(size);
   };
 
   const handleContactSeller = () => {
     console.log("Contact Seller clicked!");
-    // contact seller logic, open a chat
+    // Implement contact seller logic, e.g., navigate to a contact form or open a chat
   };
 
   if (!product) return <div>Loading...</div>;
 
   return (
     <div>
-      {/* <div style={{ backgroundColor: "red" }}> 
-        <Header />
-      </div> */}
+      {/* <Header /> */}
       <div className={styles.productDetailsContainer}>
         <img
           className={styles.productImage}
@@ -68,36 +69,78 @@ const ProductDetails = () => {
         <div className={styles.productInfo}>
           <h1 className={styles.productName}>{product.name}</h1>
           <p className={styles.productPrice}>Rs. {product.price}</p>
-          <p className={styles.productDescription}>
-            <b> Description:</b> {product.description}
-          </p>
+          <p className={styles.productDescription}>{product.description}</p>
           <div className={styles.buttonGroup}>
             <button
               className={styles.addToCartButton}
               onClick={handleAddToCart}
             >
-              Add to Cart{" "}
               <FaCartPlus
                 style={{
-                  fontSize: "20px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
                   marginTop: "-2px",
+                  fontSize: "1.3rem",
                 }}
-              />
+              />{" "}
+              Add to Cart
             </button>
             <button
               className={styles.contactSellerButton}
               onClick={handleContactSeller}
             >
-              Contact Seller{" "}
               <FaMessage
                 style={{
-                  fontSize: "20px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
                   marginTop: "-2px",
+                  fontSize: "1.3rem",
                 }}
-              />
+              />{" "}
+              Contact Seller
             </button>
+          </div>
+          <div className={styles.features}>
+            <div className={styles.feature}>
+              <h3>
+                <FaTruck
+                  style={{
+                    fontSize: "1.5rem",
+                    marginRight: "5px",
+                    marginBottom: "4px",
+                  }}
+                />{" "}
+                Free Shipping
+              </h3>
+              <p>Free Shipping in Pakistan on orders above Rs.4000.</p>
+            </div>
+            <div className={styles.feature}>
+              <h3>
+                <FaCreditCard
+                  style={{
+                    fontSize: "1.2rem",
+                    marginRight: "5px",
+                    marginBottom: "4px",
+                  }}
+                />
+                Secure Payment
+              </h3>
+              <p>Visa, Mastercard and Cash on Delivery are accepted.</p>
+            </div>
+          </div>
+          <div className={styles.sizeSection}>
+            <h3>Size: {selectedSize}</h3>
+            <div className={styles.sizeOptions}>
+              {product.Size?.map((size: string, index: number) => (
+                <button
+                  key={index}
+                  className={`${styles.sizeButton} ${
+                    size === selectedSize ? styles.selectedSizeButton : ""
+                  }`}
+                  onClick={() => handleSizeChange(size)}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, query, doc, getDoc } from "@firebase/firestore";
 import { auth, firestore } from "../../firebase";
-import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import ImageGallery from "../../components/ImageGallery/ImageGallery";
 import Categories from "../../components/Categories/Categories";
-import Header from "../../components/Header/Header"; // Import new Header
+import Header from "../../components/Header/Header";
 import styles from "./Home.module.css";
 import { addToCart } from "../../components/addToCart";
 import { FaCartPlus, FaEye } from "react-icons/fa6";
@@ -19,9 +18,7 @@ const Home = () => {
     status: "",
   });
   const [products, setProducts] = useState<any>([]);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showProductDetails, setShowProductDetails] = useState(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -41,27 +38,39 @@ const Home = () => {
     getProducts();
   }, [user]);
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
-
   const getProducts = async () => {
     try {
       const productsCollectionRef = collection(firestore, "Products");
       const productsQuery = query(productsCollectionRef);
       const productsSnapshot = await getDocs(productsQuery);
+
       const productsData = productsSnapshot.docs.map((doc) => {
         const data = doc.data();
-        return {
+
+        const baseData: any = {
           name: data.name || "",
           price: data.price || "",
           description: data.description || "",
           images: data.images || [],
+          type: data.type || "",
+          Size: [],
+          Quantity: [],
         };
+
+        // Dynamically add Size or Quantity based on the type
+        if (data.type === "Fashion") {
+          baseData.Size = ["S", "M", "L", "XL", "XXL"];
+        } else {
+          baseData.Quantity = [1, 2, 3, 4, 5];
+        }
+
+        return baseData; // Return the constructed object
       });
+
       setProducts(productsData);
       console.log("Products:", productsData);
     } catch (error) {
+      console.error("Error fetching products:", error);
       navigate("/error");
     }
   };
@@ -78,20 +87,11 @@ const Home = () => {
     }
   };
 
-  const openProductDetails = (product: any) => {
-    setShowProductDetails(product);
-  };
-
-  const closeProductDetails = () => {
-    setShowProductDetails(null);
-  };
-
   return (
     <div className={styles.main}>
       {/* Use the new Header component */}
       <Header
         user={user}
-        // toggleSidebar={toggleSidebar}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
@@ -103,7 +103,7 @@ const Home = () => {
         )}
         <ImageGallery />
         <Categories />
-        <h1 className={styles.bodyHeading}>Items</h1>
+        <h1 className={styles.bodyHeading}>Fashion & Beauty</h1>
         <div className={styles.productsContainer}>
           {products
             .filter((product: any) =>
@@ -132,12 +132,7 @@ const Home = () => {
                 <div style={{ display: "flex", flexDirection: "row" }}>
                   <button
                     onClick={() => {
-                      // openProductDetails(product);
                       navigate(`/product/${product.name}`, { state: product });
-                      // <ProductDetails
-                      //   product={showProductDetails}
-                      //   onClose={closeProductDetails}
-                      // />;
                     }}
                     className={styles.handlersBtn}
                   >
@@ -155,12 +150,6 @@ const Home = () => {
               </div>
             ))}
         </div>
-        {/* {showProductDetails && (
-          <ProductDetails
-            product={showProductDetails}
-            onClose={closeProductDetails}
-          />
-        )} */}
       </div>
     </div>
   );

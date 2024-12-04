@@ -4,7 +4,7 @@ import { auth, firestore } from "../../firebase";
 import styles from "./Login.module.css";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "@firebase/firestore";
-import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { FaGoogle, FaFacebook, FaHome } from "react-icons/fa";
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -51,6 +51,14 @@ const Login = () => {
   return (
     <div className={styles.main}>
       <div className={styles.glassView}>
+        <button
+          className={styles.homeBtn}
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          <FaHome />
+        </button>
         <h1 className={styles.heading}>Welcome Back</h1>
         <form className={styles.inputContainer} onSubmit={handleLogin}>
           <input

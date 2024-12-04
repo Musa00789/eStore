@@ -4,6 +4,7 @@ import { auth, firestore } from "../../firebase";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { doc, setDoc } from "@firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa6";
 
 const Signup = () => {
   const [user, setUser] = useState({
@@ -46,6 +47,15 @@ const Signup = () => {
   return (
     <div className={styles.main}>
       <div className={styles.glassView}>
+        <button
+          className={styles.backButton}
+          onClick={() => {
+            // navigate("/");
+            navigate(-1);
+          }}
+        >
+          <FaArrowLeft />
+        </button>
         <h1 className={styles.heading}>Sign Up</h1>
         <form className={styles.inputContainer} onSubmit={handleSubmit}>
           <label className={styles.inputLabel}>Name</label>

@@ -10,6 +10,16 @@ import ProductDetails from "./components/ProductDetails/ProductDetails";
 /*TODO:
  1. In this ecommerce app I will use React Router, React Context API, Firebase,
  2. Try to impliment payment methods like jazzcash, easypaisa, stripe, paypal
+  3. Try to impliment chat system 
+  4. Try to impliment search system
+  5. Try to impliment rating system
+  6. Try to impliment review system
+  7. Try to impliment order system
+  8. Try to impliment tracking system
+  9. Try to impliment notification system
+  10. Try to impliment email system
+  11. Try to impliment sms system
+  12. Try to impliment social media login system
 */
 
 const Router = () => {
@@ -22,6 +32,7 @@ const Router = () => {
       <Route path="/User/*" element={<UserRoutes />} />
       <Route path="/error" element={<Error />} />
       <Route path="/product/:productName" element={<ProductDetails />} />
+      {/* <Route path="/product/:productName" element={<Product />} /> */}
       <Route path="/" element={<Home />} />
     </Routes>
   );

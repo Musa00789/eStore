@@ -170,7 +170,6 @@ const Cart = () => {
           textAlign: "center",
           color: "#28a745",
           fontWeight: "700",
-          textDecoration: "dotted underline",
         }}
       >
         Your Items

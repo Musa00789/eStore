@@ -22,7 +22,11 @@ const Sidebar = () => {
 
   useEffect(() => {
     const getStatus = async () => {
-      const statusRef = await doc(firestore, "Users", auth.currentUser?.uid);
+      if (!auth.currentUser?.uid) {
+        navigate("/Login");
+        return;
+      }
+      const statusRef = doc(firestore, "Users", auth.currentUser.uid);
       const statusSnapshot = await getDoc(statusRef);
       if (statusSnapshot.exists()) {
         if (statusSnapshot.data().status === "User") {

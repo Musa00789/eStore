@@ -11,6 +11,7 @@ const Signup = () => {
     phone: "",
     email: "",
     password: "",
+    status: "",
   });
 
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const Signup = () => {
           name: user.name,
           phone: user.phone,
           email: user.email,
-          status: "User",
+          status: user.status,
         }).then(() => {
           navigate("/");
         });
@@ -47,6 +48,7 @@ const Signup = () => {
       <div className={styles.glassView}>
         <h1 className={styles.heading}>Sign Up</h1>
         <form className={styles.inputContainer} onSubmit={handleSubmit}>
+          <label className={styles.inputLabel}>Name</label>
           <input
             className={styles.inputFields}
             name="name"
@@ -55,6 +57,7 @@ const Signup = () => {
             value={user.name}
             onChange={getUserData}
           />
+          <label className={styles.inputLabel}>Phone</label>
           <input
             className={styles.inputFields}
             type="tel"
@@ -64,6 +67,7 @@ const Signup = () => {
             value={user.phone}
             onChange={getUserData}
           />
+          <label className={styles.inputLabel}>Email</label>
           <input
             className={styles.inputFields}
             type="email"
@@ -73,6 +77,7 @@ const Signup = () => {
             value={user.email}
             onChange={getUserData}
           />
+          <label className={styles.inputLabel}>Password</label>
           <input
             className={styles.inputFields}
             type="password"
@@ -83,6 +88,24 @@ const Signup = () => {
             value={user.password}
             onChange={getUserData}
           />
+          <label className={styles.inputLabel}>User Type</label>
+          <div className={styles.userTypeSelection}>
+            <input
+              className={styles.radioInput}
+              type="radio"
+              name="status"
+              value="Admin"
+              defaultChecked
+            />
+            <label className={styles.radioLabel}>Admin</label>
+            <input
+              className={styles.radioInput}
+              type="radio"
+              name="status"
+              value="User"
+            />
+            <label className={styles.radioLabel}>User</label>
+          </div>
           <button className={styles.btn} type="submit">
             Register
           </button>

@@ -119,6 +119,7 @@ label {
 
 input[type="file"],
 input[type="text"],
+select,
 input[type="number"] {
   width: 100%;
   padding: 10px;

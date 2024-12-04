@@ -5,6 +5,7 @@ import { doc, getDoc } from "@firebase/firestore";
 import { useLocation } from "react-router-dom";
 import { firestore } from "../../firebase";
 import { FaCartPlus, FaCreditCard, FaMessage, FaTruck } from "react-icons/fa6";
+import Header from "../Header/Header";
 
 const ProductDetails = () => {
   const location = useLocation();

@@ -20,6 +20,9 @@ const AddProducts = () => {
   const [productPrice, setProductPrice] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [category, setCategory] = useState("");
+  const [size, setSize] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [products, setProducts] = useState([
     {
       name: "",
@@ -52,10 +55,57 @@ const AddProducts = () => {
     setFile(selectedFiles);
   };
 
+  // const handleAddProduct = async () => {
+  //   try {
+  //     const productId = uuidv4();
+  //     const downloadUrls: any[] = [];
+  //     for (const selectedFile of file) {
+  //       const storageRef = ref(
+  //         storage,
+  //         `products/${productId}/${selectedFile.name}`
+  //       );
+
+  //       const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+  //       uploadTask.on(
+  //         "state_changed",
+  //         (snapshot: UploadTaskSnapshot) => {
+  //           const progress =
+  //             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //           setUploadProgress(progress);
+  //         },
+  //         (error) => {
+  //           console.error("Error uploading file:", error);
+  //         },
+  //         () => {
+  //           const snapshotRef = uploadTask.snapshot.ref;
+  //           getDownloadURL(snapshotRef).then(async (downloadURL) => {
+  //             downloadUrls.push(downloadURL);
+  //             if (downloadUrls.length === file.length) {
+  //               const productData = {
+  //                 id: productId,
+  //                 name: productName,
+  //                 price: productPrice,
+  //                 description: productDescription,
+  //                 images: downloadUrls,
+  //               };
+  //               const productRef = doc(firestore, "Products", productId);
+  //               setDoc(productRef, productData);
+  //               closeForm();
+  //             }
+  //           });
+  //         }
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding product:", error);
+  //   }
+  // };
+
   const handleAddProduct = async () => {
     try {
       const productId = uuidv4();
-      const downloadUrls: any[] = [];
+      const downloadUrls: string[] = [];
+
       for (const selectedFile of file) {
         const storageRef = ref(
           storage,
@@ -77,16 +127,31 @@ const AddProducts = () => {
             const snapshotRef = uploadTask.snapshot.ref;
             getDownloadURL(snapshotRef).then(async (downloadURL) => {
               downloadUrls.push(downloadURL);
+
               if (downloadUrls.length === file.length) {
-                const productData = {
+                // Create the product data object dynamically based on the category
+                const productData: any = {
                   id: productId,
                   name: productName,
                   price: productPrice,
                   description: productDescription,
                   images: downloadUrls,
+                  category,
                 };
+
+                // Add size and quantity for Fashion
+                if (category === "Fashion") {
+                  productData.size = size;
+                  productData.quantity = quantity;
+                }
+
+                // Add quantity for Electronics
+                if (category === "Electronics") {
+                  productData.quantity = quantity;
+                }
+
                 const productRef = doc(firestore, "Products", productId);
-                setDoc(productRef, productData);
+                await setDoc(productRef, productData);
                 closeForm();
               }
             });
@@ -190,6 +255,65 @@ const AddProducts = () => {
               required
               onChange={(e) => setProductDescription(e.target.value)}
             />
+            <label>Category</label>
+            <select
+              value={category}
+              required
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">Select a category</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Vehicle">Vehicle</option>
+              <option value="Bike">Bike</option>
+              <option value="Property">Property</option>
+              <option value="Furniture">Furniture</option>
+            </select>
+
+            {category === "Fashion" && (
+              <>
+                <label>Size</label>
+                <select
+                  value={size}
+                  required
+                  onChange={(e) => setSize(e.target.value)}
+                >
+                  <option value="">Select a size</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                </select>
+
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  required
+                  min="1"
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </>
+            )}
+
+            {category === "Electronics" && (
+              <>
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  required
+                  min="1"
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </>
+            )}
+
+            {["Vehicle", "Bike", "Property", "Furniture"].includes(
+              category
+            ) && <p>No additional inputs required for this category.</p>}
+
             <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>
             <button onClick={handleAddProduct}>Add Product</button>
           </div>

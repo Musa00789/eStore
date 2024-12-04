@@ -16,8 +16,8 @@
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 10px;
-  width: 600px;
-  height: 500px;
+  width: 700px;
+  height: 650px;
   padding: 20px;
   justify-content: center;
   align-items: center;
@@ -31,6 +31,15 @@
   background-image: linear-gradient(to bottom, #ffffff, #ffffff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.inputLabel {
+  text-align: left;
+  width: 300px;
+  font-size: 18px;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-top: 10px;
 }
 
 .inputContainer {
@@ -50,6 +59,27 @@
   &:focus {
     outline: none;
   }
+}
+
+.userTypeSelection {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: ; */
+  /* align-items: center; */
+  margin-top: 10px;
+  width: 300px;
+}
+
+.radioInput {
+  margin: 5px;
+  margin-left: 25px;
+}
+.radioLabel {
+  margin-top: 1px;
+  margin-left: 5px;
+  font-size: 16px;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .btn {

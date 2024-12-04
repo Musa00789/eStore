@@ -57,15 +57,13 @@ const Home = () => {
           Size: [],
           Quantity: [],
         };
-
-        // Dynamically add Size or Quantity based on the type
         if (data.type === "Fashion") {
           baseData.Size = ["S", "M", "L", "XL", "XXL"];
         } else {
           baseData.Quantity = [1, 2, 3, 4, 5];
         }
 
-        return baseData; // Return the constructed object
+        return baseData;
       });
 
       setProducts(productsData);
@@ -88,6 +86,27 @@ const Home = () => {
     }
   };
 
+  const renderProductCategory = (categoryName: string) => {
+    const filteredProducts = products.filter(
+      (product: any) => product.type === categoryName
+    );
+
+    return (
+      <div>
+        <h1 className={styles.bodyHeading}>{categoryName}</h1>
+        {filteredProducts.length > 0 ? (
+          <ProductList
+            products={filteredProducts}
+            searchQuery={searchQuery}
+            productType={categoryName}
+          />
+        ) : (
+          <h1 className={styles.noProductsMessage}>No products available</h1>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={styles.main}>
       {/* Use the new Header component */}
@@ -104,8 +123,13 @@ const Home = () => {
         )}
         <ImageGallery />
         <Categories />
-        <h1 className={styles.bodyHeading}>Fashion & Beauty</h1>
-        <ProductList products={products} searchQuery={searchQuery} />
+        {renderProductCategory("Mobile")}
+        {renderProductCategory("Vehicle")}
+        {renderProductCategory("Property")}
+        {renderProductCategory("Fashion")}
+        {renderProductCategory("Electronics")}
+        {renderProductCategory("Furniture")}
+        {renderProductCategory("Bikes")}
       </div>
     </div>
   );

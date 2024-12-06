@@ -34,7 +34,7 @@ const AddProducts = () => {
 
   useEffect(() => {
     getProducts();
-  }, [products]);
+  }, []);
 
   const openForm = () => {
     setIsFormVisible(true);
@@ -47,6 +47,9 @@ const AddProducts = () => {
     setProductName("");
     setProductPrice("");
     setProductDescription("");
+    setCategory("");
+    setSize("");
+    setQuantity("");
     setUploadProgress(0);
   };
 
@@ -150,7 +153,11 @@ const AddProducts = () => {
                   productData.quantity = quantity;
                 }
 
-                const productRef = doc(firestore, "Products", productId);
+                const productRef = doc(
+                  firestore,
+                  `Products/${productData.category}`,
+                  productId
+                );
                 await setDoc(productRef, productData);
                 closeForm();
               }

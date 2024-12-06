@@ -118,7 +118,7 @@ const Header = ({ user }: any) => {
           >
             <div className={styles.profileSection} onClick={toggleDropdown}>
               <FaCircleUser className={styles.profileIcon} />
-              <h5>Musa</h5>
+              <h5>{user?.name}</h5>
             </div>
             {isDropdownOpen && (
               <div className={styles.dropdownMenu}>

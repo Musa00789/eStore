@@ -36,6 +36,7 @@ const Signup = () => {
           email: user.email,
           status: user.status,
         }).then(() => {
+          console.log("Users status" + user.status);
           navigate("/");
         });
       });
@@ -101,18 +102,22 @@ const Signup = () => {
           <label className={styles.inputLabel}>User Type</label>
           <div className={styles.userTypeSelection}>
             <input
+              onChange={getUserData}
               className={styles.radioInput}
               type="radio"
               name="status"
               value="Admin"
+              checked={user.status === "Admin"}
               defaultChecked
             />
             <label className={styles.radioLabel}>Admin</label>
             <input
+              onChange={getUserData}
               className={styles.radioInput}
               type="radio"
               name="status"
               value="User"
+              checked={user.status === "User"}
             />
             <label className={styles.radioLabel}>User</label>
           </div>

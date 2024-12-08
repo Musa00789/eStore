@@ -35,11 +35,12 @@
 .searchBarContainer {
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100%;
 }
 
 .searchBar {
-  width: 100%;
+  width: 70%;
   border: 1px solid #ccc;
   border-radius: 4px 0px 0px 4px;
   padding: 5px 10px;
@@ -84,7 +85,7 @@
 }
 
 .cartBtn {
-  background-color: #99aab5;
+  background-color: #7289da;
 }
 
 .userActions {
@@ -148,13 +149,15 @@
   background-color: #f0f0f0;
 }
 .suggestionsDropdown {
+  display: flex;
+  align-self: center;
   position: absolute;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 38px;
-  width: 47%;
+  width: 36.3%;
   z-index: 10;
   max-height: 200px;
   overflow-y: auto;

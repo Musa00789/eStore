@@ -9,6 +9,7 @@ import styles from "./Home.module.css";
 import { addToCart } from "../../components/addToCart";
 import { FaCartPlus, FaEye } from "react-icons/fa6";
 import ProductList from "../../components/CategoryBasedProductList/ProductList";
+import Loader from "../../components/Loader/Loader";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const Home = () => {
   });
   const [products, setProducts] = useState<any>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -40,6 +42,7 @@ const Home = () => {
   }, [user]);
 
   const getProducts = async () => {
+    setLoading(true);
     try {
       const productsCollectionRef = collection(firestore, "Products");
       const productsQuery = query(productsCollectionRef);
@@ -71,6 +74,8 @@ const Home = () => {
     } catch (error) {
       console.error("Error fetching products:", error);
       navigate("/error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,11 +100,15 @@ const Home = () => {
       <div>
         <h1 className={styles.bodyHeading}>{categoryName}</h1>
         {filteredProducts.length > 0 ? (
-          <ProductList
-            products={filteredProducts}
-            searchQuery={searchQuery}
-            productType={categoryName}
-          />
+          loading ? (
+            <Loader />
+          ) : (
+            <ProductList
+              products={filteredProducts}
+              searchQuery={searchQuery}
+              productType={categoryName}
+            />
+          )
         ) : (
           <h1 className={styles.noProductsMessage}>No products available</h1>
         )}
@@ -123,13 +132,13 @@ const Home = () => {
         )}
         <ImageGallery />
         <Categories />
-        {renderProductCategory("Mobile")}
+        {renderProductCategory("Mobiles")}
         {renderProductCategory("Vehicle")}
         {renderProductCategory("Property")}
         {renderProductCategory("Fashion")}
         {renderProductCategory("Electronics")}
         {renderProductCategory("Furniture")}
-        {renderProductCategory("Bikes")}
+        {renderProductCategory("Bike")}
       </div>
     </div>
   );

@@ -14,10 +14,10 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
         product.type === productType && // Match product type
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) // Match search query
     )
-    .slice(0, 5); // Limit to 5 products
+    .slice(0, 7); // Limit to 5 products
 
   const showViewAllButton =
-    products.filter((product: any) => product.type === productType).length > 5;
+    products.filter((product: any) => product.type === productType).length > 7;
 
   return (
     <div className={styles.productsContainer}>

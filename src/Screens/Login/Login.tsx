@@ -1,30 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { auth, firestore } from "../../firebase";
 import styles from "./Login.module.css";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "@firebase/firestore";
 import { FaGoogle, FaFacebook, FaHome } from "react-icons/fa";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import { LoginValidationSchema } from "../../components/FormValidations/Validations";
 
 const Login = () => {
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
-  const [attempts, setAttempts] = useState(0);
   const navigate = useNavigate();
 
-  const getUserData = (event: any) => {
-    setUser({ ...user, [event.target.name]: event.target.value });
-  };
-
-  const handleLogin = async (event: any) => {
-    event.preventDefault();
+  const handleLogin = async (
+    values: any,
+    { setSubmitting, setFieldError }: any
+  ) => {
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
-        user.email,
-        user.password
+        values.email,
+        values.password
       );
       const userDoc = await getDoc(
         doc(firestore, "Users", userCredential.user.uid)
@@ -42,9 +37,10 @@ const Login = () => {
       } else {
         alert("User document does not exist");
       }
-    } catch (error: any) {
-      setAttempts((prev) => prev + 1);
-      alert(`Error logging in: ${error.message}`);
+    } catch (error) {
+      setFieldError("password", "Invalid email or password");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -60,42 +56,59 @@ const Login = () => {
           <FaHome />
         </button>
         <h1 className={styles.heading}>Welcome Back</h1>
-        <form className={styles.inputContainer} onSubmit={handleLogin}>
-          <input
-            placeholder="Enter email"
-            className={styles.input}
-            type="email"
-            name="email"
-            required
-            value={user.email}
-            onChange={getUserData}
-          />
-          <input
-            placeholder="Enter password"
-            className={styles.input}
-            type="password"
-            name="password"
-            required
-            value={user.password}
-            onChange={getUserData}
-          />
-          <button type="submit" className={styles.btn}>
-            Log In
-          </button>
-        </form>
-        {attempts >= 2 && (
-          <p className={styles.signup}>
-            Forgot your password?{" "}
-            <span
-              onClick={() => {
-                navigate("/ForgotPassword");
-              }}
-              className={styles.signupBtn}
-            >
-              Reset it
-            </span>
-          </p>
-        )}
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+          }}
+          validationSchema={LoginValidationSchema}
+          onSubmit={handleLogin}
+        >
+          {({ isSubmitting }) => (
+            <Form className={styles.inputContainer}>
+              <div>
+                <Field
+                  className={styles.input}
+                  type="email"
+                  name="email"
+                  placeholder="Enter email"
+                />
+                <ErrorMessage name="email" component="div" className="error" />
+              </div>
+              <div>
+                <Field
+                  className={styles.input}
+                  type="password"
+                  name="password"
+                  placeholder="Enter password"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="error"
+                />
+              </div>
+              <button
+                type="submit"
+                className={styles.btn}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Logging in ..." : "Log In"}
+              </button>
+            </Form>
+          )}
+        </Formik>
+        <p className={styles.signup}>
+          Forgot your password?{" "}
+          <span
+            onClick={() => {
+              navigate("/ForgotPassword");
+            }}
+            className={styles.signupBtn}
+          >
+            Reset it
+          </span>
+        </p>
         <p className={styles.signup}>
           New to us?{" "}
           <span

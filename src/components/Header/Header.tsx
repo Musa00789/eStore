@@ -6,6 +6,7 @@ import {
   FaArrowRightFromBracket,
   FaCircleUser,
   FaGear,
+  FaMessage,
 } from "react-icons/fa6";
 import styles from "./Header.module.css";
 import { auth, firestore } from "../../firebase";
@@ -96,6 +97,20 @@ const Header = ({ user }: any) => {
         )}
       </div>
       <div style={{ display: "flex", flexDirection: "row" }}>
+        <button
+          style={{
+            backgroundColor: "transparent",
+            border: "0px",
+            borderColor: "transparent",
+          }}
+        >
+          <FaMessage
+            style={{
+              color: "#7289da",
+              fontSize: "22px",
+            }}
+          />
+        </button>
         {user.name === "" ? (
           <button
             className={styles.loginBtn}

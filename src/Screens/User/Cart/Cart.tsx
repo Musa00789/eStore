@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { auth, firestore } from "../../../firebase";
-import { doc, getDocs, collection, updateDoc } from "@firebase/firestore";
+import {
+  doc,
+  getDocs,
+  collection,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  DocumentData,
+} from "@firebase/firestore";
 import styles from "./Cart.module.css";
-import { FaArrowLeft, FaDeleteLeft, FaDumpster } from "react-icons/fa6";
+import { FaArrowLeft, FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState<DocumentData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +32,7 @@ const Cart = () => {
     };
   }, []);
 
-  const getItems = async (uid) => {
+  const getItems = async (uid: string) => {
     try {
       const collectionRef = collection(firestore, "Users", uid, "Cart");
       const querySnapshot = await getDocs(collectionRef);
@@ -41,26 +50,12 @@ const Cart = () => {
     }
   };
 
-  const increaseQuantity = async (item) => {
+  const increaseQuantity = async (item: {
+    cartId: string;
+    quantity: number;
+  }) => {
     try {
-      const itemRef = doc(
-        firestore,
-        "Users",
-        auth.currentUser.uid,
-        "Cart",
-        item.cartId
-      );
-      const updatedItem = { ...item, quantity: item.quantity + 1 };
-      await updateDoc(itemRef, updatedItem);
-      getItems(auth.currentUser?.uid);
-    } catch (error) {
-      console.error("Error increasing quantity:", error);
-    }
-  };
-
-  const decreaseQuantity = async (item) => {
-    if (item.quantity > 1) {
-      try {
+      if (auth.currentUser?.uid) {
         const itemRef = doc(
           firestore,
           "Users",
@@ -68,58 +63,116 @@ const Cart = () => {
           "Cart",
           item.cartId
         );
-        const updatedItem = { ...item, quantity: item.quantity - 1 };
+
+        const updatedItem = { ...item, quantity: item.quantity + 1 };
         await updateDoc(itemRef, updatedItem);
-        getItems(auth.currentUser?.uid);
+        getItems(auth.currentUser.uid);
+      }
+    } catch (error) {
+      console.error("Error increasing quantity:", error);
+    }
+  };
+
+  const decreaseQuantity = async (item: {
+    cartId: string;
+    quantity: number;
+  }) => {
+    if (item.quantity > 1) {
+      try {
+        if (auth.currentUser?.uid) {
+          const itemRef = doc(
+            firestore,
+            "Users",
+            auth.currentUser.uid,
+            "Cart",
+            item.cartId
+          );
+          const updatedItem = { ...item, quantity: item.quantity - 1 };
+          await updateDoc(itemRef, updatedItem);
+          getItems(auth.currentUser?.uid || "");
+        }
       } catch (error) {
         console.error("Error decreasing quantity:", error);
       }
     } else {
-      removeFromCart(item);
+      try {
+        if (auth.currentUser?.uid) {
+          const itemRef = doc(
+            firestore,
+            "Users",
+            auth.currentUser.uid,
+            "Cart",
+            item.cartId
+          );
+          await updateDoc(itemRef, {
+            // cart: arrayRemove(item),
+            quantity: 0,
+          });
+          getItems(auth.currentUser.uid);
+        } else {
+          console.error("User ID is undefined");
+        }
+      } catch (error) {
+        console.error("Error removing from cart:", error);
+      }
     }
   };
 
-  const removeFromCart = async (item) => {
+  const checkOut = (item: any) => {
     try {
-      const itemRef = doc(
-        firestore,
-        "Users",
-        auth.currentUser.uid,
-        "Cart",
-        item.cartId
-      );
-      await updateDoc(itemRef, {
-        // cart: arrayRemove(item),
-        quantity: 0,
-      });
-      getItems(auth.currentUser.uid);
+      if (auth.currentUser?.uid) {
+        const itemRef = doc(
+          firestore,
+          "Users",
+          auth.currentUser?.uid,
+          "Orders",
+          item.cartId
+        );
+        setDoc(itemRef, item).then(async () => {
+          await deleteFromCart(item);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteFromCart = async (item: any) => {
+    try {
+      if (auth.currentUser?.uid) {
+        const itemRef = doc(
+          firestore,
+          "Users",
+          auth.currentUser.uid,
+          "Cart",
+          item.cartId
+        );
+        await deleteDoc(itemRef);
+        getItems(auth.currentUser?.uid || "");
+      }
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
   };
 
-  function deleteFromCart(item: any) {
-    console.log(item);
-  }
-
   return (
     <div>
-      <button
+      {/* <button
+        className={styles.backNavigator}
         onClick={() => {
           navigate(-1);
         }}
       >
         <FaArrowLeft />
-      </button>
+      </button> */}
       <h1
         style={{
           textAlign: "center",
           color: "#28a745",
           fontWeight: "700",
-          textDecoration: "dotted underline",
         }}
       >
-        Wellcome to Cart
+        Your Items
       </h1>
       {cart.length > 0 ? (
         <div className={styles.cartContainer}>
@@ -159,14 +212,21 @@ const Cart = () => {
                   </div>
                 </div>
               </div>
-              <button className={styles.checkOutBtn}>Check Out</button>
+              <button
+                onClick={() => {
+                  checkOut(item);
+                }}
+                className={styles.checkOutBtn}
+              >
+                Check Out
+              </button>
               <button
                 onClick={() => {
                   deleteFromCart(item);
                 }}
                 className={styles.delBtn}
               >
-                <FaDeleteLeft />
+                <FaTrashCan />
               </button>
             </div>
           ))}
@@ -179,7 +239,11 @@ const Cart = () => {
             fontWeight: "700",
           }}
         >
-          Your cart is empty.
+          Lets add some items to the cart!{" "}
+          <button className={styles.homeButton} onClick={() => navigate(-1)}>
+            {" "}
+            <FaHome style={{ marginTop: "-5px" }} /> Home
+          </button>
         </p>
       )}
     </div>

@@ -3,6 +3,12 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.filterDropdown {
+  width: 350px;
+  margin-left: 150px;
+}
+
 .leadHeadings {
   font-size: 30px;
   font-weight: 700;
@@ -11,6 +17,7 @@
   color: #7eb6ff;
   text-decoration: underline;
 }
+
 .productCard {
   background-color: rgb(255, 255, 255);
   width: 200px;
@@ -119,6 +126,7 @@ label {
 
 input[type="file"],
 input[type="text"],
+select,
 input[type="number"] {
   width: 100%;
   padding: 10px;

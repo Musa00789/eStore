@@ -6,7 +6,7 @@
 .main {
   display: flex;
   justify-content: center;
-  background: linear-gradient(to bottom, #0000ff, #6b3c3c);
+  background: linear-gradient(to bottom, #2c2f33, #2c2f33);
   align-items: center;
   height: 100vh;
 }
@@ -22,13 +22,34 @@
   justify-content: center;
   align-items: center;
 }
+
+.homeBtn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 5px;
+  font-size: 17px;
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 10px;
+  width: 50px;
+  border: 1px solid grey;
+  background: linear-gradient(to bottom, #7289da, #7289da);
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  &:hover {
+    box-shadow: 0px 0px 10px 0px cadetblue;
+    transition: 0.5s;
+  }
+}
 .heading {
   text-align: center;
   font-size: 50px;
   font-weight: 800;
   background-clip: text;
   color: transparent;
-  background-image: linear-gradient(to bottom, #0000ff, #6b3c3c);
+  background-image: linear-gradient(to bottom, #ffffff, #ffffff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -47,24 +68,24 @@
   border: 1px solid grey;
   font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
+  &:focus {
+    outline: none;
+  }
 }
-.input:focus {
-  box-shadow: 0px 0px 10px 0px cadetblue;
-  border: 1px solid grey;
-  outline: none;
-}
+
 .btn {
   padding: 5px;
   font-size: 17px;
   font-family: Arial, Helvetica, sans-serif;
-  border-radius: 40px;
-  width: 110px;
+  border-radius: 10px;
+  width: 135px;
   margin-top: 20px;
   border: 1px solid grey;
-  background: linear-gradient(to bottom, #8f62e2, #6b3c3c);
+  background: linear-gradient(to bottom, #7289da, #7289da);
   color: white;
   text-decoration: none;
   cursor: pointer;
+  font-weight: 600;
 }
 .btn:hover {
   box-shadow: 0px 0px 10px 0px cadetblue;
@@ -91,9 +112,12 @@
   align-items: center;
   margin-top: 20px;
   margin: 15px;
-  background: linear-gradient(to bottom, #8f62e2, #6b3c3c);
+  background: linear-gradient(to bottom, #7289da, #7289da);
+  border-radius: 10px;
+  font-weight: 500;
 }
 .loginWithIcon {
+  margin-top: -4px;
   font-size: 25px;
   color: white;
 }

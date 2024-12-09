@@ -1,37 +1,39 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AddProducts.module.css";
 import { firestore, storage } from "../../../firebase";
-import { doc, getDocs, setDoc, collection, query } from "@firebase/firestore";
 import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  UploadTaskSnapshot,
-} from "@firebase/storage";
+  doc,
+  getDocs,
+  setDoc,
+  collection,
+  query,
+  deleteDoc,
+  where,
+} from "@firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL } from "@firebase/storage";
 import { FaPlus, FaPencil, FaTrashCan, FaCartShopping } from "react-icons/fa6";
 import { v4 as uuidv4 } from "uuid";
-
-// TODO: Add unique id for all product
+import Loader from "../../../components/Loader/Loader";
 
 const AddProducts = () => {
-  const [file, setFile] = useState([]);
+  const [file, setFile] = useState<File[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editProductId, setEditProductId] = useState<string | null>(null);
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [products, setProducts] = useState([
-    {
-      name: "",
-      price: "",
-      description: "",
-      images: [],
-    },
-  ]);
+  const [type, setType] = useState("");
+  const [size, setSize] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getProducts();
-  }, [products]);
+  }, [selectedTypeFilter]);
 
   const openForm = () => {
     setIsFormVisible(true);
@@ -39,23 +41,32 @@ const AddProducts = () => {
 
   const closeForm = () => {
     setIsFormVisible(false);
-    // Reset form fields
+    setIsEditMode(false);
+    setEditProductId(null);
+    resetForm();
+  };
+
+  const resetForm = () => {
     setFile([]);
     setProductName("");
     setProductPrice("");
     setProductDescription("");
+    setType("");
+    setSize("");
+    setQuantity("");
     setUploadProgress(0);
   };
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
+  const handleFileChange = (e: any) => {
+    const selectedFiles: any = Array.from(e.target.files);
     setFile(selectedFiles);
   };
 
   const handleAddProduct = async () => {
     try {
-      const productId = uuidv4();
-      const downloadUrls = [];
+      const productId = isEditMode && editProductId ? editProductId : uuidv4();
+      const downloadUrls: string[] = [];
+
       for (const selectedFile of file) {
         const storageRef = ref(
           storage,
@@ -65,7 +76,7 @@ const AddProducts = () => {
         const uploadTask = uploadBytesResumable(storageRef, selectedFile);
         uploadTask.on(
           "state_changed",
-          (snapshot: UploadTaskSnapshot) => {
+          (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setUploadProgress(progress);
@@ -74,87 +85,152 @@ const AddProducts = () => {
             console.error("Error uploading file:", error);
           },
           () => {
-            const snapshotRef = uploadTask.snapshot.ref;
-            getDownloadURL(snapshotRef).then(async (downloadURL) => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               downloadUrls.push(downloadURL);
               if (downloadUrls.length === file.length) {
-                const productData = {
+                const productData: any = {
                   id: productId,
                   name: productName,
                   price: productPrice,
                   description: productDescription,
                   images: downloadUrls,
+                  type,
+                  ...(type === "Fashion" && { size, quantity }),
+                  ...(type === "Electronics" && { quantity }),
+                  ...(type === "Mobiles" && { quantity }),
                 };
+
                 const productRef = doc(firestore, "Products", productId);
-                setDoc(productRef, productData);
-                closeForm();
+                setDoc(productRef, productData).then(() => {
+                  getProducts();
+                  closeForm();
+                });
               }
             });
           }
         );
       }
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("Error adding/updating product:", error);
     }
   };
 
   const getProducts = async () => {
+    setLoading(true); // Start loading
     try {
       const productsCollectionRef = collection(firestore, "Products");
-      const productsQuery = query(productsCollectionRef);
+      const productsQuery = selectedTypeFilter
+        ? query(productsCollectionRef, where("type", "==", selectedTypeFilter))
+        : query(productsCollectionRef);
+
       const querySnapshot = await getDocs(productsQuery);
-      const productsArray = [];
+      const productsArray: any[] = [];
       querySnapshot.forEach((doc) => {
-        productsArray.push(doc.data());
+        const data = doc.data();
+        productsArray.push({ ...data, id: doc.id });
       });
-      console.log("Products:", productsArray);
       setProducts(productsArray);
     } catch (error) {
       console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
+
+  const handleEditProduct = (product: any) => {
+    setIsEditMode(true);
+    setEditProductId(product.id);
+    setProductName(product.name);
+    setProductPrice(product.price);
+    setProductDescription(product.description);
+    setType(product.type);
+    setSize(product.size || "");
+    setQuantity(product.quantity || "");
+    setFile([]); // New images can be added, but existing ones remain unchanged
+    openForm();
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const productRef = doc(firestore, "Products", productId);
+      await deleteDoc(productRef);
+      setProducts((prevProducts) =>
+        prevProducts.filter((p) => p.id !== productId)
+      );
+    } catch (error) {
+      console.error("Error deleting product:", error);
     }
   };
 
   return (
     <div>
-      <button className={styles.addProductBtn} onClick={openForm}>
-        <FaCartShopping />
-        <FaPlus /> Add Products
-      </button>
+      <div className={styles.actionsContainer}>
+        <button className={styles.addProductBtn} onClick={openForm}>
+          <FaCartShopping />
+          <FaPlus /> Add Products
+        </button>
+        <select
+          value={selectedTypeFilter}
+          onChange={(e) => setSelectedTypeFilter(e.target.value)}
+          className={styles.filterDropdown}
+        >
+          <option value="">All Products</option>
+          <option value="Mobiles">Mobiles</option>
+          <option value="Fashion">Fashion</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Vehicle">Vehicle</option>
+          <option value="Bike">Bike</option>
+          <option value="Property">Property</option>
+          <option value="Furniture">Furniture</option>
+        </select>
+      </div>
       <h1 className={styles.leadHeadings}>
         My Products
         <FaCartShopping />
       </h1>
-      <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-        {products.map((product, index) => {
-          return (
-            <div key={index} className={styles.productCard}>
-              <img className={styles.productImage} src={product.images[0]} />
+      {loading ? (
+        <Loader />
+      ) : (
+        <div
+          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
+        >
+          {products.map((product) => (
+            <div key={product.id} className={styles.productCard}>
+              <img
+                className={styles.productImage}
+                src={product.images[0]}
+                alt={product.name}
+              />
               <div className={styles.productDetails}>
                 <h3 className={styles.productName}>{product.name}</h3>
                 <p className={styles.productDescription}>
-                  {product.description && product.description.length > 25
-                    ? `${product.description.substring(0, 25)}...`
-                    : product.description}
+                  {product.description}
                 </p>
                 <p className={styles.productPrice}>Rs. {product.price}</p>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                <button className={styles.handlersBtn}>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <button
+                  className={styles.handlersBtn}
+                  onClick={() => handleEditProduct(product)}
+                >
                   <FaPencil />
                 </button>
-                <button className={styles.handlersBtn}>
+                <button
+                  className={styles.handlersBtn}
+                  onClick={() => handleDeleteProduct(product.id)}
+                >
                   <FaTrashCan />
                 </button>
               </div>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
       {isFormVisible && (
         <div className={styles.glassBackground}>
@@ -162,9 +238,9 @@ const AddProducts = () => {
             <span className={styles.closeButton} onClick={closeForm}>
               &times;
             </span>
-            <h2>Add Product</h2>
+            <h2>{isEditMode ? "Edit Product" : "Add Product"}</h2>
             <label>Choose Image</label>
-            <input type="file" required multiple onChange={handleFileChange} />
+            <input type="file" multiple onChange={handleFileChange} />
             <label>Product Name</label>
             <input
               type="text"
@@ -186,12 +262,68 @@ const AddProducts = () => {
               required
               onChange={(e) => setProductDescription(e.target.value)}
             />
-            <p>Upload Progress: {uploadProgress}%</p>
-            <button onClick={handleAddProduct}>Add Product</button>
+            <label>Category</label>
+            <select
+              value={type}
+              required
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="">Select a category</option>
+              <option value="Mobiles">Mobiles</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Vehicle">Vehicle</option>
+              <option value="Bike">Bike</option>
+              <option value="Property">Property</option>
+              <option value="Furniture">Furniture</option>
+            </select>
+
+            {type === "Mobiles" && (
+              <>
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  required
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </>
+            )}
+
+            {type === "Fashion" && (
+              <>
+                <label>Size</label>
+                <input
+                  type="text"
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)}
+                />
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </>
+            )}
+            {type === "Electronics" && (
+              <>
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </>
+            )}
+            <button className={styles.addProductBtn} onClick={handleAddProduct}>
+              {isEditMode ? "Update Product" : "Add Product"}
+            </button>
           </div>
         </div>
       )}
     </div>
   );
 };
+
 export default AddProducts;

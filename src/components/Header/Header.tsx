@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaMagnifyingGlass,
@@ -14,15 +14,41 @@ import { collection, query, where, getDocs } from "@firebase/firestore";
 
 const Header = ({ user }: any) => {
   const navigate = useNavigate();
+  const messageTabRef = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<
     { id: string; name: string }[]
   >([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMessageTabOpen, setIsMessageTabOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+  const toggleMessageTab = () => {
+    setIsMessageTabOpen(!isMessageTabOpen);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      messageTabRef.current &&
+      !messageTabRef.current.contains(event.target as Node)
+    ) {
+      setIsMessageTabOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isMessageTabOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMessageTabOpen]);
 
   const handleSearchInputChange = async (e: any) => {
     const queryText = e.target.value;
@@ -43,19 +69,19 @@ const Header = ({ user }: any) => {
           name: doc.data().name,
         }));
 
-        setSuggestions(results); // Update suggestions dropdown
+        setSuggestions(results);
       } catch (error) {
         console.error("Error searching products:", error);
       }
     } else {
-      setSuggestions([]); // Clear suggestions when input is empty
+      setSuggestions([]);
     }
   };
 
   const handleSuggestionClick = (product: any) => {
     setSearchQuery(product.name);
     setSuggestions([]);
-    navigate(`/Product/${product.id}`); // Navigate to the product page
+    navigate(`/Product/${product.id}`);
   };
 
   return (
@@ -97,20 +123,48 @@ const Header = ({ user }: any) => {
         )}
       </div>
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <button
-          style={{
-            backgroundColor: "transparent",
-            border: "0px",
-            borderColor: "transparent",
-          }}
-        >
-          <FaMessage
+        <div className={styles.messageIconContainer}>
+          <button
             style={{
-              color: "#7289da",
-              fontSize: "22px",
+              backgroundColor: "transparent",
+              border: "0px",
+              borderColor: "transparent",
             }}
-          />
-        </button>
+            onClick={toggleMessageTab}
+          >
+            <FaMessage
+              style={{
+                color: "#7289da",
+                fontSize: "22px",
+              }}
+            />
+          </button>
+          {isMessageTabOpen && (
+            <div className={styles.messageTab} ref={messageTabRef}>
+              <div className={styles.messageHeader}>
+                <h4>Messages</h4>
+                <button
+                  onClick={toggleMessageTab}
+                  className={styles.closeMessageTabBtn}
+                >
+                  X
+                </button>
+              </div>
+              <p>No new messages</p>
+              <a
+                href="/messages"
+                className={styles.showAllLink}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/messages");
+                }}
+              >
+                Show All
+              </a>
+            </div>
+          )}
+        </div>
+
         {user.name === "" ? (
           <button
             className={styles.loginBtn}

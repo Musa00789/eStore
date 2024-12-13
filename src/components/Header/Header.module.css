@@ -66,6 +66,65 @@
   }
 }
 
+.messageTab {
+  position: absolute;
+  top: 45px;
+  right: 0px;
+  width: 350px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.messageTab::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #ccc transparent;
+  z-index: -1;
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.closeMessageTabBtn {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+}
+
+.closeMessageTabBtn:hover {
+  color: red;
+  background-color: #f9f9f9;
+}
+
+.showAllLink {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  color: #7289da;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.showAllLink:hover {
+  text-decoration: underline;
+}
+
+.messageIconContainer {
+  position: relative;
+}
+
 .loginBtn,
 .cartBtn {
   margin: 5px 5px;

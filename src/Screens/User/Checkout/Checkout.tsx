@@ -1,9 +1,9 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import styles from "./Checkout.module.css";
+import { CheckOutValidationSchema } from "../../../components/FormValidations/Validations";
 
-const Checkout = () => {
+const Checkout = (item: any) => {
   const initialValues = {
     name: "",
     email: "",
@@ -14,36 +14,6 @@ const Checkout = () => {
     amountPayable: 0,
     paymentMethod: "COD",
   };
-
-  const validationSchema = Yup.object({
-    name: Yup.string()
-      .min(3, "Name must be at least 3 characters")
-      .required("Name is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    address: Yup.string()
-      .min(10, "Address must be at least 10 characters")
-      .required("Address is required"),
-    phone: Yup.string()
-      .matches(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
-      .required("Phone number is required"),
-    totalAmount: Yup.number()
-      .positive("Total amount must be positive")
-      .required("Total amount is required"),
-    taxes: Yup.number()
-      .positive("Taxes must be positive")
-      .required("Taxes are required"),
-    amountPayable: Yup.number()
-      .positive("Amount payable must be positive")
-      .required("Amount payable is required"),
-    paymentMethod: Yup.string()
-      .oneOf(
-        ["COD", "Debit Card", "Credit Card", "Paypal", "Stripe"],
-        "Invalid payment method"
-      )
-      .required("Payment method is required"),
-  });
 
   const handleSubmit = (values: any, { setSubmitting }: any) => {
     setTimeout(() => {
@@ -57,7 +27,7 @@ const Checkout = () => {
       <h1 className={styles.heading}>Checkout</h1>
       <Formik
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        validationSchema={CheckOutValidationSchema}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (

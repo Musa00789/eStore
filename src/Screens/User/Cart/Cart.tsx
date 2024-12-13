@@ -215,6 +215,7 @@ const Cart = () => {
               <button
                 onClick={() => {
                   checkOut(item);
+                  navigate("/User/checkout", { state: item });
                 }}
                 className={styles.checkOutBtn}
               >

@@ -1,5 +1,11 @@
-import React from "react";
-import { signInWithEmailAndPassword } from "@firebase/auth";
+import React, { useEffect } from "react";
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence,
+  onAuthStateChanged,
+  getIdTokenResult,
+} from "@firebase/auth";
 import { auth, firestore } from "../../firebase";
 import styles from "./Login.module.css";
 import { useNavigate } from "react-router-dom";
@@ -11,11 +17,31 @@ import { LoginValidationSchema } from "../../components/FormValidations/Validati
 const Login = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const tokenResult = await getIdTokenResult(user);
+        const expirationTime = tokenResult.expirationTime;
+        console.log("Expiration time: ", expirationTime);
+        if (Date.now() >= new Date(expirationTime).getTime()) {
+          await auth.signOut();
+          navigate("/Login");
+          alert("Session expired. Please log in again.");
+        }
+      } else {
+        console.log("User not logged in or session expired.");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
   const handleLogin = async (
     values: any,
     { setSubmitting, setFieldError }: any
   ) => {
     try {
+      await setPersistence(auth, browserSessionPersistence);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         values.email,

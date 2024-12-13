@@ -57,6 +57,7 @@ const Home = () => {
           description: data.description || "",
           images: data.images || [],
           type: data.type || "",
+          id: data.id || "",
           Size: [],
           Quantity: [],
         };

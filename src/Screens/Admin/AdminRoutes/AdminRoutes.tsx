@@ -15,6 +15,7 @@ import AddProducts from "../AddProducts/AddProducts";
 import Analytics from "../Analytics/Analytics";
 import { auth, firestore } from "../../../firebase";
 import { doc, getDoc } from "@firebase/firestore";
+import Error from "../../../components/Error/Error";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -112,6 +113,7 @@ const AdminRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/error" element={<Error />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/addproducts" element={<AddProducts />} />

@@ -7,6 +7,7 @@ import {
   FaCircleUser,
   FaGear,
   FaMessage,
+  FaX,
 } from "react-icons/fa6";
 import styles from "./Header.module.css";
 import { auth, firestore } from "../../firebase";
@@ -147,7 +148,7 @@ const Header = ({ user }: any) => {
                   onClick={toggleMessageTab}
                   className={styles.closeMessageTabBtn}
                 >
-                  X
+                  <FaX />
                 </button>
               </div>
               <p>No new messages</p>

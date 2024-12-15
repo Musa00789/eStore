@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import Signup from "./Screens/Signup/Signup";
-import Home from "./Screens/Home/Home";
-import Login from "./Screens/Login/Login";
+import Signup from "./Screens/Auth/Signup/Signup";
+import Home from "./Screens/Commons/Home/Home";
+import Login from "./Screens/Auth/Login/Login";
 import Sidebar from "./Screens/Admin/AdminRoutes/AdminRoutes";
 import UserRoutes from "./Screens/User/UserRoutes/UserRoutes";
-import Error from "./components/Error/Error";
-import ProductDetails from "./components/ProductDetails/ProductDetails";
+import Error from "./Screens/Commons/Error/Error";
+import ProductDetails from "./Screens/Commons/ProductDetails/ProductDetails";
 
 /*TODO:
  1. In this ecommerce app I will use React Router, React Context API, Firebase,

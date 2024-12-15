@@ -15,7 +15,7 @@ import AddProducts from "../AddProducts/AddProducts";
 import Analytics from "../Analytics/Analytics";
 import { auth, firestore } from "../../../firebase";
 import { doc, getDoc } from "@firebase/firestore";
-import Error from "../../../components/Error/Error";
+import Error from "../../Commons/Error/Error";
 
 const Sidebar = () => {
   const navigate = useNavigate();

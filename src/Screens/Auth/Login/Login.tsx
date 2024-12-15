@@ -6,13 +6,13 @@ import {
   onAuthStateChanged,
   getIdTokenResult,
 } from "@firebase/auth";
-import { auth, firestore } from "../../firebase";
+import { auth, firestore } from "../../../firebase";
 import styles from "./Login.module.css";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "@firebase/firestore";
 import { FaGoogle, FaFacebook, FaHome } from "react-icons/fa";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { LoginValidationSchema } from "../../components/FormValidations/Validations";
+import { LoginValidationSchema } from "../../../components/FormValidations/Validations";
 
 const Login = () => {
   const navigate = useNavigate();

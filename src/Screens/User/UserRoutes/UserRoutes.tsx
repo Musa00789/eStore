@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "../../Home/Home";
+import Home from "../../Commons/Home/Home";
 import Cart from "../Cart/Cart";
-import Error from "../../../components/Error/Error";
+import Error from "../../Commons/Error/Error";
 import Profile from "../Profile/Profile";
 import Settings from "../Settings/Settings";
 import Checkout from "../Checkout/Checkout";

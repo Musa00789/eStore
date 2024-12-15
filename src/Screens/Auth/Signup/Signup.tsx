@@ -1,12 +1,12 @@
 import React from "react";
 import styles from "./Signup.module.css";
-import { auth, firestore } from "../../firebase";
+import { auth, firestore } from "../../../firebase";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { doc, setDoc } from "@firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa6";
 import { Formik, Field, ErrorMessage, Form } from "formik";
-import { SignUpValidationSchema } from "../../components/FormValidations/Validations";
+import { SignUpValidationSchema } from "../../../components/FormValidations/Validations";
 
 const Signup = () => {
   const navigate = useNavigate();

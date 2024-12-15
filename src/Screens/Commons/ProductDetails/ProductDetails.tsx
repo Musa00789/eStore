@@ -1,11 +1,12 @@
+// ProductDetails component for displaying product details
 import React from "react";
 import styles from "./ProductDetails.module.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "@firebase/firestore";
 import { useLocation } from "react-router-dom";
-import { firestore } from "../../firebase";
+import { firestore } from "../../../firebase";
 import { FaCartPlus, FaCreditCard, FaMessage, FaTruck } from "react-icons/fa6";
-import Header from "../Header/Header";
+import Header from "../../../components/Header/Header";
 
 const ProductDetails = () => {
   const location = useLocation();

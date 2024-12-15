@@ -71,6 +71,7 @@
   top: 45px;
   right: 0px;
   width: 350px;
+  max-height: 400px;
   background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 10px;

@@ -1,3 +1,4 @@
+// Home Screen component used for displaying same category products upto 7 and show all btn to navigate to products page
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ProductList.module.css";
@@ -7,14 +8,13 @@ import { addToCart } from "../addToCart";
 const ProductList = ({ products, searchQuery, productType }: any) => {
   const navigate = useNavigate();
 
-  // Filter products by productType and searchQuery
   const filteredProducts = products
     .filter(
       (product: any) =>
-        product.type === productType && // Match product type
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) // Match search query
+        product.type === productType &&
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .slice(0, 7); // Limit to 5 products
+    .slice(0, 7);
 
   const showViewAllButton =
     products.filter((product: any) => product.type === productType).length > 7;
@@ -62,11 +62,10 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
         </div>
       ))}
 
-      {/* "View All" Button */}
       {showViewAllButton && (
         <button
           className={styles.viewAllBtn}
-          onClick={() => navigate("/products")} // Adjust the route for the "View All" page
+          onClick={() => navigate("/products")}
         >
           View All{" "}
           <FaArrowRight

@@ -210,6 +210,7 @@
 }
 .suggestionsDropdown {
   display: flex;
+  flex-direction: column;
   align-self: center;
   position: absolute;
   background-color: white;

@@ -6,6 +6,7 @@ import Sidebar from "./Screens/Admin/AdminRoutes/AdminRoutes";
 import UserRoutes from "./Screens/User/UserRoutes/UserRoutes";
 import Error from "./Screens/Commons/Error/Error";
 import ProductDetails from "./Screens/Commons/ProductDetails/ProductDetails";
+import CategoryBaseAllProduct from "./Screens/Commons/AllSameCategoryProducts/CategoryBaseAllProducts";
 
 /*TODO:
  1. In this ecommerce app I will use React Router, React Context API, Firebase,
@@ -32,7 +33,10 @@ const Router = () => {
       <Route path="/User/*" element={<UserRoutes />} />
       <Route path="/error" element={<Error />} />
       <Route path="/product/:productName" element={<ProductDetails />} />
-      {/* <Route path="/product/:productName" element={<Product />} /> */}
+      <Route
+        path="/allSameCategoryProducts"
+        element={<CategoryBaseAllProduct />}
+      />
       <Route path="/" element={<Home />} />
     </Routes>
   );

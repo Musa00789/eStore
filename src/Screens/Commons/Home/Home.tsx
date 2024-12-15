@@ -6,8 +6,6 @@ import ImageGallery from "../../../components/ImageGallery/ImageGallery";
 import Categories from "../../../components/Categories/Categories";
 import Header from "../../../components/Header/Header";
 import styles from "./Home.module.css";
-import { addToCart } from "../../../components/addToCart";
-import { FaCartPlus, FaEye } from "react-icons/fa6";
 import ProductList from "../../../components/CategoryBasedProductList/ProductList";
 import Loader from "../../../components/Loader/Loader";
 
@@ -24,9 +22,9 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        getUser();
+        await getUser();
       } else {
         setUser({ name: "", email: "", phone: "", status: "" });
       }
@@ -120,28 +118,29 @@ const Home = () => {
 
   return (
     <div className={styles.main}>
-      {/* Header */}
-      <Header
-        user={user}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
-
-      {/* Main body */}
-      <div className={styles.mainBodyContent}>
-        {user.name && (
-          <h1 className={styles.userGreetings}>Welcome, {user.name} . . !</h1>
-        )}
-        <ImageGallery />
-        <Categories />
-        {renderProductCategory("Mobiles")}
-        {renderProductCategory("Vehicle")}
-        {renderProductCategory("Property")}
-        {renderProductCategory("Fashion")}
-        {renderProductCategory("Electronics")}
-        {renderProductCategory("Furniture")}
-        {renderProductCategory("Bike")}
-      </div>
+      {user ? (
+        <>
+          <Header user={user} />
+          <div className={styles.mainBodyContent}>
+            {user.name && (
+              <h1 className={styles.userGreetings}>
+                Welcome, {user.name} . . !
+              </h1>
+            )}
+            <ImageGallery />
+            <Categories />
+            {renderProductCategory("Mobiles")}
+            {renderProductCategory("Vehicle")}
+            {renderProductCategory("Property")}
+            {renderProductCategory("Fashion")}
+            {renderProductCategory("Electronics")}
+            {renderProductCategory("Furniture")}
+            {renderProductCategory("Bike")}
+          </div>
+        </>
+      ) : (
+        <Loader />
+      )}
     </div>
   );
 };

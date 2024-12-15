@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import { firestore } from "../../../firebase";
 import { FaCartPlus, FaCreditCard, FaMessage, FaTruck } from "react-icons/fa6";
 import Header from "../../../components/Header/Header";
+import Loader from "../../../components/Loader/Loader";
 
 const ProductDetails = () => {
   const location = useLocation();
@@ -45,7 +46,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     console.log("Add to Cart clicked!", product);
-    // Implement your add-to-cart logic here
+    // Implement add-to-cart logic here
   };
 
   const handleSizeChange = (size: any) => {
@@ -53,11 +54,18 @@ const ProductDetails = () => {
   };
 
   const handleContactSeller = () => {
-    console.log("Contact Seller clicked!");
-    // Implement contact seller logic, e.g., navigate to a contact form or open a chat
+    if (product) {
+      navigate("/User/chat", {
+        state: {
+          sellerId: product.sellerId,
+          productName: product.name,
+          productId: product.id,
+        },
+      });
+    }
   };
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return <Loader />;
 
   return (
     <div>

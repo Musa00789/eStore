@@ -1,4 +1,3 @@
-import React from "react";
 import { firestore, auth } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
@@ -13,7 +12,6 @@ export const addToCart = async (product: any) => {
     }
     console.log(product);
 
-    // Base product data
     const cartItem: any = {
       name: product.name,
       price: product.price,
@@ -24,7 +22,6 @@ export const addToCart = async (product: any) => {
       productType: product.type,
     };
 
-    // Additional parameters based on product type
     if (product.type === "Fashion") {
       cartItem.productSize = product.size;
       cartItem.quantity = product.quantity;
@@ -50,30 +47,3 @@ export const addToCart = async (product: any) => {
     console.error("Error adding product to cart:", error);
   }
 };
-
-// export const addToCart = async (product: any) => {
-//   const cartId = uuidv4();
-//   try {
-//     const uid: any = auth.currentUser?.uid;
-//     console.log(product);
-//     await setDoc(doc(firestore, "Users", uid, "Cart", cartId), {
-//       name: product.name,
-//       price: product.price,
-//       description: product.description,
-//       quantity: product.quantity,
-//       images: product.images,
-//       productId: product.id,
-//       productSize: product.size,
-//       productType: product.type,
-//       cartId: cartId,
-//     })
-//       .then(() => {
-//         alert("Product added to cart");
-//       })
-//       .catch((err) => {
-//         alert(err);
-//       });
-//   } catch (error) {
-//     console.error("Error adding product to cart:", error);
-//   }
-// };

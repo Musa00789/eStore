@@ -1,10 +1,10 @@
 import React from "react";
 
-const Chat = () => {
+const ChatSection = () => {
   return (
     <div>
       <h1>Chat</h1>
     </div>
   );
 };
-export default Chat;
+export default ChatSection;

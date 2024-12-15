@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AddProducts.module.css";
-import { firestore, storage } from "../../../firebase";
+import { auth, firestore, storage } from "../../../firebase";
 import {
   doc,
   getDocs,
@@ -28,10 +28,12 @@ const AddProducts = () => {
   const [size, setSize] = useState("");
   const [quantity, setQuantity] = useState("");
   const [products, setProducts] = useState<any[]>([]);
+  const [sellerId, setSellerId] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setSellerId(auth.currentUser?.uid || "");
     getProducts();
   }, [selectedTypeFilter]);
 
@@ -90,6 +92,7 @@ const AddProducts = () => {
               if (downloadUrls.length === file.length) {
                 const productData: any = {
                   id: productId,
+                  sellerId: sellerId,
                   name: productName,
                   price: productPrice,
                   description: productDescription,

@@ -15,6 +15,11 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
         product.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .slice(0, 7);
+  const filteredAllProducts = products.filter(
+    (product: any) =>
+      product.type === productType &&
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const showViewAllButton =
     products.filter((product: any) => product.type === productType).length > 7;
@@ -65,7 +70,9 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
       {showViewAllButton && (
         <button
           className={styles.viewAllBtn}
-          onClick={() => navigate("/products")}
+          onClick={() =>
+            navigate("/allSameCategoryProducts", { state: filteredAllProducts })
+          }
         >
           View All{" "}
           <FaArrowRight

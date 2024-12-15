@@ -157,7 +157,13 @@ const Header = ({ user }: any) => {
                 className={styles.showAllLink}
                 onClick={(e) => {
                   e.preventDefault();
-                  navigate("/messages");
+                  try {
+                    console.log("user:", user);
+                    navigate("/User/chat", { state: user });
+                  } catch (error) {
+                    console.log(error);
+                    navigate("/User/error");
+                  }
                 }}
               >
                 Show All

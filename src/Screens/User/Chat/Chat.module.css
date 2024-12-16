@@ -1,163 +1,160 @@
 .main {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background-color: #f7f7f7;
+  margin-top: 98px;
+  width: 100%;
+  height: 90vh;
+  background-color: #f4f4f4;
+}
+
+/* Header style */
+.chatContainer {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar containing the list of sellers */
+.sidebar {
+  width: 25%;
+  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar header */
+.sidebar h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  font-weight: bold;
   color: #333;
 }
 
-.chatContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 10px;
-}
-
-.chatHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
-  padding: 15px;
-  border-bottom: 1px solid #e6e6e6;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.chatHeader h2 {
-  font-size: 18px;
-  font-weight: bold;
-  color: #262626;
-  margin: 0;
-}
-
-.productDetails {
-  font-size: 14px;
-  color: #888;
-}
-
-.noChats {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-  color: #555;
-  font-size: 16px;
-  text-align: center;
-}
-
+/* Seller chat list */
 .chatList {
   margin-top: 20px;
-  max-height: 60%;
-  overflow-y: auto;
 }
 
 .chatPreview {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
+  background-color: #f9f9f9;
   padding: 10px;
-  border-radius: 8px;
   margin-bottom: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s;
 }
 
 .chatPreview:hover {
-  background-color: #f1f1f1;
+  background-color: #ececec;
 }
 
-.chatPreview p {
-  font-size: 16px;
-  color: #262626;
+/* No chats message */
+.noChats {
+  text-align: center;
+  color: #777;
 }
 
-.chatMessages {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  flex-grow: 1;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 10px;
-  margin-top: 20px;
-  overflow-y: auto;
-}
-
+/* Chat box where messages are displayed */
 .chatBox {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
 }
 
+/* Chat header displaying product info */
+.chatHeader {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #555;
+  font-weight: bold;
+}
+
+/* Chat messages area */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+/* Individual message styles */
 .message {
-  max-width: 75%;
-  padding: 8px 12px;
-  border-radius: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+  max-width: 70%;
   font-size: 14px;
-  line-height: 1.4;
-  word-wrap: break-word;
 }
 
 .sent {
-  align-self: flex-end;
-  background-color: #0078d4;
+  background-color: #0078ff;
   color: #fff;
+  align-self: flex-end;
 }
 
 .received {
-  align-self: flex-start;
-  background-color: #e6e6e6;
+  background-color: #f1f1f1;
   color: #333;
+  align-self: flex-start;
 }
 
-.chatInputContainer {
+/* Message input and send button */
+.inputContainer {
   display: flex;
   align-items: center;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 20px;
-  margin-top: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chatInput {
-  flex-grow: 1;
+  flex: 1;
   padding: 10px;
   font-size: 14px;
-  border: 1px solid #e6e6e6;
-  border-radius: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-right: 10px;
   outline: none;
-  background-color: #f7f7f7;
-  color: #333;
 }
 
 .chatInput:focus {
-  border-color: #0078d4;
+  border-color: #0078ff;
 }
 
 .sendButton {
-  padding: 8px 16px;
-  margin-left: 10px;
-  background-color: #0078d4;
-  color: #fff;
+  padding: 10px 20px;
+  background-color: #0078ff;
+  color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 14px;
+  transition: background-color 0.3s;
 }
 
 .sendButton:hover {
-  background-color: #005b99;
+  background-color: #005bb5;
 }
 
-.sendButton:disabled {
-  background-color: #c6c6c6;
+/* Chat product details */
+.productDetails {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
 }
 
-.chatHeader img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
+/* Loading spinner */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* Chat container when there are no chats */
+.chatContainerEmpty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #777;
 }

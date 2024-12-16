@@ -1,4 +1,5 @@
-{/_ <div className={styles.categoriesContainer}>
+{/\_ <div className={styles.categoriesContainer}>
+
 <div className={styles.categoryCard}>
 <img
                 className={styles.categoryImage}
@@ -27,3 +28,524 @@
               />
 </div>
 </div> _/}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  doc,
+  getDoc,
+  collection,
+  addDoc,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  setDoc,
+  serverTimestamp,
+} from "@firebase/firestore";
+import { auth, firestore } from "../../../firebase";
+import styles from "./Chat.module.css";
+import Header from "../../../components/Header/Header";
+import Loader from "../../../components/Loader/Loader";
+
+const Chat = () => {
+const location = useLocation();
+const { sellerId, productName, productId } = location.state || {};
+const navigate = useNavigate();
+
+const [user, setUser] = useState<null | { id: string; name: string }>(null);
+const [product, setProduct] = useState<null | { title: string }>(null);
+const [messages, setMessages] = useState<any[]>([]);
+const [sellerChats, setSellerChats] = useState<any[]>([]);
+const [messageInput, setMessageInput] = useState("");
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+const fetchData = async () => {
+try {
+const uid = auth.currentUser?.uid;
+if (!uid) {
+navigate("/login");
+return;
+}
+
+        const userDoc = await getDoc(doc(firestore, "Users", uid));
+        if (!userDoc.exists()) {
+          navigate("/error");
+          return;
+        }
+        setUser({ id: uid, ...(userDoc.data() as any) });
+
+        const chatQuery = query(
+          collection(firestore, `Chats`),
+          where("participants", "array-contains", uid),
+          orderBy("timestamp", "desc")
+        );
+        const querySnapshot = await getDocs(chatQuery);
+        const chats = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setSellerChats(chats);
+
+        if (productId) {
+          const productDoc = await getDoc(
+            doc(firestore, "Products", productId)
+          );
+          if (productDoc.exists()) {
+            setProduct(productDoc.data() as any);
+          }
+        }
+
+        if (sellerId && productId) {
+          const chatExists = chats.find((chat: any) =>
+            chat.participants.includes(sellerId)
+          );
+          if (!chatExists) {
+            await startNewChat(uid, sellerId, productId);
+          } else {
+            await loadMessages(chatExists.id);
+          }
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        navigate("/error");
+      }
+    };
+
+    fetchData();
+
+}, [sellerId, productId, navigate]);
+
+const startNewChat = async (
+userId: string,
+sellerId: string,
+productId: string
+) => {
+try {
+const chatId = `${userId}-${sellerId}`;
+const productDoc = await getDoc(doc(firestore, "Products", productId));
+const product = productDoc.exists() ? productDoc.data() : null;
+
+      // Create a new chat document
+      await setDoc(doc(firestore, `Chats`, chatId), {
+        participants: [userId, sellerId],
+        productId,
+        productName: product?.title || "",
+        timestamp: serverTimestamp(),
+      });
+
+      // Add the first message
+      await addDoc(collection(firestore, `Chats/${chatId}/Messages`), {
+        text: `Hi! I want to know about ${product?.title || "your product"}.`,
+        senderID: userId,
+        timestamp: serverTimestamp(),
+      });
+
+      // Load the new chat messages
+      await loadMessages(chatId);
+    } catch (error) {
+      console.error("Error starting new chat:", error);
+    }
+
+};
+
+const loadMessages = async (chatId: string) => {
+try {
+const messageQuery = query(
+collection(firestore, `Chats/${chatId}/Messages`),
+orderBy("timestamp", "asc")
+);
+const messageSnapshot = await getDocs(messageQuery);
+const loadedMessages = messageSnapshot.docs.map((doc) => doc.data());
+setMessages(loadedMessages);
+} catch (error) {
+console.error("Error loading messages:", error);
+}
+};
+
+const sendMessage = async () => {
+if (!messageInput.trim()) return;
+
+    try {
+      const chatId = `${user?.id}-${sellerId}`;
+      const chatRef = collection(firestore, `Chats/${chatId}/Messages`);
+      await addDoc(chatRef, {
+        text: messageInput,
+        senderID: user?.id,
+        timestamp: serverTimestamp(),
+      });
+      setMessageInput("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+
+};
+
+if (loading) return <Loader />;
+
+return (
+<div className={styles.main}>
+<Header user={user} />
+<div className={styles.chatContainer}>
+{/_ Sidebar for Seller Chats _/}
+<div className={styles.sidebar}>
+<h2>Chats</h2>
+{sellerChats.length === 0 ? (
+<p>No active chats.</p>
+) : (
+sellerChats.map((chat) => (
+<div
+key={chat.id}
+className={styles.chatPreview}
+onClick={() => loadMessages(chat.id)} >
+Chat with Seller {chat.participants[1]}{" "}
+{/_ Replace with Seller name _/}
+</div>
+))
+)}
+</div>
+
+        {/* Chat Box */}
+        <div className={styles.chatBox}>
+          {messages.length > 0 ? (
+            <>
+              <div className={styles.messages}>
+                {messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.message} ${
+                      msg.senderID === user?.id ? styles.sent : styles.received
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                ))}
+              </div>
+
+              <div className={styles.inputContainer}>
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Type your message..."
+                />
+                <button onClick={sendMessage}>Send</button>
+              </div>
+            </>
+          ) : (
+            <p>No messages yet. Start chatting!</p>
+          )}
+        </div>
+      </div>
+    </div>
+
+);
+};
+
+export default Chat;
+
+
+
+-------------------------------------------------------------
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  doc,
+  getDoc,
+  collection,
+  addDoc,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  setDoc,
+  serverTimestamp,
+  onSnapshot,
+} from "@firebase/firestore";
+import { auth, firestore } from "../../../firebase";
+import styles from "./Chat.module.css";
+import Header from "../../../components/Header/Header";
+import Loader from "../../../components/Loader/Loader";
+
+const Chat = () => {
+  const location = useLocation();
+  const { sellerId, productName, productId } = location.state || {};
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState<null | { id: string; name: string }>(null);
+  const [product, setProduct] = useState<null | { title: string }>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [sellerChats, setSellerChats] = useState<any[]>([]);
+  const [messageInput, setMessageInput] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [sellerID, setSellerId] = useState<string | null>(null);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const uid = auth.currentUser?.uid;
+        if (!uid) {
+          navigate("/login");
+          return;
+        }
+
+        const userDoc = await getDoc(doc(firestore, "Users", uid));
+        if (!userDoc.exists()) {
+          navigate("/error");
+          return;
+        }
+        setUser({ id: uid, ...(userDoc.data() as any) });
+
+        const chatQuery = query(
+          collection(firestore, `Chats`),
+          where("participants", "array-contains", uid),
+          orderBy("timestamp", "desc")
+        );
+        const querySnapshot = await getDocs(chatQuery);
+        const chats = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setSellerChats(chats);
+
+        if (productId) {
+          const productDoc = await getDoc(
+            doc(firestore, "Products", productId)
+          );
+          if (productDoc.exists()) {
+            setProduct(productDoc.data() as any);
+          }
+        }
+
+        if (sellerId && productId) {
+          const chatExists = chats.find((chat: any) =>
+            chat.participants.includes(sellerId)
+          );
+          if (!chatExists) {
+            console.log(
+              "Chat does not exist. Starting new chat...",
+              uid,
+              sellerId,
+              productId
+            );
+            await startNewChat(uid, sellerId, productId);
+          } else {
+            await loadMessages(chatExists.id);
+          }
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        navigate("/error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [sellerId, productId, navigate, messages]);
+
+  const startNewChat = async (
+    userId: string,
+    sellerId: string,
+    productId: string
+  ) => {
+    try {
+      console.log("Starting new chat...", userId, sellerId, productId);
+      const chatId = `${userId}-${sellerId}`;
+      const productDoc = await getDoc(doc(firestore, "Products", productId));
+      const product = productDoc.exists() ? productDoc.data() : null;
+
+      // Create a new chat document
+      await setDoc(doc(firestore, `Chats`, chatId), {
+        participants: [userId, sellerId],
+        productId,
+        productName: product?.title || "",
+        timestamp: serverTimestamp(),
+      });
+
+      // Add the first message
+      await addDoc(collection(firestore, `Chats/${chatId}/Messages`), {
+        text: `Hi! I want to know about ${product?.title || "your product"}.`,
+        senderID: userId,
+        timestamp: serverTimestamp(),
+      });
+
+      // Load the new chat messages
+      await loadMessages(chatId);
+    } catch (error) {
+      console.error("Error starting new chat:", error);
+    }
+  };
+
+  const loadMessages = async (chatId: string) => {
+    try {
+      const messageQuery = query(
+        collection(firestore, `Chats/${chatId}/Messages`),
+        orderBy("timestamp", "asc")
+      );
+      const messageSnapshot = await getDocs(messageQuery);
+      const loadedMessages = messageSnapshot.docs.map((doc) => doc.data());
+      setMessages(loadedMessages);
+    } catch (error) {
+      console.error("Error loading messages:", error);
+    }
+  };
+
+  // const sendMessage = async () => {
+  //   if (!messageInput.trim()) return;
+
+  //   try {
+  //     console.log("Sending message:", messageInput);
+  //     const chatId = `${user?.id}-${sellerId}`;
+  //     const chatRef = collection(firestore, `Chats/${chatId}/Messages`);
+  //     await addDoc(chatRef, {
+  //       text: messageInput,
+  //       senderID: user?.id,
+  //       timestamp: serverTimestamp(),
+  //     });
+  //     console.log("Message sent!");
+  //     setMessageInput("");
+  //   } catch (error) {
+  //     console.error("Error sending message:", error);
+  //   }
+  // };
+
+  const sendMessage = async () => {
+    if (!messageInput.trim()) return;
+
+    try {
+      console.log("Sending message:", messageInput);
+
+      if (!currentChatId || !sellerId) {
+        console.error("No active chat or seller to send a message to.");
+        return;
+      }
+
+      const chatRef = collection(firestore, `Chats/${currentChatId}/Messages`);
+      await addDoc(chatRef, {
+        text: messageInput,
+        senderID: user?.id,
+        timestamp: serverTimestamp(),
+      });
+
+      console.log("Message sent!");
+      setMessageInput("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
+  const subscribeToMessages = (chatId: string) => {
+    const messagesQuery = query(
+      collection(firestore, `Chats/${chatId}/Messages`),
+      orderBy("timestamp", "asc")
+    );
+
+    const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
+      const loadedMessages = querySnapshot.docs.map((doc) => doc.data());
+      setMessages(loadedMessages);
+    });
+
+    return unsubscribe;
+  };
+
+  const handleSellerClick = async (chatId: string) => {
+    setMessages([]); // Clear previous messages
+    setLoading(true); // Show loader while loading messages
+    setCurrentChatId(chatId); // Track the current chat ID
+
+    try {
+      // Get the chat document to retrieve sellerId
+      const chatDoc = await getDoc(doc(firestore, `Chats`, chatId));
+      if (chatDoc.exists()) {
+        const chatData = chatDoc.data();
+        const sellerIdFromChat = chatData.participants.find(
+          (participant: string) => participant !== user?.id
+        );
+
+        setSellerId(sellerIdFromChat); // Dynamically set sellerId
+      }
+
+      // Subscribe to real-time messages
+      subscribeToMessages(chatId);
+    } catch (error) {
+      console.error("Error loading messages:", error);
+    } finally {
+      setLoading(false); // Hide loader after messages are loaded
+    }
+  };
+
+  if (loading) return <Loader />;
+
+  return (
+    <div className={styles.main}>
+      <Header user={user} />
+      <div className={styles.chatContainer}>
+        {/* {/_ Sidebar for Seller Chats _/} */}
+        <div className={styles.sidebar}>
+          <h2>Chats</h2>
+          {sellerChats.length === 0 ? (
+            <p>No active chats.</p>
+          ) : (
+            sellerChats.map((chat) => (
+              <div
+                key={chat.id}
+                className={styles.chatPreview}
+                // onClick={() => loadMessages(chat.id)}
+                onClick={() => handleSellerClick(chat.id)}
+              >
+                Chat with Seller {chat.participants[1]}{" "}
+                {/* {/_ Replace with Seller name _/} */}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Chat Box */}
+        <div className={styles.chatBox}>
+          {currentChatId ? (
+            // {/* {messages.length > 0 ? ( */}
+            <>
+              <div className={styles.messages}>
+                {messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.message} ${
+                      msg.senderID === user?.id ? styles.sent : styles.received
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                ))}
+              </div>
+
+              <div className={styles.inputContainer}>
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Type your message..."
+                />
+                <button onClick={sendMessage}>Send</button>
+              </div>
+            </>
+          ) : (
+            // ) : (
+            //   <p>No messages yet. Start chatting!</p>
+            // )}
+            <p>Select a chat to start messaging.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Chat;

@@ -55,6 +55,7 @@ const ProductDetails = () => {
 
   const handleContactSeller = () => {
     if (product) {
+      console.log("Contact Seller clicked!", product);
       navigate("/User/chat", {
         state: {
           sellerId: product.sellerId,

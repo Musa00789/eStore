@@ -5,7 +5,7 @@ import Error from "../../Commons/Error/Error";
 import Profile from "../Profile/Profile";
 import Settings from "../Settings/Settings";
 import Checkout from "../Checkout/Checkout";
-import Chat from "../Chat/Chat";
+import Chat from "../BuyerChat/BuyerChat";
 
 const UserRoutes = () => {
   return (

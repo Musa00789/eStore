@@ -16,6 +16,8 @@ import Analytics from "../Analytics/Analytics";
 import { auth, firestore } from "../../../firebase";
 import { doc, getDoc } from "@firebase/firestore";
 import Error from "../../Commons/Error/Error";
+import SellerChat from "../SellerChat/SellerChat";
+import { FaMessage } from "react-icons/fa6";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -85,6 +87,11 @@ const Sidebar = () => {
             icon: <UserOutlined />,
           },
           {
+            label: "Chats",
+            key: "/Admin/seller-chat",
+            icon: <FaMessage />,
+          },
+          {
             label: "Add Products",
             key: "/Admin/addproducts",
             icon: <PlusOutlined />,
@@ -115,6 +122,7 @@ const AdminRoutes = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="/error" element={<Error />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/seller-chat" element={<SellerChat />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/addproducts" element={<AddProducts />} />
       <Route path="/analytics" element={<Analytics />} />

@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { Menu } from "antd";
-import styles from "./AdminRoutes.module.css";
+import styles from "./SellerRoutes.module.css";
 import {
   DashboardOutlined,
   UserOutlined,
   PlusOutlined,
   LineChartOutlined,
   PoweroffOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
 import Profile from "../Profile/Profile";
 import Dashboard from "../Dashboard/Dashboard";
@@ -17,7 +18,6 @@ import { auth, firestore } from "../../../firebase";
 import { doc, getDoc } from "@firebase/firestore";
 import Error from "../../Commons/Error/Error";
 import SellerChat from "../SellerChat/SellerChat";
-import { FaMessage } from "react-icons/fa6";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -89,7 +89,7 @@ const Sidebar = () => {
           {
             label: "Chats",
             key: "/Admin/seller-chat",
-            icon: <FaMessage />,
+            icon: <MessageOutlined />,
           },
           {
             label: "Add Products",

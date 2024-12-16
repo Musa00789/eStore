@@ -1,10 +1,10 @@
 // ProductDetails component for displaying product details
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./ProductDetails.module.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc } from "@firebase/firestore";
+import { doc, getDoc, updateDoc, increment } from "@firebase/firestore";
 import { useLocation } from "react-router-dom";
-import { firestore } from "../../../firebase";
+import { auth, firestore } from "../../../firebase";
 import { FaCartPlus, FaCreditCard, FaMessage, FaTruck } from "react-icons/fa6";
 import Header from "../../../components/Header/Header";
 import Loader from "../../../components/Loader/Loader";
@@ -12,11 +12,17 @@ import Loader from "../../../components/Loader/Loader";
 const ProductDetails = () => {
   const location = useLocation();
   const { productName } = useParams();
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    status: "",
+  });
   const navigate = useNavigate();
-  const [product, setProduct] = React.useState(location.state || null);
-  const [selectedSize, setSelectedSize] = React.useState(null);
+  const [product, setProduct] = useState(location.state || null);
+  const [selectedSize, setSelectedSize] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!product) {
       const fetchProduct = async () => {
         try {
@@ -39,10 +45,23 @@ const ProductDetails = () => {
           navigate("/error");
         }
       };
-
+      incrementField(product.id, "views");
+      incrementField(product.id, "clicks");
       fetchProduct();
+      getUser();
     }
   }, [product, productName, navigate]);
+
+  const incrementField = async (productId: string, field: string) => {
+    try {
+      const productRef = doc(firestore, "Products", productId);
+      await updateDoc(productRef, {
+        [field]: increment(1),
+      });
+    } catch (error) {
+      console.error(`Error incrementing ${field}:`, error);
+    }
+  };
 
   const handleAddToCart = () => {
     console.log("Add to Cart clicked!", product);
@@ -65,12 +84,23 @@ const ProductDetails = () => {
       });
     }
   };
+  const getUser = async () => {
+    try {
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      const docRef = doc(firestore, "Users", uid);
+      const docSnap: any = await getDoc(docRef);
+      setUser(docSnap.data());
+    } catch (error) {
+      navigate("/error");
+    }
+  };
 
   if (!product) return <Loader />;
 
   return (
     <div>
-      {/* <Header /> */}
+      <Header user={user} />
       <div className={styles.productDetailsContainer}>
         <img
           className={styles.productImage}

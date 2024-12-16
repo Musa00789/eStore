@@ -1,0 +1,102 @@
+.profileContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f7f9fc;
+  font-family: Arial, sans-serif;
+}
+
+.profileCard {
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  padding: 30px;
+}
+
+.profilePic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.greetings {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.detailsContainer {
+  margin: 20px 0;
+}
+
+.dataTitle {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #555;
+}
+
+.userData {
+  font-size: 0.9rem;
+  color: #333;
+  margin: 5px 0;
+}
+
+.inputField {
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 5px;
+  width: 90%;
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.editButton,
+.logoutButton,
+.saveButton,
+.cancelButton {
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.editButton {
+  background-color: #0078ff;
+  color: white;
+}
+
+.logoutButton {
+  background-color: #ff5252;
+  color: white;
+}
+
+.saveButton {
+  background-color: #00c853;
+  color: white;
+}
+
+.cancelButton {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.editButton:hover,
+.logoutButton:hover,
+.saveButton:hover,
+.cancelButton:hover {
+  opacity: 0.9;
+}

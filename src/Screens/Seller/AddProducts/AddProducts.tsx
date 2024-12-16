@@ -98,6 +98,9 @@ const AddProducts = () => {
                   description: productDescription,
                   images: downloadUrls,
                   type,
+                  clicks: 0,
+                  views: 0,
+                  purchases: 0,
                   ...(type === "Fashion" && { size, quantity }),
                   ...(type === "Electronics" && { quantity }),
                   ...(type === "Mobiles" && { quantity }),
@@ -119,7 +122,7 @@ const AddProducts = () => {
   };
 
   const getProducts = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const productsCollectionRef = collection(firestore, "Products");
       const productsQuery = selectedTypeFilter
@@ -136,7 +139,7 @@ const AddProducts = () => {
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -149,7 +152,7 @@ const AddProducts = () => {
     setType(product.type);
     setSize(product.size || "");
     setQuantity(product.quantity || "");
-    setFile([]); // New images can be added, but existing ones remain unchanged
+    setFile([]);
     openForm();
   };
 

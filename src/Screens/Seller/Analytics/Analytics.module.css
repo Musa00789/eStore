@@ -1,0 +1,24 @@
+.analytics {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section h2 {
+  font-size: 1.5em;
+  margin-bottom: 15px;
+}
+
+.loader {
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 50px;
+}
+.chartContainer {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}

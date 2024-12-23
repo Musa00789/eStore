@@ -1,115 +1,106 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 .profileContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
+
 .backButton {
-  font-size: 24px;
-  background-color: transparent;
+  margin-bottom: 20px;
+  background: none;
   border: none;
+  font-size: 1rem;
   cursor: pointer;
+  color: #0078ff;
 }
+
 .profileContent {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.profileImage {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-right: 20px;
-  background-color: #f0f0f0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.userImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-.noUserImage {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #007bff;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-  align-items: center;
-  font-size: 44px;
-}
-.noUserImage span {
-  font-size: inherit;
-}
-.userInfo {
-  display: flex;
   flex-direction: column;
-  font-family: Arial, Helvetica, sans-serif;
+  gap: 20px;
 }
-.userName {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-.userEmail,
-.userPhone {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 18px;
-  color: #555;
-  margin-bottom: 5px;
-}
-/* top right bottom left */
-.cartHeading {
-  margin-top: 60px;
-  margin-bottom: 20px;
-  font-size: 25px;
-  width: 100%;
-  font-family: Arial, Helvetica, sans-serif;
+
+.profileCard {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
-.columnContainer {
+
+.profileImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.defaultProfile {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #0078ff;
+  color: #fff;
   display: flex;
-  justify-content: space-evenly;
-  flex-direction: row;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto;
 }
-.scrollableContainer {
-  overflow-y: scroll;
-  border: 1px solid #ccc;
+
+.logoutButton {
   margin-top: 10px;
-  max-height: 400px;
-  width: 500px;
+  padding: 10px 20px;
+  background-color: #ff5252;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
-.cartTable {
+
+.logoutButton:hover {
+  background-color: #e53935;
+}
+
+.section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table {
   width: 100%;
   border-collapse: collapse;
 }
-.tableRow {
-  background-color: #f2f2f2;
-}
-.tableHeader,
-.tableData {
-  padding: 8px;
+
+.table th,
+.table td {
+  padding: 10px;
   text-align: center;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
 }
-.tableHeader {
-  background-color: #333;
-  color: #fff;
-}
+
 .cartImage {
-  max-width: 100px;
-  max-height: 100px;
-  margin-bottom: 5px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.removeButton {
+  padding: 5px 10px;
+  background-color: #ff5252;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  background-color: #e53935;
+}
+
+.cartTotal {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: right;
 }

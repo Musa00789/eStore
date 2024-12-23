@@ -1,56 +1,39 @@
-// ProductDetails component for displaying product details
 import React, { useEffect, useState } from "react";
 import styles from "./ProductDetails.module.css";
-import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc, updateDoc, increment } from "@firebase/firestore";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { doc, updateDoc, increment, getDoc } from "@firebase/firestore";
 import { auth, firestore } from "../../../firebase";
 import { FaCartPlus, FaCreditCard, FaMessage, FaTruck } from "react-icons/fa6";
 import Header from "../../../components/Header/Header";
 import Loader from "../../../components/Loader/Loader";
+import { addToCart } from "../../../components/addToCart";
+import { FaInfoCircle } from "react-icons/fa";
 
 const ProductDetails = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { productName } = useParams();
+  const product = location.state; // Product object from navigation state
+
   const [user, setUser] = useState({
     name: "",
     email: "",
     phone: "",
     status: "",
   });
-  const navigate = useNavigate();
-  const [product, setProduct] = useState(location.state || null);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   useEffect(() => {
     if (!product) {
-      const fetchProduct = async () => {
-        try {
-          if (!productName) {
-            console.log("Product name is undefined!");
-            navigate("/error");
-            return;
-          }
-          const productRef = doc(firestore, "Products", productName);
-          const productSnap = await getDoc(productRef);
-
-          if (productSnap.exists()) {
-            setProduct(productSnap.data());
-          } else {
-            console.log("No such document!");
-            navigate("/error");
-          }
-        } catch (error) {
-          console.error("Error fetching product:", error);
-          navigate("/error");
-        }
-      };
-      incrementField(product.id, "views");
-      incrementField(product.id, "clicks");
-      fetchProduct();
-      getUser();
+      console.error("No product data received!");
+      navigate("/error");
+      return;
     }
-  }, [product, productName, navigate]);
+    setSelectedImage(product.images[0]); // Set first image as default
+    incrementField(product.id, "views"); // Increment views
+    incrementField(product.id, "clicks"); // Increment clicks
+    fetchUser();
+  }, [product, navigate]);
 
   const incrementField = async (productId: string, field: string) => {
     try {
@@ -64,35 +47,129 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
-    console.log("Add to Cart clicked!", product);
-    // Implement add-to-cart logic here
-  };
-
-  const handleSizeChange = (size: any) => {
-    setSelectedSize(size);
+    if (product) {
+      addToCart(product);
+      alert("Added to cart!");
+    }
   };
 
   const handleContactSeller = () => {
-    if (product) {
-      console.log("Contact Seller clicked!", product);
-      navigate("/User/chat", {
-        state: {
-          sellerId: product.sellerId,
-          productName: product.name,
-          productId: product.id,
-        },
-      });
-    }
+    navigate("/User/chat", {
+      state: {
+        sellerId: product.sellerId,
+        productName: product.name,
+        productId: product.id,
+      },
+    });
   };
-  const getUser = async () => {
+
+  const handleGetQuotes = () => {
+    alert("Get Quotes functionality coming soon!");
+  };
+
+  const fetchUser = async () => {
     try {
       const uid = auth.currentUser?.uid;
       if (!uid) return;
-      const docRef = doc(firestore, "Users", uid);
-      const docSnap: any = await getDoc(docRef);
-      setUser(docSnap.data());
+      const userRef = doc(firestore, "Users", uid);
+      const userSnap: any = await getDoc(userRef);
+      setUser(userSnap.data());
     } catch (error) {
-      navigate("/error");
+      console.error("Error fetching user:", error);
+    }
+  };
+
+  const renderCategorySpecificContent = () => {
+    switch (product.type) {
+      case "Fashion":
+        return (
+          <div className={styles.sizeSection}>
+            <button
+              className={styles.addToCartButton}
+              onClick={handleAddToCart}
+            >
+              <FaCartPlus /> Add to Cart
+            </button>
+            <h3>Select Size:</h3>
+            <div className={styles.sizeOptions}>
+              {product.Size?.map((size: string, index: number) => (
+                <button
+                  key={index}
+                  className={`${styles.sizeButton} ${
+                    size === selectedSize ? styles.selectedSizeButton : ""
+                  }`}
+                  onClick={() => setSelectedSize(size)}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      case "Bike":
+      case "Vehicle":
+        return (
+          <button
+            className={styles.viewDetailsButton}
+            onClick={() => navigate("/vehicle-details", { state: product })}
+          >
+            View Details
+          </button>
+        );
+      case "Mobiles":
+        return (
+          <div>
+            <button
+              className={styles.specificationsButton}
+              onClick={() => alert("Specifications coming soon!")}
+            >
+              <FaInfoCircle /> View Specifications
+            </button>
+            <table className={styles.specificationsTable}>
+              <tbody>
+                <tr>
+                  <td>Brand:</td>
+                  <td>{product.brand}</td>
+                </tr>
+                <tr>
+                  <td>Model:</td>
+                  <td>{product.model}</td>
+                </tr>
+                <tr>
+                  <td>Warranty:</td>
+                  <td>{product.warranty || "No Warranty"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      case "Property":
+        return (
+          <div>
+            <button
+              className={styles.contactSellerButton}
+              onClick={handleContactSeller}
+            >
+              Contact Seller
+            </button>
+            <button
+              className={styles.getQuotesButton}
+              onClick={handleGetQuotes}
+            >
+              Get Quotes
+            </button>
+            <p className={styles.productDescription}>{product.description}</p>
+          </div>
+        );
+      case "Electronics":
+      case "Furniture":
+        return (
+          <button className={styles.addToCartButton} onClick={handleAddToCart}>
+            <FaCartPlus /> Add to Cart
+          </button>
+        );
+      default:
+        return null;
     }
   };
 
@@ -102,87 +179,77 @@ const ProductDetails = () => {
     <div>
       <Header user={user} />
       <div className={styles.productDetailsContainer}>
-        <img
-          className={styles.productImage}
-          src={product.images[0]}
-          alt={product.name}
-        />
+        {/* Image Gallery */}
+        <div className={styles.imageGallery}>
+          <img
+            className={styles.productImage}
+            src={selectedImage || ""}
+            alt={product.name}
+          />
+          <div className={styles.thumbnailContainer}>
+            {product.images?.map((image: string, index: number) => (
+              <img
+                key={index}
+                src={image}
+                alt="Thumbnail"
+                className={`${styles.thumbnail} ${
+                  image === selectedImage ? styles.selectedThumbnail : ""
+                }`}
+                onClick={() => setSelectedImage(image)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Product Info */}
         <div className={styles.productInfo}>
           <h1 className={styles.productName}>{product.name}</h1>
           <p className={styles.productPrice}>Rs. {product.price}</p>
           <p className={styles.productDescription}>{product.description}</p>
           <div className={styles.buttonGroup}>
-            <button
-              className={styles.addToCartButton}
-              onClick={handleAddToCart}
-            >
-              <FaCartPlus
-                style={{
-                  marginRight: "5px",
-                  marginTop: "-2px",
-                  fontSize: "1.3rem",
-                }}
-              />{" "}
-              Add to Cart
-            </button>
-            <button
-              className={styles.contactSellerButton}
-              onClick={handleContactSeller}
-            >
-              <FaMessage
-                style={{
-                  marginRight: "5px",
-                  marginTop: "-2px",
-                  fontSize: "1.3rem",
-                }}
-              />{" "}
-              Contact Seller
-            </button>
+            {renderCategorySpecificContent()}
           </div>
-          <div className={styles.features}>
-            <div className={styles.feature}>
-              <h3>
+          {product.type === "Property" ||
+          product.type === "Bike" ||
+          product.type === "Vehicle" ? (
+            <div>
+              <p>
+                More details about the product can be obtained by contacting the
+                seller as the products cannot be delivered by the company
+              </p>
+            </div>
+          ) : (
+            <div className={styles.features}>
+              <div
+                style={{ backgroundColor: "#c5c5c5" }}
+                className={styles.feature}
+              >
                 <FaTruck
+                  size={34}
                   style={{
-                    fontSize: "1.5rem",
+                    // fontSize: "1.5rem",
                     marginRight: "5px",
                     marginBottom: "4px",
                   }}
                 />{" "}
-                Free Shipping
-              </h3>
-              <p>Free Shipping in Pakistan on orders above Rs.4000.</p>
-            </div>
-            <div className={styles.feature}>
-              <h3>
+                Free Shipping in Pakistan on orders above Rs.4000.
+              </div>
+              <div
+                style={{ backgroundColor: "#cecece" }}
+                className={styles.feature}
+              >
                 <FaCreditCard
+                  size={34}
                   style={{
-                    fontSize: "1.2rem",
+                    // fontSize: "1.2rem",
                     marginRight: "5px",
                     marginBottom: "4px",
                   }}
-                />
-                Secure Payment
-              </h3>
-              <p>Visa, Mastercard and Cash on Delivery are accepted.</p>
+                />{" "}
+                Visa, Mastercard and Cash on Delivery are accepted.
+              </div>
             </div>
-          </div>
-          <div className={styles.sizeSection}>
-            <h3>Size: {selectedSize}</h3>
-            <div className={styles.sizeOptions}>
-              {product.Size?.map((size: string, index: number) => (
-                <button
-                  key={index}
-                  className={`${styles.sizeButton} ${
-                    size === selectedSize ? styles.selectedSizeButton : ""
-                  }`}
-                  onClick={() => handleSizeChange(size)}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

@@ -9,20 +9,20 @@ import {
   setDoc,
   DocumentData,
 } from "@firebase/firestore";
-import styles from "./Cart.module.css";
-import { FaArrowLeft, FaTrashCan } from "react-icons/fa6";
+import { FaTrashCan, FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { FaHome } from "react-icons/fa";
+import styles from "./Cart.module.css";
 
 const Cart = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState<DocumentData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        getItems(user.uid);
+        fetchCartItems(user.uid);
       } else {
         setLoading(false);
       }
@@ -32,28 +32,37 @@ const Cart = () => {
     };
   }, []);
 
-  const getItems = async (uid: string) => {
+  const fetchCartItems = async (uid: string) => {
     try {
       const collectionRef = collection(firestore, "Users", uid, "Cart");
       const querySnapshot = await getDocs(collectionRef);
       if (!querySnapshot.empty) {
-        const cartItems = querySnapshot.docs.map((doc) => doc.data());
+        const cartItems = querySnapshot.docs.map((doc) => ({
+          ...(doc.data() as { price: number; quantity: number }),
+          ...doc.data(),
+          cartId: doc.id,
+        }));
         setCart(cartItems);
+
+        // Calculate total price
+        const total = cartItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        setCartTotal(total);
         setLoading(false);
       } else {
         setCart([]);
+        setCartTotal(0);
         setLoading(false);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching cart items:", error);
       setLoading(false);
     }
   };
 
-  const increaseQuantity = async (item: {
-    cartId: string;
-    quantity: number;
-  }) => {
+  const updateQuantity = async (item: any, newQuantity: number) => {
     try {
       if (auth.currentUser?.uid) {
         const itemRef = doc(
@@ -63,81 +72,15 @@ const Cart = () => {
           "Cart",
           item.cartId
         );
-
-        const updatedItem = { ...item, quantity: item.quantity + 1 };
-        await updateDoc(itemRef, updatedItem);
-        getItems(auth.currentUser.uid);
+        await updateDoc(itemRef, { quantity: newQuantity });
+        fetchCartItems(auth.currentUser.uid); // Refresh cart
       }
     } catch (error) {
-      console.error("Error increasing quantity:", error);
+      console.error("Error updating quantity:", error);
     }
   };
 
-  const decreaseQuantity = async (item: {
-    cartId: string;
-    quantity: number;
-  }) => {
-    if (item.quantity > 1) {
-      try {
-        if (auth.currentUser?.uid) {
-          const itemRef = doc(
-            firestore,
-            "Users",
-            auth.currentUser.uid,
-            "Cart",
-            item.cartId
-          );
-          const updatedItem = { ...item, quantity: item.quantity - 1 };
-          await updateDoc(itemRef, updatedItem);
-          getItems(auth.currentUser?.uid || "");
-        }
-      } catch (error) {
-        console.error("Error decreasing quantity:", error);
-      }
-    } else {
-      try {
-        if (auth.currentUser?.uid) {
-          const itemRef = doc(
-            firestore,
-            "Users",
-            auth.currentUser.uid,
-            "Cart",
-            item.cartId
-          );
-          await updateDoc(itemRef, {
-            // cart: arrayRemove(item),
-            quantity: 0,
-          });
-          getItems(auth.currentUser.uid);
-        } else {
-          console.error("User ID is undefined");
-        }
-      } catch (error) {
-        console.error("Error removing from cart:", error);
-      }
-    }
-  };
-
-  const checkOut = (item: any) => {
-    try {
-      if (auth.currentUser?.uid) {
-        const itemRef = doc(
-          firestore,
-          "Users",
-          auth.currentUser?.uid,
-          "Orders",
-          item.cartId
-        );
-        setDoc(itemRef, item).then(async () => {
-          await deleteFromCart(item);
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteFromCart = async (item: any) => {
+  const removeFromCart = async (item: any) => {
     try {
       if (auth.currentUser?.uid) {
         const itemRef = doc(
@@ -148,104 +91,114 @@ const Cart = () => {
           item.cartId
         );
         await deleteDoc(itemRef);
-        getItems(auth.currentUser?.uid || "");
+        fetchCartItems(auth.currentUser.uid); // Refresh cart
       }
     } catch (error) {
-      console.error("Error removing from cart:", error);
+      console.error("Error removing item from cart:", error);
+    }
+  };
+
+  const handleCheckout = async (item: any) => {
+    try {
+      if (auth.currentUser?.uid) {
+        const orderRef = doc(
+          firestore,
+          "Users",
+          auth.currentUser.uid,
+          "Orders",
+          item.cartId
+        );
+        await setDoc(orderRef, item); // Move to Orders collection
+        await removeFromCart(item); // Remove from cart
+        navigate("/User/checkout", { state: item });
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
     }
   };
 
   return (
-    <div>
-      {/* <button
-        className={styles.backNavigator}
-        onClick={() => {
-          navigate(-1);
-        }}
-      >
-        <FaArrowLeft />
-      </button> */}
-      <h1
-        style={{
-          textAlign: "center",
-          color: "#28a745",
-          fontWeight: "700",
-        }}
-      >
-        Your Items
-      </h1>
-      {cart.length > 0 ? (
-        <div className={styles.cartContainer}>
-          {cart.map((item: any) => (
-            <div className={styles.productContainer} key={item.cartId}>
-              <img
-                className={styles.productImg}
-                src={item.images}
-                alt={item.name}
-              />
-              <div className={styles.productInfo}>
-                <h3 className={styles.pName}>{item.name}</h3>
-                <p className={styles.pDescription}>
-                  {item.description && item.description.length > 75
-                    ? `${item.description.substring(0, 70)} . . .`
-                    : item.description}
-                </p>
-                <div className={styles.priceAndQuantity}>
-                  <div className={styles.price}>
-                    <h6>Price: </h6>
-                    <span className={styles.pPrice}>{item.price}</span>
-                  </div>
-                  <div className={styles.quantityControl}>
+    <div className={styles.cartPage}>
+      <button className={styles.backButton} onClick={() => navigate(-1)}>
+        <FaArrowLeft /> Back
+      </button>
+      <h1 className={styles.pageTitle}>Your Cart</h1>
+
+      {loading ? (
+        <p className={styles.loadingText}>Loading...</p>
+      ) : cart.length > 0 ? (
+        <>
+          <table className={styles.cartTable}>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item) => (
+                <tr key={item.cartId}>
+                  <td>
+                    <img
+                      src={item.images}
+                      alt={item.name}
+                      className={styles.itemImage}
+                    />
+                  </td>
+                  <td>{item.name}</td>
+                  <td>${item.price}</td>
+                  <td>
+                    <div className={styles.quantityControls}>
+                      <button
+                        className={styles.quantityButton}
+                        onClick={() => updateQuantity(item, item.quantity - 1)}
+                        disabled={item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button
+                        className={styles.quantityButton}
+                        onClick={() => updateQuantity(item, item.quantity + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </td>
+                  <td>${item.price * item.quantity}</td>
+                  <td>
                     <button
-                      className={styles.quantityButton}
-                      onClick={() => decreaseQuantity(item)}
+                      className={styles.checkoutButton}
+                      onClick={() => handleCheckout(item)}
                     >
-                      -
+                      Checkout
                     </button>
-                    <span className={styles.quantity}>{item.quantity}</span>
                     <button
-                      className={styles.quantityButton}
-                      onClick={() => increaseQuantity(item)}
+                      className={styles.deleteButton}
+                      onClick={() => removeFromCart(item)}
                     >
-                      +
+                      <FaTrashCan />
                     </button>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  checkOut(item);
-                  navigate("/User/checkout", { state: item });
-                }}
-                className={styles.checkOutBtn}
-              >
-                Check Out
-              </button>
-              <button
-                onClick={() => {
-                  deleteFromCart(item);
-                }}
-                className={styles.delBtn}
-              >
-                <FaTrashCan />
-              </button>
-            </div>
-          ))}
-        </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className={styles.cartSummary}>
+            <h3>Total: ${cartTotal}</h3>
+          </div>
+        </>
       ) : (
-        <p
-          style={{
-            textAlign: "center",
-            color: "#28a745",
-            fontWeight: "700",
-          }}
-        >
-          Lets add some items to the cart!{" "}
-          <button className={styles.homeButton} onClick={() => navigate(-1)}>
-            {" "}
-            <FaHome style={{ marginTop: "-5px" }} /> Home
+        <div className={styles.emptyCart}>
+          <p>Your cart is empty.</p>
+          <button className={styles.homeButton} onClick={() => navigate("/")}>
+            Continue Shopping
           </button>
-        </p>
+        </div>
       )}
     </div>
   );

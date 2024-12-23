@@ -27,6 +27,9 @@ const AddProducts = () => {
   const [type, setType] = useState("");
   const [size, setSize] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [model, setModel] = useState("");
+  const [brand, setBrand] = useState("");
+  const [waranty, setWaranty] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [sellerId, setSellerId] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
@@ -103,7 +106,12 @@ const AddProducts = () => {
                   purchases: 0,
                   ...(type === "Fashion" && { size, quantity }),
                   ...(type === "Electronics" && { quantity }),
-                  ...(type === "Mobiles" && { quantity }),
+                  ...(type === "Mobiles" && {
+                    quantity,
+                    model,
+                    brand,
+                    waranty,
+                  }),
                 };
 
                 const productRef = doc(firestore, "Products", productId);
@@ -292,6 +300,27 @@ const AddProducts = () => {
                   value={quantity}
                   required
                   onChange={(e) => setQuantity(e.target.value)}
+                />
+                <label>Model</label>
+                <input
+                  type="text"
+                  value={model}
+                  required
+                  onChange={(e) => setModel(e.target.value)}
+                />
+                <label>Brand</label>
+                <input
+                  type="number"
+                  value={brand}
+                  required
+                  onChange={(e) => setBrand(e.target.value)}
+                />
+                <label>Waranty</label>
+                <input
+                  type="number"
+                  value={waranty}
+                  required
+                  onChange={(e) => setWaranty(e.target.value)}
                 />
               </>
             )}

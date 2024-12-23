@@ -129,7 +129,11 @@ const Home = () => {
               </h1>
             )}
             <ImageGallery />
-            <Categories />
+            {products.length > 0 ? (
+              <Categories allProducts={products} />
+            ) : (
+              <Loader />
+            )}
             {renderProductCategory("Mobiles")}
             {renderProductCategory("Vehicle")}
             {renderProductCategory("Property")}

@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { firestore, auth } from "../../../firebase";
-import { getDoc, doc, getDocs, collection } from "@firebase/firestore";
+import {
+  getDoc,
+  doc,
+  getDocs,
+  collection,
+  deleteDoc,
+} from "@firebase/firestore";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
@@ -8,8 +14,9 @@ import styles from "./Profile.module.css";
 const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
-  const [cartItems, setCartItems] = useState<any>([]);
-  const [deliveredOrders, setDeliveredOrders] = useState<any>([]);
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [deliveredOrders, setDeliveredOrders] = useState<any[]>([]);
+  const [cartTotal, setCartTotal] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,11 +43,11 @@ const Profile = () => {
       if (docSnap.exists()) {
         setUser(docSnap.data());
       } else {
-        alert("No data found.");
+        alert("No user data found.");
       }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching user data:", error);
       setLoading(false);
     }
   };
@@ -48,162 +55,192 @@ const Profile = () => {
   const getCartItems = async () => {
     try {
       const userId = auth.currentUser?.uid;
-      if (!userId) {
-        throw new Error("User ID not found");
-      }
+      if (!userId) return;
       const collectionRef = collection(firestore, "Users", userId, "Cart");
       const querySnapshot = await getDocs(collectionRef);
+
       if (!querySnapshot.empty) {
-        const cartItems = querySnapshot.docs.map((doc) => doc.data());
-        setCartItems(cartItems);
-        setLoading(false);
+        const items = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            price: data.price || 0,
+            quantity: data.quantity || 0,
+          };
+        });
+        setCartItems(items);
+
+        // Calculate total cart amount
+        const total = items.reduce(
+          (acc, item) => acc + item.price * item.quantity,
+          0
+        );
+        setCartTotal(total);
       } else {
         setCartItems([]);
-        setLoading(false);
       }
     } catch (error) {
-      console.error(error);
-      setLoading(false);
+      console.error("Error fetching cart items:", error);
     }
   };
 
   const getDeliveredOrders = async () => {
     try {
       const userId = auth.currentUser?.uid;
-      if (!userId) {
-        throw new Error("User ID not found");
-      }
+      if (!userId) return;
       const collectionRef = collection(firestore, "Users", userId, "Orders");
       const querySnapshot = await getDocs(collectionRef);
+
       if (!querySnapshot.empty) {
-        const cartItems = querySnapshot.docs.map((doc) => doc.data());
-        setDeliveredOrders(cartItems);
-        setLoading(false);
+        const orders = querySnapshot.docs.map((doc) => doc.data());
+        setDeliveredOrders(orders);
       } else {
         setDeliveredOrders([]);
-        setLoading(false);
       }
     } catch (error) {
-      console.error(error);
-      setLoading(false);
+      console.error("Error fetching delivered orders:", error);
     }
   };
 
+  const removeCartItem = async (itemId: string) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+      const itemRef = doc(firestore, "Users", userId, "Cart", itemId);
+      await deleteDoc(itemRef);
+
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.id !== itemId)
+      );
+      const updatedTotal = cartItems
+        .filter((item) => item.id !== itemId)
+        .reduce((acc, item) => acc + item.price * item.quantity, 0);
+      setCartTotal(updatedTotal);
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    auth.signOut().then(() => {
+      navigate("/Login");
+    });
+  };
+
   return (
-    <div>
-      <button
-        onClick={() => {
-          navigate(-1);
-        }}
-      >
-        <FaArrowLeft />
+    <div className={styles.profileContainer}>
+      <button className={styles.backButton} onClick={() => navigate(-1)}>
+        <FaArrowLeft /> Back
       </button>
 
       {loading ? (
-        <p>Loading...</p>
+        <div className={styles.loader}>Loading...</div>
       ) : user ? (
-        <div>
-          <div className={styles.profileContent}>
-            <div className={styles.profileImage}>
-              {user?.photoURL ? (
-                <img
-                  src={user?.photoURL}
-                  alt="Profile"
-                  className={styles.userImage}
-                />
-              ) : (
-                <div className={styles.noUserImage}>
-                  <span>{user?.name ? user?.name[0] : "?"}</span>
-                </div>
-              )}
-            </div>
-            <div className={styles.userInfo}>
-              <h1 className={styles.userName}>{user?.name}</h1>
-              <h1 className={styles.userEmail}>{user?.email}</h1>
-              <h1 className={styles.userPhone}>{user?.phone}</h1>
-            </div>
+        <div className={styles.profileContent}>
+          {/* Profile Section */}
+          <div className={styles.profileCard}>
+            {user?.photoURL ? (
+              <img
+                src={user?.photoURL}
+                alt="Profile"
+                className={styles.profileImage}
+              />
+            ) : (
+              <div className={styles.defaultProfile}>
+                {user?.name ? user?.name[0] : "?"}
+              </div>
+            )}
+            <h2>{user?.name}</h2>
+            <p>{user?.email}</p>
+            <p>{user?.phone}</p>
+            <button className={styles.logoutButton} onClick={handleLogout}>
+              Logout
+            </button>
           </div>
-          <div className={styles.columnContainer}>
-            {/* Orders in cart */}
-            <div>
-              <h5 className={styles.cartHeading}>Orders in cart</h5>
-              <div className={styles.scrollableContainer}>
-                <table className={styles.cartTable}>
+
+          {/* Cart Items Section */}
+          <div className={styles.section}>
+            <h3>Cart Items</h3>
+            {cartItems.length > 0 ? (
+              <>
+                <table className={styles.table}>
                   <thead>
-                    <tr className={styles.tableRow}>
-                      <th className={styles.tableHeader}>Image</th>
-                      <th className={styles.tableHeader}>Name</th>
-                      <th className={styles.tableHeader}>Quantity</th>
-                      <th className={styles.tableHeader}>Price</th>
+                    <tr>
+                      <th>Image</th>
+                      <th>Name</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {cartItems.map((item: any, index: number) => (
-                      <tr className={styles.tableRow} key={index}>
+                    {cartItems.map((item) => (
+                      <tr key={item.id}>
                         <td>
                           <img
-                            className={styles.cartImage}
                             src={item.images}
                             alt={item.name}
+                            className={styles.cartImage}
                           />
                         </td>
+                        <td>{item.name}</td>
+                        <td>{item.quantity}</td>
+                        <td>${item.price}</td>
                         <td>
-                          <p className={styles.tableData}>{item.name}</p>
-                        </td>
-                        <td>
-                          <p className={styles.tableData}>{item.quantity}</p>
-                        </td>
-                        <td>
-                          <p className={styles.tableData}>{item.price}</p>
+                          <button
+                            className={styles.removeButton}
+                            onClick={() => removeCartItem(item.id)}
+                          >
+                            Remove
+                          </button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              </div>
-            </div>
-            {/* Orders Delivered */}
-            <div>
-              <h5 className={styles.cartHeading}>Orders Delivered</h5>
-              <div className={styles.scrollableContainer}>
-                <table className={styles.cartTable}>
-                  <thead>
-                    <tr className={styles.tableRow}>
-                      <th className={styles.tableHeader}>Image</th>
-                      <th className={styles.tableHeader}>Name</th>
-                      <th className={styles.tableHeader}>Quantity</th>
-                      <th className={styles.tableHeader}>Price</th>
-                      <th className={styles.tableHeader}>Status</th>
+                <p className={styles.cartTotal}>Total: ${cartTotal}</p>
+              </>
+            ) : (
+              <p>No items in cart.</p>
+            )}
+          </div>
+
+          {/* Delivered Orders Section */}
+          <div className={styles.section}>
+            <h3>Delivered Orders</h3>
+            {deliveredOrders.length > 0 ? (
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deliveredOrders.map((order, index) => (
+                    <tr key={index}>
+                      <td>
+                        <img
+                          src={order.images}
+                          alt={order.name}
+                          className={styles.cartImage}
+                        />
+                      </td>
+                      <td>{order.name}</td>
+                      <td>{order.quantity}</td>
+                      <td>${order.price}</td>
+                      <td>Delivered</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {deliveredOrders.map((item: any, index: number) => (
-                      <tr className={styles.tableRow} key={index}>
-                        <td>
-                          <img
-                            className={styles.cartImage}
-                            src={item.images}
-                            alt={item.name}
-                          />
-                        </td>
-                        <td>
-                          <p className={styles.tableData}>{item.name}</p>
-                        </td>
-                        <td>
-                          <p className={styles.tableData}>{item.quantity}</p>
-                        </td>
-                        <td>
-                          <p className={styles.tableData}>{item.price}</p>
-                        </td>
-                        <td>
-                          <p className={styles.tableData}>Delivered</p>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No delivered orders.</p>
+            )}
           </div>
         </div>
       ) : (

@@ -17,6 +17,7 @@ const CategoryBaseAllProduct = () => {
   });
 
   useEffect(() => {
+    console.log(products);
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         await getUser();

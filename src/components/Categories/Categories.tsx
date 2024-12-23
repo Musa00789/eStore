@@ -1,22 +1,28 @@
-// Categories list on home page to navigate to products specific page (Mobile, Vehicles, Property, Fashion, Appliances, Furniture, Bikes)
 import React from "react";
-import { FaMobile } from "react-icons/fa6";
 import styles from "./Categories.module.css";
 import { useNavigate } from "react-router-dom";
 
-const Categories = () => {
+const Categories = (products: any) => {
   const navigate = useNavigate();
+  console.log(products);
+
+  const filterAndNavigate = (categoryName: string) => {
+    console.log(products);
+    const filteredProducts = products.filter(
+      (product: any) => product.type === categoryName
+    );
+    navigate("/allSameCategoryProducts", {
+      state: filteredProducts,
+    });
+  };
+
   return (
     <div>
       <h1 className={styles.bodyHeading}>All Categories</h1>
       <div className={styles.categoriesContainer}>
         <div
           className={styles.category}
-          onClick={() => {
-            navigate("/allSameCategoryProducts", {
-              state: { category: "Mobile" },
-            });
-          }}
+          onClick={() => filterAndNavigate("Mobiles")}
         >
           <img className={styles.productImageCategory} src="/Mobile.svg" />
           <div className={styles.productDetails}>
@@ -25,11 +31,7 @@ const Categories = () => {
         </div>
         <div
           className={styles.category}
-          onClick={() => {
-            navigate("/allSameCategoryProducts", {
-              state: { category: "Vehicles" },
-            });
-          }}
+          onClick={() => filterAndNavigate("Vehicle")}
         >
           <img className={styles.productImageCategory} src="/Car.svg" />
           <div className={styles.productDetails}>
@@ -38,11 +40,7 @@ const Categories = () => {
         </div>
         <div
           className={styles.category}
-          onClick={() => {
-            navigate("/allSameCategoryProducts", {
-              state: { category: "Property" },
-            });
-          }}
+          onClick={() => filterAndNavigate("Property")}
         >
           <img className={styles.productImageCategory} src="/Property.svg" />
           <div className={styles.productDetails}>
@@ -51,11 +49,7 @@ const Categories = () => {
         </div>
         <div
           className={styles.category}
-          onClick={() => {
-            navigate("/allSameCategoryProducts", {
-              state: { category: "Fashion" },
-            });
-          }}
+          onClick={() => filterAndNavigate("Fashion")}
         >
           <img className={styles.productImageCategory} src="/Fashion.png" />
           <div className={styles.productDetails}>
@@ -64,11 +58,7 @@ const Categories = () => {
         </div>
         <div
           className={styles.category}
-          onClick={() => {
-            navigate("/allSameCategoryProducts", {
-              state: { category: "Appliances" },
-            });
-          }}
+          onClick={() => filterAndNavigate("Electronics")}
         >
           <img className={styles.productImageCategory} src="/Appliances.jpg" />
           <div className={styles.productDetails}>
@@ -79,11 +69,7 @@ const Categories = () => {
         </div>
         <div
           className={styles.category}
-          onClick={() => {
-            navigate("/allSameCategoryProducts", {
-              state: { category: "Furniture" },
-            });
-          }}
+          onClick={() => filterAndNavigate("Furniture")}
         >
           <img className={styles.productImageCategory} src="/Furniture.jpg" />
           <div className={styles.productDetails}>
@@ -92,11 +78,7 @@ const Categories = () => {
         </div>
         <div
           className={styles.category}
-          onClick={() => {
-            navigate("/allSameCategoryProducts", {
-              state: { category: "Bikes" },
-            });
-          }}
+          onClick={() => filterAndNavigate("Bike")}
         >
           <img className={styles.productImageCategory} src="/Bikes.jpg" />
           <div className={styles.productDetails}>

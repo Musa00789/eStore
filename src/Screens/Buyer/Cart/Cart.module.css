@@ -1,132 +1,119 @@
-.backNavigator {
-  display: flex;
-  align-items: center;
-  margin-top: 16px;
-  cursor: pointer;
-  &:hover {
-    background-color: #016fe6;
-  }
-}
-.cartContainer {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 50px;
+.cartPage {
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-.productContainer {
-  width: 100%;
-  max-width: 1220px;
-  border: 1px solid #ccc;
-  padding: 16px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 5px;
-}
-
-.productImg {
-  max-width: 150px;
-  max-height: 150px;
-  margin-right: 16px;
-}
-
-.productInfo {
-  flex-grow: 1;
-}
-
-.pName {
-  font-size: 1.2rem;
-  margin: 0;
-}
-
-.pDescription {
-  font-size: 0.9rem;
-}
-
-.priceAndQuantity {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.price {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-}
-
-.pPrice {
-  margin-left: 8px;
-  margin-bottom: 5px;
-  font-weight: 700;
-  color: rgb(0, 0, 0);
-}
-
-.quantityControl {
-  display: flex;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.quantityButton {
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  background-color: #007bff;
-  color: #fff;
+.backButton {
+  background: none;
   border: none;
-  padding: 0px 8px;
-  margin: 0px 4px;
+  color: #0078ff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.pageTitle {
+  text-align: center;
+  color: #0078ff;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.cartTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.cartTable th,
+.cartTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
   text-align: center;
 }
 
-.quantity {
-  font-size: 1rem;
-  font-weight: 600;
+.cartTable th {
+  background-color: #f7f7f7;
+  color: #333;
 }
 
-.checkOutBtn {
-  font-size: 1rem;
+.itemImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantityButton {
+  background-color: #0078ff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
   cursor: pointer;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.quantityButton:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.checkoutButton {
   background-color: #28a745;
   color: #fff;
   border: none;
-  padding: 8px 16px;
-  margin: 5px;
-  &:hover {
-    background-color: #218838;
-  }
-}
-.delBtn {
-  font-size: 1rem;
+  padding: 5px 10px;
+  border-radius: 5px;
   cursor: pointer;
-  background-color: #fd0606;
+}
+
+.checkoutButton:hover {
+  background-color: #218838;
+}
+
+.deleteButton {
+  background-color: #ff5252;
   color: #fff;
   border: none;
-  padding: 8px 16px;
-  margin: 5px;
-  &:hover {
-    background-color: #c50606;
-  }
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
-.homeButton {
-  padding: 10px 20px;
-  font-size: 1.1rem;
+
+.deleteButton:hover {
+  background-color: #e53935;
+}
+
+.cartSummary {
+  text-align: right;
+  margin-top: 20px;
+  font-size: 1.2rem;
   font-weight: bold;
+  color: #333;
+}
+
+.emptyCart {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.homeButton {
+  background-color: #0078ff;
   color: #fff;
-  background-color: #0056b3;
   border: none;
-  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  max-width: 130px;
-  width: 130px;
+  margin-top: 20px;
 }
 
 .homeButton:hover {
-  background-color: #218838;
+  background-color: #005bb5;
 }

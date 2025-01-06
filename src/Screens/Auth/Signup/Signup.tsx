@@ -28,7 +28,11 @@ const Signup = () => {
       });
 
       console.log("User registered successfully");
-      navigate("/");
+      if (values.status === "Admin") {
+        navigate("/Admin");
+      } else {
+        navigate("/");
+      }
     } catch (error: any) {
       alert(`Error: ${error.message}`);
     } finally {

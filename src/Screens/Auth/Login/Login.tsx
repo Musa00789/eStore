@@ -55,7 +55,9 @@ const Login = () => {
         const userData = userDoc.data();
         const userStatus = userData?.status;
 
-        if (userStatus === "Admin") {
+        if (userStatus === "Seller") {
+          navigate("/Seller");
+        } else if (userStatus === "Admin") {
           navigate("/Admin");
         } else {
           navigate("/");

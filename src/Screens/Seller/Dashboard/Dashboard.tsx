@@ -115,16 +115,18 @@ const Dashboard = () => {
       </div>
 
       <div className={styles.quickLinks}>
-        <button onClick={() => navigate("/Admin/addproducts")}>
+        <button onClick={() => navigate("/Seller/addproducts")}>
           Add New Product
         </button>
-        <button onClick={() => navigate("/Admin/analytics")}>
+        <button onClick={() => navigate("/Seller/analytics")}>
           View Analytics
         </button>
-        <button onClick={() => navigate("/Admin/seller-chat")}>
+        <button onClick={() => navigate("/Seller/seller-chat")}>
           Open Chats
         </button>
-        <button onClick={() => navigate("/Admin/profile")}>Edit Profile</button>
+        <button onClick={() => navigate("/Seller/profile")}>
+          Edit Profile
+        </button>
       </div>
 
       <div className={styles.section}>

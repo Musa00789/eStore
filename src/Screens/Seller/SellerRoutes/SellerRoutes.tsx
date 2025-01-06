@@ -78,27 +78,27 @@ const Sidebar = () => {
         items={[
           {
             label: "Dashboard",
-            key: "/Admin/dashboard",
+            key: "/Seller/dashboard",
             icon: <DashboardOutlined />,
           },
           {
             label: "Profile",
-            key: "/Admin/profile",
+            key: "/Seller/profile",
             icon: <UserOutlined />,
           },
           {
             label: "Chats",
-            key: "/Admin/seller-chat",
+            key: "/Seller/seller-chat",
             icon: <MessageOutlined />,
           },
           {
             label: "Add Products",
-            key: "/Admin/addproducts",
+            key: "/Seller/addproducts",
             icon: <PlusOutlined />,
           },
           {
             label: "Analytics",
-            key: "/Admin/analytics",
+            key: "/Seller/analytics",
             icon: <LineChartOutlined />,
           },
           {

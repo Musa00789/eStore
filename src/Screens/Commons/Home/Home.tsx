@@ -8,6 +8,7 @@ import Header from "../../../components/Header/Header";
 import styles from "./Home.module.css";
 import ProductList from "../../../components/CategoryBasedProductList/ProductList";
 import Loader from "../../../components/Loader/Loader";
+import { FaThumbsDown } from "react-icons/fa6";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -110,8 +111,10 @@ const Home = () => {
             />
           )
         ) : (
-          // <h1 className={styles.noProductsMessage}>No products available</h1>
-          <Loader />
+          <h1 className={styles.noProductsMessage}>
+            No products available <FaThumbsDown />
+          </h1>
+          // <Loader />
         )}
       </div>
     );

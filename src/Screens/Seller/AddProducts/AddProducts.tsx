@@ -14,8 +14,10 @@ import { ref, uploadBytesResumable, getDownloadURL } from "@firebase/storage";
 import { FaPlus, FaPencil, FaTrashCan, FaCartShopping } from "react-icons/fa6";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "../../../components/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 const AddProducts = () => {
+  const navigate = useNavigate();
   const [file, setFile] = useState<File[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -71,6 +73,7 @@ const AddProducts = () => {
     try {
       const productId = isEditMode && editProductId ? editProductId : uuidv4();
       const downloadUrls: string[] = [];
+      const uAuth = auth.currentUser?.uid;
 
       for (const selectedFile of file) {
         const storageRef = ref(
@@ -114,6 +117,11 @@ const AddProducts = () => {
                   }),
                 };
 
+                if (!uAuth) {
+                  alert("User is not authenticated");
+                  navigate("/login");
+                  throw new Error("User is not authenticated");
+                }
                 const productRef = doc(firestore, "Products", productId);
                 setDoc(productRef, productData).then(() => {
                   getProducts();
@@ -129,13 +137,52 @@ const AddProducts = () => {
     }
   };
 
+  // const getProducts = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const uAuth = auth.currentUser?.uid;
+  //     if (!uAuth) {
+  //       alert("User is not authenticated");
+  //       navigate("/login");
+  //       throw new Error("User is not authenticated");
+  //     }
+  //     const productsCollectionRef = collection(firestore, "Products");
+  //     const productsQuery = selectedTypeFilter
+  //       ? query(productsCollectionRef, where("type", "==", selectedTypeFilter))
+  //       : query(productsCollectionRef);
+
+  //     const querySnapshot = await getDocs(productsQuery);
+  //     const productsArray: any[] = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const data = doc.data();
+  //       productsArray.push({ ...data, id: doc.id });
+  //     });
+  //     setProducts(productsArray);
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const getProducts = async () => {
     setLoading(true);
     try {
+      const uAuth = auth.currentUser?.uid;
+      if (!uAuth) {
+        alert("User is not authenticated");
+        navigate("/login");
+        return;
+      }
+
       const productsCollectionRef = collection(firestore, "Products");
       const productsQuery = selectedTypeFilter
-        ? query(productsCollectionRef, where("type", "==", selectedTypeFilter))
-        : query(productsCollectionRef);
+        ? query(
+            productsCollectionRef,
+            where("sellerId", "==", uAuth), // Filter by sellerId
+            where("type", "==", selectedTypeFilter) // Additional type filter
+          )
+        : query(productsCollectionRef, where("sellerId", "==", uAuth)); // Filter only by sellerId
 
       const querySnapshot = await getDocs(productsQuery);
       const productsArray: any[] = [];
@@ -171,6 +218,12 @@ const AddProducts = () => {
     if (!confirmDelete) return;
 
     try {
+      const uAuth = auth.currentUser?.uid;
+      if (!uAuth) {
+        alert("User is not authenticated");
+        navigate("/login");
+        throw new Error("User is not authenticated");
+      }
       const productRef = doc(firestore, "Products", productId);
       await deleteDoc(productRef);
       setProducts((prevProducts) =>

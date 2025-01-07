@@ -159,10 +159,10 @@ const Header = ({ user }: any) => {
                   e.preventDefault();
                   try {
                     console.log("user:", user);
-                    navigate("/User/chat", { state: user });
+                    navigate("/Buyer/chat", { state: user });
                   } catch (error) {
                     console.log(error);
-                    navigate("/User/error");
+                    navigate("/Buyer/error");
                   }
                 }}
               >
@@ -200,14 +200,14 @@ const Header = ({ user }: any) => {
               <div className={styles.dropdownMenu}>
                 <button
                   onClick={() => {
-                    navigate("/User/profile");
+                    navigate("/Buyer/profile");
                   }}
                 >
                   Profile
                 </button>
                 <button
                   onClick={() => {
-                    navigate("/User/settings");
+                    navigate("/Buyer/settings");
                   }}
                 >
                   <FaGear
@@ -243,7 +243,7 @@ const Header = ({ user }: any) => {
         )}
         <button
           onClick={() => {
-            navigate("/User/cart");
+            navigate("/Buyer/cart");
           }}
           className={styles.cartBtn}
         >

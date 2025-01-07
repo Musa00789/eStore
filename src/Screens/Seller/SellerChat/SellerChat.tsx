@@ -256,13 +256,14 @@ const SellerChat: React.FC = () => {
               </div>
               <div className={styles.inputContainer}>
                 <input
+                  className={styles.chatInput}
                   type="text"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Type your message..."
                   onKeyDown={handleKeyPress}
                 />
-                <button onClick={sendMessage}>
+                <button className={styles.sendButton} onClick={sendMessage}>
                   <FaPaperPlane /> Send
                 </button>
               </div>

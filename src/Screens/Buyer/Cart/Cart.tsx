@@ -110,7 +110,7 @@ const Cart = () => {
         );
         await setDoc(orderRef, item); // Move to Orders collection
         await removeFromCart(item); // Remove from cart
-        navigate("/User/checkout", { state: item });
+        navigate("/Buyer/checkout", { state: item });
       }
     } catch (error) {
       console.error("Error during checkout:", error);

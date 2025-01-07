@@ -54,7 +54,7 @@ const ProductDetails = () => {
   };
 
   const handleContactSeller = () => {
-    navigate("/User/chat", {
+    navigate("/Buyer/chat", {
       state: {
         sellerId: product.sellerId,
         productName: product.name,

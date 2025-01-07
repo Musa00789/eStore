@@ -47,3 +47,9 @@
   color: rgb(0, 0, 0);
   /* text-decoration: double underline rgb(116, 116, 116); */
 }
+.noProductsMessage {
+  font-size: 18px;
+  font-weight: 600;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}

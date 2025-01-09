@@ -47,7 +47,7 @@ const Dashboard = () => {
         setTotalSales(totalRevenue);
 
         const productsQuery = query(
-          collection(firestore, "Products", uid, "User Products"),
+          collection(firestore, "Products"),
           where("sellerId", "==", uid)
         );
         const productsSnapshot = await getDocs(productsQuery);

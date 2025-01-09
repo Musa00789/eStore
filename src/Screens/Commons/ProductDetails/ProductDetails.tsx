@@ -8,11 +8,12 @@ import Header from "../../../components/Header/Header";
 import Loader from "../../../components/Loader/Loader";
 import { addToCart } from "../../../components/addToCart";
 import { FaInfoCircle } from "react-icons/fa";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 const ProductDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const product = location.state; // Product object from navigation state
+  const product = location.state;
 
   const [user, setUser] = useState({
     name: "",
@@ -23,15 +24,42 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
+  // const resolveShortUrl = async (shortUrl: string): Promise<string | null> => {
+  //   try {
+  //     const response = await fetch(shortUrl, {
+  //       method: "HEAD",
+  //       redirect: "follow",
+  //     });
+  //     console.log("Resolved URL:", response.url);
+  //     return response.url;
+  //   } catch (error) {
+  //     console.error("Error resolving shortened URL:", error);
+  //     return null;
+  //   }
+  // };
+
+  // // Example Usage
+  // useEffect(() => {
+  //   const shortUrl = product.locationUrl;
+  //   resolveShortUrl(shortUrl).then((resolvedUrl) => {
+  //     if (resolvedUrl) {
+  //       console.log("Resolved Full URL:", resolvedUrl);
+  //       // Now extract coordinates from resolvedUrl
+  //       const coordinates = extractCoordinates(resolvedUrl);
+  //       console.log("Extracted Coordinates:", coordinates);
+  //     }
+  //   });
+  // }, []);
+
   useEffect(() => {
     if (!product) {
       console.error("No product data received!");
       navigate("/error");
       return;
     }
-    setSelectedImage(product.images[0]); // Set first image as default
-    incrementField(product.id, "views"); // Increment views
-    incrementField(product.id, "clicks"); // Increment clicks
+    setSelectedImage(product.images[0]);
+    incrementField(product.id, "views");
+    incrementField(product.id, "clicks");
     fetchUser();
   }, [product, navigate]);
 
@@ -54,6 +82,10 @@ const ProductDetails = () => {
   };
 
   const handleContactSeller = () => {
+    if (!auth.currentUser?.uid) {
+      alert("Login to chat with the seller");
+      return;
+    }
     navigate("/Buyer/chat", {
       state: {
         sellerId: product.sellerId,
@@ -77,6 +109,45 @@ const ProductDetails = () => {
     } catch (error) {
       console.error("Error fetching user:", error);
     }
+  };
+  const extractCoordinates = (url: string) => {
+    console.log("url", url);
+    const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    console.log("match", match);
+    if (match) {
+      console.log("match", match);
+      return {
+        lat: parseFloat(match[1]),
+        lng: parseFloat(match[2]),
+      };
+    }
+    return null;
+  };
+
+  const renderMapFromUrl = (url: string) => {
+    const coordinates = extractCoordinates(url);
+
+    if (!coordinates) {
+      return <p>Invalid location URL</p>;
+    }
+
+    const { lat, lng } = coordinates;
+
+    const { isLoaded } = useJsApiLoader({
+      googleMapsApiKey: "AIzaSyCGXjH2olWHaRbJBH4SRNGmYfX60skyWs8",
+    });
+
+    if (!isLoaded) return <p>Loading map...</p>;
+
+    return (
+      <GoogleMap
+        mapContainerClassName={styles.mapContainer}
+        center={{ lat, lng }}
+        zoom={15}
+      >
+        <Marker position={{ lat, lng }} />
+      </GoogleMap>
+    );
   };
 
   const renderCategorySpecificContent = () => {
@@ -120,27 +191,17 @@ const ProductDetails = () => {
         return (
           <div>
             <button
+              className={styles.contactSellerButton}
+              onClick={handleContactSeller}
+            >
+              Contact Seller
+            </button>
+            <button
               className={styles.specificationsButton}
               onClick={() => alert("Specifications coming soon!")}
             >
               <FaInfoCircle /> View Specifications
             </button>
-            <table className={styles.specificationsTable}>
-              <tbody>
-                <tr>
-                  <td>Brand:</td>
-                  <td>{product.brand}</td>
-                </tr>
-                <tr>
-                  <td>Model:</td>
-                  <td>{product.model}</td>
-                </tr>
-                <tr>
-                  <td>Warranty:</td>
-                  <td>{product.warranty || "No Warranty"}</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         );
       case "Property":
@@ -227,7 +288,6 @@ const ProductDetails = () => {
                 <FaTruck
                   size={34}
                   style={{
-                    // fontSize: "1.5rem",
                     marginRight: "5px",
                     marginBottom: "4px",
                   }}
@@ -241,7 +301,6 @@ const ProductDetails = () => {
                 <FaCreditCard
                   size={34}
                   style={{
-                    // fontSize: "1.2rem",
                     marginRight: "5px",
                     marginBottom: "4px",
                   }}
@@ -252,6 +311,80 @@ const ProductDetails = () => {
           )}
         </div>
       </div>
+      {product.type === "Mobiles" && (
+        <div className={styles.specificationsContainer}>
+          <h2>Specifications</h2>
+          <table className={styles.specificationsTable}>
+            <tbody>
+              <tr>
+                <td>OS</td>
+                <td>Android 14 OS</td>
+              </tr>
+              <tr>
+                <td>UI</td>
+                <td>HIOS 14</td>
+              </tr>
+              <tr>
+                <td>Dimensions</td>
+                <td>168 x 76.4 x 7.7 mm</td>
+              </tr>
+              <tr>
+                <td>Weight</td>
+                <td>N/A</td>
+              </tr>
+              <tr>
+                <td>SIM</td>
+                <td>Dual Sim, Dual Standby (Nano-SIM)</td>
+              </tr>
+              <tr>
+                <td>Colors</td>
+                <td>
+                  Stellar Shadow, Astral Ice, Magic Skin 3.0, Bumblebee Edition
+                </td>
+              </tr>
+              <tr>
+                <td>Processor</td>
+                <td>
+                  Octa-core (2 x 2.0 GHz Cortex-A75 + 6 x 1.8 GHz Cortex-A55),
+                  Mediatek Helio G91 (12 nm), Mali-G52 MC2
+                </td>
+              </tr>
+              <tr>
+                <td>Display</td>
+                <td>
+                  IPS LCD Capacitive Touchscreen, 16M Colors, Multitouch, 6.8
+                  Inches, 1080 x 2460 Pixels (~396 PPI), 90Hz, 800 nits
+                </td>
+              </tr>
+              <tr>
+                <td>Memory</td>
+                <td>128GB Built-in, 8GB RAM, microSDXC (dedicated slot)</td>
+              </tr>
+              <tr>
+                <td>Camera</td>
+                <td>
+                  Dual Camera: 64 MP (wide), PDAF + Auxiliary lens, Quad LED
+                  Flash; Front: 13 MP (wide), Dual-LED dual-tone flash
+                </td>
+              </tr>
+              <tr>
+                <td>Battery</td>
+                <td>5000 mAh, 18W wired</td>
+              </tr>
+              <tr>
+                <td>Price</td>
+                <td>Rs. 39,999 ($122)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+      {product.type === "Property" && product.locationUrl && (
+        <div className={styles.propertyLocation}>
+          <h2>Property Location</h2>
+          {renderMapFromUrl(product.locationUrl)}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,19 +1,25 @@
 import React from "react";
 import styles from "./Categories.module.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const Categories = (products: any) => {
+const Categories = ({ products }: { products: any[] }) => {
   const navigate = useNavigate();
-  console.log(products);
+  // const location = useLocation();
+  // const product = location.state();
+  console.log("categories" + products);
 
   const filterAndNavigate = (categoryName: string) => {
-    console.log(products);
-    const filteredProducts = products.filter(
-      (product: any) => product.type === categoryName
-    );
-    navigate("/allSameCategoryProducts", {
-      state: filteredProducts,
-    });
+    try {
+      console.log(products);
+      const filteredProducts = products.filter(
+        (product: any) => product.type === categoryName
+      );
+      navigate("/allSameCategoryProducts", {
+        state: filteredProducts,
+      });
+    } catch (error) {
+      console.log("Error moving forward" + error);
+    }
   };
 
   return (

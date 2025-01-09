@@ -58,13 +58,26 @@ const Home = () => {
           type: data.type || "",
           id: data.id || "",
           sellerId: data.sellerId || "",
+          waranty: data.waranty || "",
           Size: [],
           Quantity: [],
+          locationUrl: "",
         };
         if (data.type === "Fashion") {
           baseData.Size = ["S", "M", "L", "XL", "XXL"];
+        } else if (data.type === "Property") {
+          console.log("location url : " + data.locationUrl);
+          baseData.locationUrl = data.locationUrl;
         } else {
-          baseData.Quantity = [1, 2, 3, 4, 5];
+          if (data.type === "Mobiles") {
+            baseData.Quantity = data.quantity;
+          } else if (baseData.type === "Fashion") {
+            baseData.Quantity = [1, 2, 3, 4, 5];
+          } else if (baseData.Quantity === "Property") {
+            baseData.Quantity = null;
+          } else {
+            baseData.Quantity = data.quantity;
+          }
         }
 
         return baseData;
@@ -133,7 +146,7 @@ const Home = () => {
             )}
             <ImageGallery />
             {products.length > 0 ? (
-              <Categories allProducts={products} />
+              <Categories products={products} />
             ) : (
               <Loader />
             )}

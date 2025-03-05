@@ -118,7 +118,7 @@ const Signup = () => {
                     name="status"
                     value="Admin"
                   />
-                  Admin
+                  <h6>Admin</h6>
                 </label>
                 <label className={styles.radioLabel}>
                   <Field
@@ -127,7 +127,7 @@ const Signup = () => {
                     name="status"
                     value="User"
                   />
-                  User
+                  <h6>User</h6>
                 </label>
               </div>
               <ErrorMessage name="status" component="div" className="error" />

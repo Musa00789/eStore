@@ -79,7 +79,7 @@ const Home = () => {
             baseData.Quantity = data.quantity;
           }
         }
-
+        setLoading(false);
         return baseData;
       });
 
@@ -147,8 +147,10 @@ const Home = () => {
             <ImageGallery />
             {products.length > 0 ? (
               <Categories products={products} />
-            ) : (
+            ) : loading ? (
               <Loader />
+            ) : (
+              <h1 className={styles.userGreetings}>No Products available</h1>
             )}
             {renderProductCategory("Mobiles")}
             {renderProductCategory("Vehicle")}
@@ -159,8 +161,10 @@ const Home = () => {
             {renderProductCategory("Bike")}
           </div>
         </>
-      ) : (
+      ) : loading ? (
         <Loader />
+      ) : (
+        <h1 className={styles.userGreetings}>No Products available</h1>
       )}
     </div>
   );

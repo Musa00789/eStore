@@ -4,8 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const Categories = ({ products }: { products: any[] }) => {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const product = location.state();
   console.log("categories" + products);
 
   const filterAndNavigate = (categoryName: string) => {

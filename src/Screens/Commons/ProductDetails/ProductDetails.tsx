@@ -24,33 +24,6 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
-  // const resolveShortUrl = async (shortUrl: string): Promise<string | null> => {
-  //   try {
-  //     const response = await fetch(shortUrl, {
-  //       method: "HEAD",
-  //       redirect: "follow",
-  //     });
-  //     console.log("Resolved URL:", response.url);
-  //     return response.url;
-  //   } catch (error) {
-  //     console.error("Error resolving shortened URL:", error);
-  //     return null;
-  //   }
-  // };
-
-  // // Example Usage
-  // useEffect(() => {
-  //   const shortUrl = product.locationUrl;
-  //   resolveShortUrl(shortUrl).then((resolvedUrl) => {
-  //     if (resolvedUrl) {
-  //       console.log("Resolved Full URL:", resolvedUrl);
-  //       // Now extract coordinates from resolvedUrl
-  //       const coordinates = extractCoordinates(resolvedUrl);
-  //       console.log("Extracted Coordinates:", coordinates);
-  //     }
-  //   });
-  // }, []);
-
   useEffect(() => {
     if (!product) {
       console.error("No product data received!");
@@ -137,7 +110,7 @@ const ProductDetails = () => {
       googleMapsApiKey: "AIzaSyCGXjH2olWHaRbJBH4SRNGmYfX60skyWs8",
     });
 
-    if (!isLoaded) return <p>Loading map...</p>;
+    if (!isLoaded) return <Loader />;
 
     return (
       <GoogleMap
@@ -265,8 +238,8 @@ const ProductDetails = () => {
         {/* Product Info */}
         <div className={styles.productInfo}>
           <h1 className={styles.productName}>{product.name}</h1>
-          <p className={styles.productPrice}>Rs. {product.price}</p>
-          <p className={styles.productDescription}>{product.description}</p>
+          <p className={styles.productPrice}> Rs. {product.price}</p>
+          {/* <p className={styles.productDescription}>{product.description}</p> */}
           <div className={styles.buttonGroup}>
             {renderCategorySpecificContent()}
           </div>
@@ -381,7 +354,7 @@ const ProductDetails = () => {
       )}
       {product.type === "Property" && product.locationUrl && (
         <div className={styles.propertyLocation}>
-          <h2>Property Location</h2>
+          <h2 style={{ marginLeft: 40, fontWeight: 700 }}>Property Location</h2>
           {renderMapFromUrl(product.locationUrl)}
         </div>
       )}

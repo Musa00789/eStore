@@ -36,6 +36,7 @@ const AddProducts = () => {
   const [sellerId, setSellerId] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
   const [loading, setLoading] = useState(false);
+  const [locationUrl, setLocationUrl] = useState("");
 
   useEffect(() => {
     setSellerId(auth.currentUser?.uid || "");
@@ -109,6 +110,7 @@ const AddProducts = () => {
                   purchases: 0,
                   ...(type === "Fashion" && { size, quantity }),
                   ...(type === "Electronics" && { quantity }),
+                  ...(type === "Property" && { locationUrl }),
                   ...(type === "Mobiles" && {
                     quantity,
                     model,
@@ -207,6 +209,7 @@ const AddProducts = () => {
     setType(product.type);
     setSize(product.size || "");
     setQuantity(product.quantity || "");
+    setLocationUrl(product.locationUrl || "");
     setFile([]);
     openForm();
   };
@@ -363,7 +366,7 @@ const AddProducts = () => {
                 />
                 <label>Brand</label>
                 <input
-                  type="number"
+                  type="text"
                   value={brand}
                   required
                   onChange={(e) => setBrand(e.target.value)}
@@ -404,7 +407,22 @@ const AddProducts = () => {
                 />
               </>
             )}
-            <button className={styles.addProductBtn} onClick={handleAddProduct}>
+            {type === "Property" && (
+              <>
+                <label>Location Url</label>
+                <input
+                  type="text"
+                  value={locationUrl}
+                  onChange={(e) => setLocationUrl(e.target.value)}
+                />
+              </>
+            )}
+            <button
+              className={styles.addProductBtn}
+              onClick={() => {
+                handleAddProduct();
+              }}
+            >
               {isEditMode ? "Update Product" : "Add Product"}
             </button>
           </div>

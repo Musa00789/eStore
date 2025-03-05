@@ -88,14 +88,14 @@ const Header = ({ user }: any) => {
   return (
     <div className={styles.header}>
       <div className={styles.menuLogoContainer}>
-        <h4
+        <h1
           onClick={() => {
             navigate("/");
           }}
           className={styles.logo}
         >
-          RSS
-        </h4>
+          ♾️
+        </h1>
       </div>
       <div style={{ display: "flex", flexDirection: "column", width: "50%" }}>
         <div className={styles.searchBarContainer}>

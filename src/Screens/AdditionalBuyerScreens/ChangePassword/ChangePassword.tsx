@@ -32,6 +32,9 @@ const ChangePassword = () => {
         await reauthenticateWithCredential(user, credential);
         await updatePassword(user, newPassword);
         setMessage("Password updated successfully!");
+        setCurrentPassword("");
+        setConfirmPassword("");
+        setNewPassword("");
       } catch (error: any) {
         setMessage("Error updating password: " + error.message);
       }

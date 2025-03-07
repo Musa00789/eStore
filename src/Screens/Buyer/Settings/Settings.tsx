@@ -5,15 +5,25 @@ import AddressSettings from "../../AdditionalBuyerScreens/AddressSettings/Addres
 import Notifications from "../../AdditionalBuyerScreens/Notifications/Notifications";
 import DeleteAccount from "../../AdditionalBuyerScreens/DeleteAccount/DeleteAccount";
 import styles from "./Settings.module.css";
+import { FaHome } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
 
   return (
     <div className={styles.settingsContainer}>
+      <button
+        className={styles.homeBtn}
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        <FaHome />
+      </button>
       <h2 className={styles.settingsTitle}>Account Settings</h2>
 
-      {/* Tabs */}
       <div className={styles.settingsTabs}>
         {["profile", "password", "address", "notifications", "delete"].map(
           (tab) => (
@@ -28,7 +38,6 @@ const Settings = () => {
         )}
       </div>
 
-      {/* Dynamic Content */}
       <div className={styles.settingsContent}>
         {activeTab === "profile" && <ProfileSettings />}
         {activeTab === "password" && <ChangePassword />}

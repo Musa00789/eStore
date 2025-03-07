@@ -118,8 +118,10 @@ const Chat: React.FC = () => {
           console.log(
             "Seller ID and Product ID provided. Checking for existing chats..."
           );
-          const existingChat = fetchedChats.find((chat) =>
-            chat.participants.includes(sellerId)
+          const existingChat = fetchedChats.find(
+            (chat) =>
+              chat.participants.includes(sellerId) &&
+              chat.productId === productId
           );
           console.log("Existing chat found:", !!existingChat);
 
@@ -187,7 +189,13 @@ const Chat: React.FC = () => {
         : null;
       console.log("Product fetched for new chat:", product);
 
-      const chatRef = doc(firestore, "Chats", `${userId}-${sellerId}`);
+      // const chatRef = doc(firestore, "Chats", `${userId}-${sellerId}`);
+      const chatRef = doc(
+        firestore,
+        "Chats",
+        `${userId}-${sellerId}-${productId}`
+      );
+
       await setDoc(chatRef, {
         participants: [userId, sellerId],
         productId,

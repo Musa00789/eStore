@@ -52,3 +52,23 @@
   border-radius: 8px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
 }
+.homeBtn {
+  /* position: absolute;
+  top: 20px;
+  left: 20px; */
+  padding: 5px;
+  font-size: 17px;
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 10px;
+  width: 50px;
+  border: 1px solid grey;
+  background: linear-gradient(to bottom, #7289da, #7289da);
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  &:hover {
+    box-shadow: 0px 0px 10px 0px cadetblue;
+    transition: 0.5s;
+  }
+}

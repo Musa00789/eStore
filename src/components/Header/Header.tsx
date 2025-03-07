@@ -8,6 +8,7 @@ import {
   FaGear,
   FaMessage,
   FaX,
+  FaPerson,
 } from "react-icons/fa6";
 import styles from "./Header.module.css";
 import { auth, firestore } from "../../firebase";
@@ -193,7 +194,7 @@ const Header = ({ user }: any) => {
             onMouseLeave={() => setIsDropdownOpen(false)}
           >
             <div className={styles.profileSection} onClick={toggleDropdown}>
-              <FaCircleUser className={styles.profileIcon} />
+              <FaPerson className={styles.profileIcon} />
               <h5>{user?.name}</h5>
             </div>
             {isDropdownOpen && (
@@ -203,6 +204,12 @@ const Header = ({ user }: any) => {
                     navigate("/Buyer/profile");
                   }}
                 >
+                  <FaCircleUser
+                    style={{
+                      color: "#7289da",
+                      marginRight: "5px",
+                    }}
+                  />{" "}
                   Profile
                 </button>
                 <button
@@ -212,7 +219,7 @@ const Header = ({ user }: any) => {
                 >
                   <FaGear
                     style={{
-                      color: "black",
+                      color: "#7289da",
                       marginRight: "5px",
                     }}
                   />
@@ -233,6 +240,7 @@ const Header = ({ user }: any) => {
                   Logout{" "}
                   <FaArrowRightFromBracket
                     style={{
+                      color: "#7289da",
                       marginLeft: "5px",
                     }}
                   />

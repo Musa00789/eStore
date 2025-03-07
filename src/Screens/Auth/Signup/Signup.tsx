@@ -28,10 +28,12 @@ const Signup = () => {
       });
 
       console.log("User registered successfully");
-      if (values.status === "Admin") {
+      if (values.status === "Seller") {
+        navigate("/Seller");
+      } else if (values.status === "Admin") {
         navigate("/Admin");
       } else {
-        navigate("/");
+        navigate("/Buyer");
       }
     } catch (error: any) {
       alert(`Error: ${error.message}`);
@@ -116,18 +118,18 @@ const Signup = () => {
                     className={styles.radioInput}
                     type="radio"
                     name="status"
-                    value="Admin"
+                    value="Seller"
                   />
-                  <h6>Admin</h6>
+                  <h6>Seller</h6>
                 </label>
                 <label className={styles.radioLabel}>
                   <Field
                     className={styles.radioInput}
                     type="radio"
                     name="status"
-                    value="User"
+                    value="Buyer"
                   />
-                  <h6>User</h6>
+                  <h6>Buyer</h6>
                 </label>
               </div>
               <ErrorMessage name="status" component="div" className="error" />

@@ -4,22 +4,22 @@ import ProfileSettings from "../../AdditionalBuyerScreens/ProfileSettings/Profil
 import AddressSettings from "../../AdditionalBuyerScreens/AddressSettings/AddressSettings";
 import Notifications from "../../AdditionalBuyerScreens/Notifications/Notifications";
 import DeleteAccount from "../../AdditionalBuyerScreens/DeleteAccount/DeleteAccount";
-import "./settings.module.css";
+import styles from "./Settings.module.css";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
   return (
-    <div className="settings-container">
-      <h2 className="settings-title">Account Settings</h2>
+    <div className={styles.settingsContainer}>
+      <h2 className={styles.settingsTitle}>Account Settings</h2>
 
       {/* Tabs */}
-      <div className="settings-tabs">
+      <div className={styles.settingsTabs}>
         {["profile", "password", "address", "notifications", "delete"].map(
           (tab) => (
             <button
               key={tab}
-              className={activeTab === tab ? "active" : ""}
+              className={activeTab === tab ? styles.active : ""}
               onClick={() => setActiveTab(tab)}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -29,7 +29,7 @@ const Settings = () => {
       </div>
 
       {/* Dynamic Content */}
-      <div className="settings-content">
+      <div className={styles.settingsContent}>
         {activeTab === "profile" && <ProfileSettings />}
         {activeTab === "password" && <ChangePassword />}
         {activeTab === "address" && <AddressSettings />}

@@ -1,80 +1,54 @@
-.settings-container {
-  max-width: 100%;
-  margin: 20px auto;
+.settingsContainer {
+  background-color: #2c2f33; /* Discord dark background */
+  color: #ffffff; /* White text */
   padding: 20px;
-  background: white;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 50px auto;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.settings-title {
+.settingsTitle {
   text-align: center;
   font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
-.settings-tabs {
+/* Tabs */
+.settingsTabs {
   display: flex;
-  justify-content: space-evenly;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 10px;
+  justify-content: space-around;
   margin-bottom: 20px;
-  width: 100%;
+  border-bottom: 2px solid #23272a;
+  padding-bottom: 10px;
 }
 
-.settings-tabs button {
+.settingsTabs button {
   background: none;
   border: none;
-  padding: 10px;
+  color: #b9bbbe;
   font-size: 16px;
+  padding: 10px 15px;
   cursor: pointer;
   transition: color 0.3s ease-in-out;
 }
 
-.settings-tabs button.active {
-  color: blue;
-  border-bottom: 2px solid blue;
+.settingsTabs button:hover {
+  color: #7289da; /* Discord blue */
 }
 
-.settings-content {
-  padding: 10px;
+.settingsTabs .active {
+  color: #7289da;
+  border-bottom: 2px solid #7289da;
+  font-weight: bold;
 }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-  .settings-container {
-    width: 90%;
-    padding: 15px;
-  }
-
-  .settings-tabs {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .settings-tabs button {
-    margin-bottom: 5px;
-  }
-}
-
-input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  background: blue;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background: darkblue;
+/* Content */
+.settingsContent {
+  background-color: #23272a;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
 }

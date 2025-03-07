@@ -71,7 +71,6 @@ const Profile = () => {
         });
         setCartItems(items);
 
-        // Calculate total cart amount
         const total = items.reduce(
           (acc, item) => acc + item.price * item.quantity,
           0

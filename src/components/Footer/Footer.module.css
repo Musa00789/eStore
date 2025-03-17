@@ -1,0 +1,117 @@
+/* Footer Container */
+.footer {
+  background-color: #23272a;
+  color: #ffffff;
+  padding: 40px 0;
+  font-family: "Arial", sans-serif;
+  text-align: center;
+}
+
+/* Flex Container */
+.container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: auto;
+  gap: 20px;
+}
+
+/* Logo Section */
+.logoSection h2 {
+  font-size: 1.8rem;
+  color: #7289da;
+}
+
+.logoSection p {
+  font-size: 0.9rem;
+  color: #b9bbbe;
+}
+
+/* Quick Links */
+.links h3,
+.newsletter h3,
+.socials h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #7289da;
+}
+
+.links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.links li {
+  margin: 5px 0;
+}
+
+.links a {
+  color: #b9bbbe;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.links a:hover {
+  color: #ffffff;
+}
+
+/* Newsletter Section */
+.newsletter p {
+  font-size: 0.9rem;
+  color: #b9bbbe;
+}
+
+.newsletter input {
+  padding: 10px;
+  width: 80%;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #2c2f33;
+  color: #ffffff;
+}
+
+.newsletter button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #7289da;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newsletter button:hover {
+  background-color: #5865f2;
+}
+
+/* Social Icons */
+.socials .icons a {
+  margin: 0 10px;
+  color: #7289da;
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.socials .icons a:hover {
+  color: #5865f2;
+}
+
+/* Copyright */
+.copyright {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: #b9bbbe;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .newsletter input {
+    width: 100%;
+  }
+}

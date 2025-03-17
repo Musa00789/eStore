@@ -9,6 +9,7 @@ import styles from "./Home.module.css";
 import ProductList from "../../../components/CategoryBasedProductList/ProductList";
 import Loader from "../../../components/Loader/Loader";
 import { FaThumbsDown } from "react-icons/fa6";
+import Footer from "../../../components/Footer/Footer";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -166,6 +167,7 @@ const Home = () => {
       ) : (
         <h1 className={styles.userGreetings}>No Products available</h1>
       )}
+      <Footer />
     </div>
   );
 };

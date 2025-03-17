@@ -10,6 +10,7 @@ import {
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
+import Footer from "../../../components/Footer/Footer";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -245,6 +246,7 @@ const Profile = () => {
       ) : (
         <p>No user data available.</p>
       )}
+      <Footer />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { doc, getDoc } from "@firebase/firestore";
 import { auth, firestore } from "../../../firebase";
 import styles from "./CategoryBaseAllProducts.module.css"; // Make sure to create this CSS file
 import Header from "../../../components/Header/Header";
+import Footer from "../../../components/Footer/Footer";
 
 const CategoryBaseAllProduct = () => {
   const navigate = useNavigate();
@@ -84,6 +85,7 @@ const CategoryBaseAllProduct = () => {
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 };

@@ -59,113 +59,6 @@ const Chat: React.FC = () => {
   const [sellerNames, setSellerNames] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    const fetchBuyerData = async () => {
-      console.log("Fetching buyer data...");
-      setLoading(true);
-      try {
-        const uid = auth.currentUser?.uid;
-        console.log("Current user UID:", uid);
-
-        if (!uid) {
-          console.warn("User is not logged in.");
-          alert("You need to log in to access the chat.");
-          navigate("/login");
-          return;
-        }
-
-        const buyerDoc = await getDoc(doc(firestore, "Users", uid));
-        console.log("Buyer document fetched:", buyerDoc.exists());
-
-        if (!buyerDoc.exists()) {
-          console.error("Buyer document does not exist.");
-          navigate("/error");
-          return;
-        }
-
-        const buyerData = buyerDoc.data() as User;
-        setUser({ id: uid, name: buyerData.name });
-        console.log("Buyer data set:", buyerData);
-
-        const chatQuery = query(
-          collection(firestore, "Chats"),
-          where("participants", "array-contains", uid),
-          orderBy("timestamp", "desc")
-        );
-
-        const querySnapshot = await getDocs(chatQuery);
-        console.log("Chats fetched:", querySnapshot.size);
-
-        const fetchedChats = querySnapshot.docs.map((doc) => ({
-          ...(doc.data() as Chat),
-          id: doc.id,
-        }));
-        setSellerChats(fetchedChats);
-        console.log("Seller chats set:", fetchedChats);
-
-        if (productId) {
-          const productDoc = await getDoc(
-            doc(firestore, "Products", productId)
-          );
-          console.log("Product document fetched:", productDoc.exists());
-
-          if (productDoc.exists()) {
-            setProduct(productDoc.data() as Product);
-            console.log("Product set:", productDoc.data());
-          }
-        }
-
-        if (sellerId && productId) {
-          console.log(
-            "Seller ID and Product ID provided. Checking for existing chats..."
-          );
-          const existingChat = fetchedChats.find(
-            (chat) =>
-              chat.participants.includes(sellerId) &&
-              chat.productId === productId
-          );
-          console.log("Existing chat found:", !!existingChat);
-
-          if (existingChat) {
-            setCurrentChatId(existingChat.id);
-            console.log("Current chat ID set to:", existingChat.id);
-            subscribeToMessages(existingChat.id);
-          } else {
-            console.log("No existing chat. Starting a new chat...");
-            await startNewChat(uid, sellerId, productId);
-          }
-        }
-
-        const sellerNamePromises = fetchedChats.map(async (chat) => {
-          const sellerId = chat.participants.find((id) => id !== uid);
-          if (sellerId) {
-            const sellerName = await getSellerName(sellerId);
-            return { sellerId, sellerName };
-          }
-          return null;
-        });
-
-        const sellerNameResults = await Promise.all(sellerNamePromises);
-        console.log("Seller names fetched:", sellerNameResults);
-
-        const namesMap = sellerNameResults.reduce((acc, result) => {
-          if (result) {
-            acc[result.sellerId] = result.sellerName;
-          }
-          return acc;
-        }, {} as { [key: string]: string });
-
-        setSellerNames(namesMap);
-        console.log("Seller names set:", namesMap);
-
-        setChats(fetchedChats);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        navigate("/error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchBuyerData();
 
     return () => {
@@ -176,6 +69,110 @@ const Chat: React.FC = () => {
     };
   }, [sellerId, productId, navigate]);
 
+  const fetchBuyerData = async () => {
+    console.log("Fetching buyer data...");
+    setLoading(true);
+    try {
+      const uid = auth.currentUser?.uid;
+      console.log("Current user UID:", uid);
+
+      if (!uid) {
+        console.warn("User is not logged in.");
+        alert("You need to log in to access the chat.");
+        navigate("/login");
+        return;
+      }
+
+      const buyerDoc = await getDoc(doc(firestore, "Users", uid));
+      console.log("Buyer document fetched:", buyerDoc.exists());
+
+      if (!buyerDoc.exists()) {
+        console.error("Buyer document does not exist.");
+        navigate("/error");
+        return;
+      }
+
+      const buyerData = buyerDoc.data() as User;
+      setUser({ id: uid, name: buyerData.name });
+      console.log("Buyer data set:", buyerData);
+
+      const chatQuery = query(
+        collection(firestore, "Chats"),
+        where("participants", "array-contains", uid),
+        orderBy("timestamp", "desc")
+      );
+
+      const querySnapshot = await getDocs(chatQuery);
+      console.log("Chats fetched:", querySnapshot.size);
+
+      const fetchedChats = querySnapshot.docs.map((doc) => ({
+        ...(doc.data() as Chat),
+        id: doc.id,
+      }));
+      setSellerChats(fetchedChats);
+      console.log("Seller chats set:", fetchedChats);
+
+      if (productId) {
+        const productDoc = await getDoc(doc(firestore, "Products", productId));
+        console.log("Product document fetched:", productDoc.exists());
+
+        if (productDoc.exists()) {
+          setProduct(productDoc.data() as Product);
+          console.log("Product set:", productDoc.data());
+        }
+      }
+
+      if (sellerId && productId) {
+        console.log(
+          "Seller ID and Product ID provided. Checking for existing chats..."
+        );
+        const existingChat = fetchedChats.find(
+          (chat) =>
+            chat.participants.includes(sellerId) && chat.productId === productId
+        );
+        console.log("Existing chat found:", !!existingChat);
+
+        if (existingChat) {
+          setCurrentChatId(existingChat.id);
+          console.log("Current chat ID set to:", existingChat.id);
+          subscribeToMessages(existingChat.id);
+        } else {
+          console.log("No existing chat. Starting a new chat...");
+          await startNewChat(uid, sellerId, productId);
+        }
+      }
+
+      const sellerNamePromises = fetchedChats.map(async (chat) => {
+        const sellerId = chat.participants.find((id) => id !== uid);
+        if (sellerId) {
+          const sellerName = await getSellerName(sellerId);
+          return { sellerId, sellerName };
+        }
+        return null;
+      });
+
+      const sellerNameResults = await Promise.all(sellerNamePromises);
+      console.log("Seller names fetched:", sellerNameResults);
+
+      const namesMap = sellerNameResults.reduce((acc, result) => {
+        if (result) {
+          acc[result.sellerId] = result.sellerName;
+        }
+        return acc;
+      }, {} as { [key: string]: string });
+
+      setSellerNames(namesMap);
+      console.log("Seller names set:", namesMap);
+
+      setChats(fetchedChats);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      navigate("/error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const startNewChat = async (
     userId: string,
     sellerId: string,
@@ -183,39 +180,46 @@ const Chat: React.FC = () => {
   ) => {
     console.log("Starting new chat...");
     try {
-      const productDoc = await getDoc(doc(firestore, "Products", productId));
-      const product = productDoc.exists()
-        ? (productDoc.data() as Product)
-        : null;
-      console.log("Product fetched for new chat:", product);
-
-      // const chatRef = doc(firestore, "Chats", `${userId}-${sellerId}`);
       const chatRef = doc(
         firestore,
         "Chats",
         `${userId}-${sellerId}-${productId}`
       );
 
-      await setDoc(chatRef, {
-        participants: [userId, sellerId],
-        productId,
-        productName: productName || "",
-        timestamp: serverTimestamp(),
-      });
-      console.log("New chat document created:", chatRef.id);
+      // Check if the chat already exists
+      const chatDoc = await getDoc(chatRef);
+      if (!chatDoc.exists()) {
+        await setDoc(chatRef, {
+          participants: [userId, sellerId],
+          productId,
+          productName: productName || "",
+          timestamp: serverTimestamp(),
+        });
+        console.log("New chat document created:", chatRef.id);
+      }
 
-      await addDoc(collection(chatRef, "Messages"), {
-        text: `Hi! I want to know about ${productName || "your product"}.`,
-        senderID: userId,
-        timestamp: serverTimestamp(),
-      });
-      console.log("Initial message sent in new chat.");
+      // Check if messages already exist in this chat
+      const messagesRef = collection(firestore, `Chats/${chatRef.id}/Messages`);
+      const messagesSnapshot = await getDocs(messagesRef);
+
+      if (messagesSnapshot.empty) {
+        console.log("No messages exist, sending initial message...");
+        await addDoc(messagesRef, {
+          text: `Hi! I want to know about ${productName || "your product"}.`,
+          senderID: userId,
+          timestamp: serverTimestamp(),
+        });
+        console.log("Initial message sent.");
+      } else {
+        console.log("Messages already exist, skipping initial message.");
+      }
 
       setCurrentChatId(chatRef.id);
       subscribeToMessages(chatRef.id);
     } catch (error) {
       console.error("Error starting new chat:", error);
     }
+    fetchBuyerData();
   };
 
   const unsubscribeFromMessages = () => {

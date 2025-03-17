@@ -9,6 +9,7 @@ import Loader from "../../../components/Loader/Loader";
 import { addToCart } from "../../../components/addToCart";
 import { FaInfoCircle } from "react-icons/fa";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import Footer from "../../../components/Footer/Footer";
 
 const ProductDetails = () => {
   const navigate = useNavigate();
@@ -153,12 +154,20 @@ const ProductDetails = () => {
       case "Bike":
       case "Vehicle":
         return (
-          <button
-            className={styles.viewDetailsButton}
-            onClick={() => navigate("/vehicle-details", { state: product })}
-          >
-            View Details
-          </button>
+          <div>
+            <button
+              className={styles.contactSellerButton}
+              onClick={handleContactSeller}
+            >
+              Contact Seller
+            </button>
+            <button
+              className={styles.viewDetailsButton}
+              onClick={() => navigate("/vehicle-details", { state: product })}
+            >
+              View Details
+            </button>
+          </div>
         );
       case "Mobiles":
         return (
@@ -198,9 +207,20 @@ const ProductDetails = () => {
       case "Electronics":
       case "Furniture":
         return (
-          <button className={styles.addToCartButton} onClick={handleAddToCart}>
-            <FaCartPlus /> Add to Cart
-          </button>
+          <div>
+            <button
+              className={styles.contactSellerButton}
+              onClick={handleContactSeller}
+            >
+              Contact Seller
+            </button>
+            <button
+              className={styles.addToCartButton}
+              onClick={handleAddToCart}
+            >
+              <FaCartPlus /> Add to Cart
+            </button>
+          </div>
         );
       default:
         return null;
@@ -358,6 +378,7 @@ const ProductDetails = () => {
           {renderMapFromUrl(product.locationUrl)}
         </div>
       )}
+      <Footer />
     </div>
   );
 };

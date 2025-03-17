@@ -1,15 +1,21 @@
 .profileContainer {
-  padding: 20px;
+  padding-top: 20px;
   font-family: Arial, sans-serif;
 }
 
 .backButton {
   margin-bottom: 20px;
+  margin-left: 10px;
   background: none;
   border: none;
   font-size: 1rem;
   cursor: pointer;
   color: #0078ff;
+  border-radius: 10px;
+  &:hover {
+    background-color: #0078ff;
+    color: white;
+  }
 }
 
 .profileContent {

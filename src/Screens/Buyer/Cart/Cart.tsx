@@ -37,11 +37,19 @@ const Cart = () => {
       const collectionRef = collection(firestore, "Users", uid, "Cart");
       const querySnapshot = await getDocs(collectionRef);
       if (!querySnapshot.empty) {
-        const cartItems = querySnapshot.docs.map((doc) => ({
-          ...(doc.data() as { price: number; quantity: number }),
-          ...doc.data(),
-          cartId: doc.id,
-        }));
+        const cartItems = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            cartId: doc.id,
+            name: data.name || "", // Ensure name exists
+            price: data.price || 0, // Ensure price is a number
+            quantity: Array.isArray(data.quantity)
+              ? data.quantity[0]
+              : data.quantity || 1, // Ensure quantity is a number
+            images: data.images || "", // Ensure images field exists
+          };
+        });
+
         setCart(cartItems);
 
         // Calculate total price
@@ -171,12 +179,25 @@ const Cart = () => {
                   </td>
                   <td>${item.price * item.quantity}</td>
                   <td>
-                    <button
-                      className={styles.checkoutButton}
-                      onClick={() => handleCheckout(item)}
-                    >
-                      Checkout
-                    </button>
+                    {item.type === "property" ? (
+                      <button
+                        className={styles.chatButton}
+                        onClick={() =>
+                          navigate("/chat", {
+                            state: { sellerId: item.sellerId },
+                          })
+                        }
+                      >
+                        Chat with Seller
+                      </button>
+                    ) : (
+                      <button
+                        className={styles.checkoutButton}
+                        onClick={() => handleCheckout(item)}
+                      >
+                        Checkout
+                      </button>
+                    )}
                     <button
                       className={styles.deleteButton}
                       onClick={() => removeFromCart(item)}

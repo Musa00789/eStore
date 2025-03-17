@@ -70,6 +70,9 @@ const Header = ({ user }: any) => {
           id: doc.id,
           name: doc.data().name,
         }));
+        // if (results.length <= 0) {
+        //   alert("No relevant products found.");
+        // }
 
         setSuggestions(results);
       } catch (error) {
@@ -106,7 +109,12 @@ const Header = ({ user }: any) => {
             value={searchQuery}
             onChange={handleSearchInputChange}
           />
-          <button className={styles.searchBtn}>
+          <button
+            onClick={() =>
+              handleSearchInputChange({ target: { value: searchQuery } })
+            }
+            className={styles.searchBtn}
+          >
             <FaMagnifyingGlass className={styles.icon} />
           </button>
         </div>

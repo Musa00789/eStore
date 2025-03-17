@@ -2,7 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./ImageGallery.module.css";
 
 const ImageGallery = () => {
-  const images = ["/Banner1.png", "/Banner1.png"];
+  const images = [
+    "/Banner1.png",
+    "/Mobile.svg",
+    "/vite.svg",
+    "/Property.svg",
+    "Car.svg",
+  ];
   const [currentIndex, setCurrentIndex] = useState(0);
   const autoSlideRef = useRef<NodeJS.Timeout | null>(null);
 

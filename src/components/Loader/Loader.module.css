@@ -1,8 +1,18 @@
 .loadingContainer {
+  /* display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 999;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
 }
 
 .spinner {

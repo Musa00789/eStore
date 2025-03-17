@@ -1,12 +1,13 @@
-// Home Screen component used for displaying same category products upto 7 and show all btn to navigate to products page
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ProductList.module.css";
 import { FaArrowRight, FaCartPlus, FaEye } from "react-icons/fa6";
 import { addToCart } from "../addToCart";
+import Loader from "../Loader/Loader";
 
 const ProductList = ({ products, searchQuery, productType }: any) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const filteredProducts = products
     .filter(
@@ -56,8 +57,14 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
               <FaEye />
             </button>
             <button
-              onClick={() => {
-                addToCart(product);
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  await addToCart(product);
+                } catch (error) {
+                  console.error("Error adding to cart:", error);
+                }
+                setLoading(false);
               }}
               className={styles.handlersBtn}
             >
@@ -84,6 +91,8 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
           />
         </button>
       )}
+
+      {loading && <Loader />}
     </div>
   );
 };

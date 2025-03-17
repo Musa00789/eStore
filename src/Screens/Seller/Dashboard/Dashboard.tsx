@@ -4,6 +4,7 @@ import { collection, getDocs, query, where } from "@firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import styles from "./Dashboard.module.css";
+import Loader from "../../../components/Loader/Loader";
 
 const Dashboard = () => {
   const [sellerName, setSellerName] = useState("");
@@ -75,7 +76,7 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [navigate]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div className={styles.dashboard}>

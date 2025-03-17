@@ -47,6 +47,7 @@ const SellerChat: React.FC = () => {
   const [messageInput, setMessageInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [buyerNames, setBuyerNames] = useState<{ [key: string]: string }>({});
+  const [currentBuyerName, setCurrentBuyerName] = useState<string>("");
 
   useEffect(() => {
     const fetchSellerData = async () => {
@@ -159,6 +160,12 @@ const SellerChat: React.FC = () => {
     setLoading(true);
     try {
       setCurrentChatId(chatId);
+      const selectedChat = chats.find((chat) => chat.id === chatId);
+      if (selectedChat) {
+        const buyerId = selectedChat.participants.find((id) => id !== user?.id);
+        const buyerName = buyerId ? buyerNames[buyerId] || "Buyer" : "Unknown";
+        setCurrentBuyerName(buyerName);
+      }
       subscribeToMessages(chatId);
     } catch (error) {
       console.error("Error loading chat messages:", error);
@@ -234,6 +241,9 @@ const SellerChat: React.FC = () => {
         <div className={styles.chatBox}>
           {currentChatId ? (
             <>
+              <div className={styles.chatHeader}>
+                <h2>Chat with {currentBuyerName}</h2>
+              </div>
               <div className={styles.messages}>
                 {messages.map((msg, index) => (
                   <div

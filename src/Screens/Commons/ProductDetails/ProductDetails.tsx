@@ -3,7 +3,13 @@ import styles from "./ProductDetails.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { doc, updateDoc, increment, getDoc } from "@firebase/firestore";
 import { auth, firestore } from "../../../firebase";
-import { FaCartPlus, FaCreditCard, FaMessage, FaTruck } from "react-icons/fa6";
+import {
+  FaCartPlus,
+  FaCreditCard,
+  FaMessage,
+  FaPhone,
+  FaTruck,
+} from "react-icons/fa6";
 import Header from "../../../components/Header/Header";
 import Loader from "../../../components/Loader/Loader";
 import { addToCart } from "../../../components/addToCart";
@@ -176,7 +182,16 @@ const ProductDetails = () => {
               className={styles.contactSellerButton}
               onClick={handleContactSeller}
             >
-              Contact Seller
+              <FaPhone /> Contact Seller
+            </button>
+            <button
+              className={styles.contactSellerButton}
+              style={{ backgroundColor: "dodgerblue" }}
+              onClick={() => {
+                addToCart(product);
+              }}
+            >
+              <FaCartPlus /> Add to cart
             </button>
             <button
               className={styles.specificationsButton}

@@ -23,27 +23,46 @@ export const SignUpValidationSchema = Yup.object().shape({
 });
 
 export const CheckOutValidationSchema = Yup.object({
-  name: Yup.string()
-    .min(3, "Name must be at least 3 characters")
-    .required("Name is required"),
+  baseAmount: Yup.number()
+    .typeError("Base amount must be a number")
+    .positive("Base amount must be positive")
+    .required("Base amount is required"),
+  taxes: Yup.number()
+    .typeError("Tax must be a number")
+    .required("Tax is required")
+    .test("tax-test", "Tax must be 18% of base amount", function (value) {
+      const { baseAmount } = this.parent;
+      return Math.abs(value - baseAmount * 0.18) < 0.01;
+    }),
+  netAmount: Yup.number()
+    .typeError("Net amount must be a number")
+    .required("Net amount is required")
+    .test(
+      "net-test",
+      "Net amount must be base amount minus tax",
+      function (value) {
+        const { baseAmount, taxes } = this.parent;
+        return Math.abs(value - (baseAmount - taxes)) < 0.01;
+      }
+    ),
+  totalAmount: Yup.number()
+    .typeError("Total amount must be a number")
+    .required("Total amount is required")
+    .test(
+      "total-test",
+      "Total amount must be base amount plus tax",
+      function (value) {
+        const { baseAmount, taxes } = this.parent;
+        return Math.abs(value - (baseAmount + taxes)) < 0.01;
+      }
+    ),
+  // Other fields that will be auto-populated from Firebase:
+  name: Yup.string().required("Name is required"),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
-  address: Yup.string()
-    .min(10, "Address must be at least 10 characters")
-    .required("Address is required"),
-  phone: Yup.string()
-    .matches(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
-    .required("Phone number is required"),
-  totalAmount: Yup.number()
-    .positive("Total amount must be positive")
-    .required("Total amount is required"),
-  taxes: Yup.number()
-    .positive("Taxes must be positive")
-    .required("Taxes are required"),
-  amountPayable: Yup.number()
-    .positive("Amount payable must be positive")
-    .required("Amount payable is required"),
+  address: Yup.string().required("Address is required"),
+  phone: Yup.string().required("Phone number is required"),
   paymentMethod: Yup.string()
     .oneOf(
       ["COD", "Debit Card", "Credit Card", "Paypal", "Stripe"],

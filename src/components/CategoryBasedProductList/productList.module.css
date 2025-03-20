@@ -50,7 +50,8 @@
   background-color: #7289da;
   color: #fff;
   transition: all 0.3s ease-in-out;
-  width: 100px;
+  /* width: 100px; */
+  /* margin: 0px; */
   &:hover {
     background-color: #fff;
     color: #7289da;

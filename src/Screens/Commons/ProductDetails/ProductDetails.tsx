@@ -78,6 +78,9 @@ const ProductDetails = () => {
   const handleGetQuotes = () => {
     alert("Get Quotes functionality coming soon!");
   };
+  const formatPrice = (price: number) => {
+    return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   const fetchUser = async () => {
     try {
@@ -274,7 +277,10 @@ const ProductDetails = () => {
           {/* Product Info */}
           <div className={styles.productInfo}>
             <h1 className={styles.productName}>{product.name}</h1>
-            <p className={styles.productPrice}> Rs. {product.price}</p>
+            <p className={styles.productPrice}>
+              {" "}
+              Rs. {formatPrice(product.price)}
+            </p>
             {/* <p className={styles.productDescription}>{product.description}</p> */}
             <div className={styles.buttonGroup}>
               {renderCategorySpecificContent()}

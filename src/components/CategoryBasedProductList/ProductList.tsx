@@ -53,23 +53,42 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
                 navigate(`/product/${product.name}`, { state: product });
               }}
               className={styles.handlersBtn}
+              style={{
+                width:
+                  product.type === "Property" ||
+                  product.type === "Bike" ||
+                  product.type === "Vehicle" ||
+                  product.type === "Furniture"
+                    ? "200px" // Full width if Add to Cart is hidden
+                    : "100px", // Split width if Add to Cart is shown
+              }}
             >
               <FaEye />
             </button>
-            <button
-              onClick={async () => {
-                setLoading(true);
-                try {
-                  await addToCart(product);
-                } catch (error) {
-                  console.error("Error adding to cart:", error);
-                }
-                setLoading(false);
-              }}
-              className={styles.handlersBtn}
-            >
-              <FaCartPlus />
-            </button>
+
+            {/* Add to Cart button (conditionally shown) */}
+            {!(
+              product.type === "Property" ||
+              product.type === "Bike" ||
+              product.type === "Vehicle" ||
+              product.type === "Furniture"
+            ) && (
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    await addToCart(product);
+                  } catch (error) {
+                    console.error("Error adding to cart:", error);
+                  }
+                  setLoading(false);
+                }}
+                className={styles.handlersBtn}
+                style={{ width: "100px" }} // Match width with Eye button
+              >
+                <FaCartPlus />
+              </button>
+            )}
           </div>
         </div>
       ))}

@@ -12,7 +12,16 @@ import {
 } from "react-icons/fa6";
 import styles from "./Header.module.css";
 import { auth, firestore } from "../../firebase";
-import { collection, query, where, getDocs } from "@firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  doc,
+  orderBy,
+} from "@firebase/firestore";
+import { FaUserCircle } from "react-icons/fa";
 
 const Header = ({ user }: any) => {
   const navigate = useNavigate();
@@ -23,6 +32,8 @@ const Header = ({ user }: any) => {
   >([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMessageTabOpen, setIsMessageTabOpen] = useState(false);
+  const [chatList, setChatList] = useState<any[]>([]);
+  const [loadingChats, setLoadingChats] = useState(true);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -30,28 +41,21 @@ const Header = ({ user }: any) => {
   const toggleMessageTab = () => {
     setIsMessageTabOpen(!isMessageTabOpen);
   };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      messageTabRef.current &&
-      !messageTabRef.current.contains(event.target as Node)
-    ) {
-      setIsMessageTabOpen(false);
-    }
-  };
-
   useEffect(() => {
-    if (isMessageTabOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        messageTabRef.current &&
+        !messageTabRef.current.contains(event.target as Node)
+      ) {
+        setIsMessageTabOpen(false);
+      }
     };
+    if (isMessageTabOpen)
+      document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMessageTabOpen]);
 
+  // Fetch product suggestions
   const handleSearchInputChange = async (e: any) => {
     const queryText = e.target.value;
     setSearchQuery(queryText);
@@ -70,10 +74,6 @@ const Header = ({ user }: any) => {
           id: doc.id,
           name: doc.data().name,
         }));
-        // if (results.length <= 0) {
-        //   alert("No relevant products found.");
-        // }
-
         setSuggestions(results);
       } catch (error) {
         console.error("Error searching products:", error);
@@ -88,6 +88,52 @@ const Header = ({ user }: any) => {
     setSuggestions([]);
     navigate(`/Product/${product.id}`);
   };
+
+  // ✅ Fetch user's chats from Firestore
+  useEffect(() => {
+    const fetchChats = async () => {
+      setLoadingChats(true);
+      try {
+        const uid = auth.currentUser?.uid;
+        if (!uid) return;
+
+        const chatQuery = query(
+          collection(firestore, "Chats"),
+          where("participants", "array-contains", uid),
+          orderBy("timestamp", "desc")
+        );
+
+        const querySnapshot = await getDocs(chatQuery);
+        const fetchedChats = await Promise.all(
+          querySnapshot.docs.map(async (docSnapshot) => {
+            const chatData = docSnapshot.data();
+            const otherParticipantId = chatData.participants.find(
+              (id: string) => id !== uid
+            );
+            const otherUserDoc = await getDoc(
+              doc(firestore, "Users", otherParticipantId)
+            );
+
+            return {
+              id: docSnapshot.id,
+              productName: chatData.productName || "Unknown Product",
+              sellerName: otherUserDoc.exists()
+                ? otherUserDoc.data().name
+                : "Seller",
+            };
+          })
+        );
+
+        setChatList(fetchedChats);
+      } catch (error) {
+        console.error("Error loading chats:", error);
+      } finally {
+        setLoadingChats(false);
+      }
+    };
+
+    if (isMessageTabOpen) fetchChats();
+  }, [isMessageTabOpen]);
 
   return (
     <div className={styles.header}>
@@ -149,6 +195,7 @@ const Header = ({ user }: any) => {
               }}
             />
           </button>
+
           {isMessageTabOpen && (
             <div className={styles.messageTab} ref={messageTabRef}>
               <div className={styles.messageHeader}>
@@ -160,7 +207,32 @@ const Header = ({ user }: any) => {
                   <FaX />
                 </button>
               </div>
-              <p>No new messages</p>
+
+              {loadingChats ? (
+                <p>Loading chats...</p>
+              ) : chatList.length > 0 ? (
+                <ul className={styles.chatList}>
+                  {chatList.slice(0, 5).map(
+                    (
+                      chat // Limit to 7 chats
+                    ) => (
+                      <li key={chat.id} onClick={() => navigate(`/Buyer/chat`)}>
+                        <FaUserCircle
+                          size={29}
+                          style={{
+                            marginRight: "5px",
+                            borderRight: "1px solid black",
+                            paddingRight: "5px",
+                          }}
+                        />
+                        <strong>{chat.sellerName}</strong> — {chat.productName}
+                      </li>
+                    )
+                  )}
+                </ul>
+              ) : (
+                <p>No active chats.</p>
+              )}
               <a
                 href="/messages"
                 className={styles.showAllLink}

@@ -234,3 +234,116 @@
 .suggestionItem:hover {
   background-color: #f9f9f9;
 }
+
+/* Chat icon container */
+.messageIconContainer {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Dropdown container */
+.messageTab {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  width: 300px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Header of message tab */
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+/* Close button in message tab */
+.messageHeader button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #888;
+}
+
+/* Chat list container */
+.chatList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each chat item */
+.chatList li {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  transition: background 0.2s ease;
+}
+
+/* Hover effect for chat items */
+.chatList li:hover {
+  background-color: #f5f5f5;
+}
+
+/* Seller name styling */
+.chatList li strong {
+  font-size: 16px;
+  color: #333;
+  margin-right: 5px;
+}
+
+/* Product name styling */
+.chatList li span {
+  font-size: 14px;
+  color: #555;
+  flex-grow: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* No messages text */
+.messageTab p {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+
+/* Show all link */
+.showAllLink {
+  display: block;
+  text-align: center;
+  color: #7289da;
+  margin-top: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.showAllLink:hover {
+  text-decoration: underline;
+}
+
+/* Scrollbar styling (optional) */
+.messageTab::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messageTab::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}

@@ -127,7 +127,7 @@ const Cart = () => {
 
   return (
     <div className={styles.cartPage}>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
+      <button className={styles.backButton} onClick={() => navigate("/")}>
         <FaArrowLeft /> Back
       </button>
       <h1 className={styles.pageTitle}>Your Cart</h1>

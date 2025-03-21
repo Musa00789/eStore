@@ -70,3 +70,9 @@ export const CheckOutValidationSchema = Yup.object({
     )
     .required("Payment method is required"),
 });
+
+export const ForgotPasswordSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+});

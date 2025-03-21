@@ -6,6 +6,7 @@ import Profile from "../Profile/Profile";
 import Settings from "../Settings/Settings";
 import Checkout from "../Checkout/Checkout";
 import Chat from "../BuyerChat/BuyerChat";
+import ForgotPassword from "../../Auth/ForgotPassword/ForgotPassword";
 
 const UserRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const UserRoutes = () => {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/forgotPassword" element={<ForgotPassword />} />
     </Routes>
   );
 };

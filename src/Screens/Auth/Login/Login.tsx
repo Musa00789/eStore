@@ -130,7 +130,7 @@ const Login = () => {
           Forgot your password?{" "}
           <span
             onClick={() => {
-              navigate("/ForgotPassword");
+              navigate("/Buyer/forgotPassword");
             }}
             className={styles.signupBtn}
           >

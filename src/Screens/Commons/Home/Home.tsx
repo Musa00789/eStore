@@ -128,7 +128,6 @@ const Home = () => {
           <h1 className={styles.noProductsMessage}>
             No products available <FaThumbsDown />
           </h1>
-          // <Loader />
         )}
       </div>
     );

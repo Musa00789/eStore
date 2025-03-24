@@ -54,7 +54,6 @@ const Sidebar = () => {
   const handleSignout = async () => {
     try {
       await auth.signOut().then(() => {
-        // to clear the history stack
         window.history.replaceState(null, "", "/Login");
         navigate("/Login", { replace: true });
       });

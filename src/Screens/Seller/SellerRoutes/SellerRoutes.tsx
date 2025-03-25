@@ -18,6 +18,7 @@ import { auth, firestore } from "../../../firebase";
 import { doc, getDoc } from "@firebase/firestore";
 import Error from "../../Commons/Error/Error";
 import SellerChat from "../SellerChat/SellerChat";
+import { FaHome } from "react-icons/fa";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -81,10 +82,16 @@ const Sidebar = () => {
             icon: <DashboardOutlined />,
           },
           {
+            label: "Buy Products",
+            key: "/",
+            icon: <FaHome />,
+          },
+          {
             label: "Profile",
             key: "/Seller/profile",
             icon: <UserOutlined />,
           },
+
           {
             label: "Chats",
             key: "/Seller/seller-chat",

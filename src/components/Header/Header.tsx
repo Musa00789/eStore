@@ -9,6 +9,8 @@ import {
   FaMessage,
   FaX,
   FaPerson,
+  FaSellcast,
+  FaShop,
 } from "react-icons/fa6";
 import styles from "./Header.module.css";
 import { auth, firestore } from "../../firebase";
@@ -21,7 +23,7 @@ import {
   doc,
   orderBy,
 } from "@firebase/firestore";
-import { FaUserCircle } from "react-icons/fa";
+import { FaBuysellads, FaUserCircle } from "react-icons/fa";
 
 const Header = ({ user }: any) => {
   const navigate = useNavigate();
@@ -195,6 +197,26 @@ const Header = ({ user }: any) => {
               }}
             />
           </button>
+          {user.status === "Seller" && (
+            <button
+              style={{
+                backgroundColor: "transparent",
+                border: "0px",
+                borderColor: "transparent",
+              }}
+              onClick={() => {
+                navigate("/Seller/dashboard");
+              }}
+            >
+              <FaShop
+                style={{
+                  color: "#7289da",
+                  fontSize: "26px",
+                }}
+              />{" "}
+              Sell
+            </button>
+          )}
 
           {isMessageTabOpen && (
             <div className={styles.messageTab} ref={messageTabRef}>

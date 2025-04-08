@@ -140,14 +140,17 @@ const Header = ({ user }: any) => {
   return (
     <div className={styles.header}>
       <div className={styles.menuLogoContainer}>
-        <h1
+        {/* <h1 className={styles.logo}> */}
+        <img
           onClick={() => {
             navigate("/");
           }}
-          className={styles.logo}
-        >
-          ♾️
-        </h1>
+          src="Wastage.png"
+          width={150}
+          height={150}
+          style={{ cursor: "pointer" }}
+        />
+        {/* </h1> */}
       </div>
       <div style={{ display: "flex", flexDirection: "column", width: "50%" }}>
         <div className={styles.searchBarContainer}>

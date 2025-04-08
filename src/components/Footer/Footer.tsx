@@ -8,7 +8,10 @@ const Footer = () => {
       <div className={styles.container}>
         {/* Logo Section */}
         <div className={styles.logoSection}>
-          <h2>RSS</h2>
+          <h2>
+            {" "}
+            <img src="Wastage.png" height={100} width={100} />W Util
+          </h2>
           <p>Buy anything, Sell anything — developed by Tayyab.</p>
         </div>
 

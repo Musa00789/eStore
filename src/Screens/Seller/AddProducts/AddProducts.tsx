@@ -308,7 +308,7 @@ const AddProducts = () => {
             <span className={styles.closeButton} onClick={closeForm}>
               &times;
             </span>
-            <h2>{isEditMode ? "Edit Product" : "Add Product"}</h2>
+            <h4>{isEditMode ? "Edit Product" : "Add Product"}</h4>
             <label>Choose Image</label>
             <input type="file" multiple onChange={handleFileChange} />
             <label>Product Name</label>

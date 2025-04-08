@@ -8,6 +8,9 @@ import Error from "./Screens/Commons/Error/Error";
 import ProductDetails from "./Screens/Commons/ProductDetails/ProductDetails";
 import CategoryBaseAllProduct from "./Screens/Commons/AllSameCategoryProducts/CategoryBaseAllProducts";
 import AdminRoutes from "./Screens/Admin/AdminRoutes";
+import AboutScreen from "./Screens/Commons/About/About";
+import SupportScreen from "./Screens/Commons/Support/Support";
+import FAQScreen from "./Screens/Commons/FAQ/FAQ";
 
 const Router = () => {
   return (
@@ -25,6 +28,12 @@ const Router = () => {
         element={<CategoryBaseAllProduct />}
       />
       <Route path="/" element={<Home />} />
+      <Route path="/shop" element={<Home />} />
+
+      <Route path="/about" element={<AboutScreen />} />
+      <Route path="/support" element={<SupportScreen />} />
+
+      <Route path="/faq" element={<FAQScreen />} />
     </Routes>
   );
 };

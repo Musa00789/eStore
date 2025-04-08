@@ -1,8 +1,10 @@
 import React from "react";
 import styles from "./Footer.module.css";
 import { FaFacebook, FaInstagram, FaTwitter, FaDiscord } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -20,16 +22,44 @@ const Footer = () => {
           <h3>Quick Links</h3>
           <ul>
             <li>
-              <a href="/shop">Shop</a>
+              <a
+                onClick={() => {
+                  navigate("/");
+                }}
+                // href="/shop"
+              >
+                Shop
+              </a>
             </li>
             <li>
-              <a href="/about">About Us</a>
+              <a
+                onClick={() => {
+                  navigate("/about");
+                }}
+                // href="/about"
+              >
+                About Us
+              </a>
             </li>
             <li>
-              <a href="/support">Support</a>
+              <a
+                onClick={() => {
+                  navigate("/support");
+                }}
+                // href="/support"
+              >
+                Support
+              </a>
             </li>
             <li>
-              <a href="/faq">FAQs</a>
+              <a
+                onClick={() => {
+                  navigate("/faq");
+                }}
+                // href="/faq"
+              >
+                FAQs
+              </a>
             </li>
           </ul>
         </div>

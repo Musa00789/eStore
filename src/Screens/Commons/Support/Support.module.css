@@ -1,0 +1,115 @@
+.supportContainer {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 40px;
+  gap: 40px;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.leftColumn {
+  flex: 1;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.rightColumn {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.heading {
+  font-size: 32px;
+  color: #7eb6ff;
+  margin-bottom: 10px;
+}
+
+.subtext {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 30px;
+}
+
+.supportForm label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.supportForm input[type="text"],
+.supportForm input[type="email"],
+.supportForm input[type="file"],
+.supportForm select,
+.supportForm textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+.supportForm textarea {
+  resize: vertical;
+}
+
+.supportForm button {
+  background-color: #7eb6ff;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.supportForm button:hover {
+  background-color: white;
+  color: #7eb6ff;
+  border: 1px solid #7eb6ff;
+  transform: translateY(-3px);
+}
+
+.contactCard {
+  background-color: #f7f9fc;
+  padding: 20px;
+  border-left: 5px solid #7eb6ff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+.contactCard h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.contactCard p {
+  margin: 0;
+  font-size: 15px;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .supportContainer {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .rightColumn {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .contactCard {
+    flex: 1 1 45%;
+  }
+}

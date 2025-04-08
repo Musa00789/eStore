@@ -15,7 +15,6 @@ const SupportScreen: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: integrate with ticketing API
     alert(
       `Ticket submitted under "${category}". We'll be in touch within 24 hrs.`
     );

@@ -145,12 +145,14 @@ const Header = ({ user }: any) => {
           onClick={() => {
             navigate("/");
           }}
-          src="Wastage.png"
-          width={150}
-          height={150}
+          src="/Wastage.png"
+          width={130}
+          height={130}
           style={{ cursor: "pointer" }}
         />
         {/* </h1> */}
+
+        {/* search should not be case sensitive */}
       </div>
       <div style={{ display: "flex", flexDirection: "column", width: "50%" }}>
         <div className={styles.searchBarContainer}>

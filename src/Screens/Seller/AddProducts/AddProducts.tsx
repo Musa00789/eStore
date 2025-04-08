@@ -16,6 +16,9 @@ import { v4 as uuidv4 } from "uuid";
 import Loader from "../../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 
+// to do :
+// on form submission loader needs to be added
+
 const AddProducts = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState<File[]>([]);
@@ -71,6 +74,7 @@ const AddProducts = () => {
   };
 
   const handleAddProduct = async () => {
+    setLoading(true);
     try {
       const productId = isEditMode && editProductId ? editProductId : uuidv4();
       const downloadUrls: string[] = [];
@@ -136,6 +140,8 @@ const AddProducts = () => {
       }
     } catch (error) {
       console.error("Error adding/updating product:", error);
+    } finally {
+      setLoading(false);
     }
   };
 

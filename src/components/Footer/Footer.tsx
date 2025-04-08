@@ -8,16 +8,14 @@ const Footer = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        {/* Logo Section */}
         <div className={styles.logoSection}>
           <h2>
             {" "}
-            <img src="Wastage.png" height={100} width={100} />W Util
+            <img src="/Wastage.png" height={100} width={100} />W Util
           </h2>
           <p>Buy anything, Sell anything — developed by Tayyab.</p>
         </div>
 
-        {/* Quick Links */}
         <div className={styles.links}>
           <h3>Quick Links</h3>
           <ul>
@@ -26,7 +24,6 @@ const Footer = () => {
                 onClick={() => {
                   navigate("/");
                 }}
-                // href="/shop"
               >
                 Shop
               </a>
@@ -36,7 +33,6 @@ const Footer = () => {
                 onClick={() => {
                   navigate("/about");
                 }}
-                // href="/about"
               >
                 About Us
               </a>
@@ -46,7 +42,6 @@ const Footer = () => {
                 onClick={() => {
                   navigate("/support");
                 }}
-                // href="/support"
               >
                 Support
               </a>
@@ -56,7 +51,6 @@ const Footer = () => {
                 onClick={() => {
                   navigate("/faq");
                 }}
-                // href="/faq"
               >
                 FAQs
               </a>
@@ -64,15 +58,19 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Newsletter Section */}
         <div className={styles.newsletter}>
           <h3>Stay Connected</h3>
           <p>Join our community for the latest updates!</p>
           <input type="email" placeholder="Enter your email" />
-          <button>Subscribe</button>
+          <button
+            onClick={() => {
+              alert("Subscribed to newsletter!");
+            }}
+          >
+            Subscribe
+          </button>
         </div>
 
-        {/* Social Icons */}
         <div className={styles.socials}>
           <h3>Join the Community</h3>
           <div className={styles.icons}>
@@ -92,9 +90,8 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Copyright Section */}
       <div className={styles.copyright}>
-        <p>&copy; 2025 RSS. All rights reserved.</p>
+        <p>&copy; 2025 W Util. All rights reserved.</p>
       </div>
     </footer>
   );

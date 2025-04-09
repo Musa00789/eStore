@@ -32,6 +32,7 @@ const ProductDetails = () => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("Product Details:", product);
     if (!product) {
       console.error("No product data received!");
       navigate("/error");

@@ -85,10 +85,25 @@ const Header = ({ user }: any) => {
     }
   };
 
-  const handleSuggestionClick = (product: any) => {
-    setSearchQuery(product.name);
+  const handleSuggestionClick = async (product: {
+    id: string;
+    name: string;
+  }) => {
+    // setSearchQuery(product.name);
+    // setSuggestions([]);
+    // navigate(`/Product/${product.id}`, { state: product });
+    const productRef = doc(firestore, "Products", product.id);
+    const snap = await getDoc(productRef);
+    if (!snap.exists()) {
+      console.error("Product not found:", product.id);
+      return;
+    }
+    const fullProduct = { id: snap.id, ...(snap.data() as any) };
+
+    // 2) Navigate with the entire object
+    setSearchQuery(fullProduct.name);
     setSuggestions([]);
-    navigate(`/Product/${product.id}`);
+    navigate(`/Product/${fullProduct.id}`, { state: fullProduct });
   };
 
   // ✅ Fetch user's chats from Firestore

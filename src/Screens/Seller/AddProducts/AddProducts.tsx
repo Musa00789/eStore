@@ -104,7 +104,7 @@ const AddProducts = () => {
                 const productData: any = {
                   id: productId,
                   sellerId: sellerId,
-                  name: productName,
+                  name: productName.toLowerCase(),
                   price: productPrice,
                   description: productDescription,
                   images: downloadUrls,

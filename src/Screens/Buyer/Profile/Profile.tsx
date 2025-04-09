@@ -11,6 +11,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
 import Footer from "../../../components/Footer/Footer";
+import Loader from "../../../components/Loader/Loader";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -135,7 +136,8 @@ const Profile = () => {
       </button>
 
       {loading ? (
-        <div className={styles.loader}>Loading...</div>
+        // <div className={styles.loader}>Loading...</div>
+        <Loader />
       ) : user ? (
         <div className={styles.profileContent}>
           {/* Profile Section */}

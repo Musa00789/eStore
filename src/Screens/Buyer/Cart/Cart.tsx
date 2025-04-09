@@ -12,6 +12,7 @@ import {
 import { FaTrashCan, FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import styles from "./Cart.module.css";
+import Loader from "../../../components/Loader/Loader";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -133,8 +134,9 @@ const Cart = () => {
       <h1 className={styles.pageTitle}>Your Cart</h1>
 
       {loading ? (
-        <p className={styles.loadingText}>Loading...</p>
-      ) : cart.length > 0 ? (
+        <Loader />
+      ) : // <p className={styles.loadingText}>Loading...</p>
+      cart.length > 0 ? (
         <>
           <table className={styles.cartTable}>
             <thead>

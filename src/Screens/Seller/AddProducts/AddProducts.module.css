@@ -38,6 +38,7 @@
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 10px;
+  text-transform: capitalize;
 }
 .productDescription {
   font-size: 14px;

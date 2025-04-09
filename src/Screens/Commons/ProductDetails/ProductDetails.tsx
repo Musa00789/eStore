@@ -158,6 +158,7 @@ const ProductDetails = () => {
                 </button>
               ))}
             </div>
+            <p className={styles.productDescription}>{product.description}</p>
           </div>
         );
       case "Bike":
@@ -176,6 +177,7 @@ const ProductDetails = () => {
             >
               View Details
             </button>
+            <p className={styles.productDescription}>{product.description}</p>
           </div>
         );
       case "Mobiles":
@@ -202,6 +204,7 @@ const ProductDetails = () => {
             >
               <FaInfoCircle /> View Specifications
             </button>
+            <p className={styles.productDescription}>{product.description}</p>
           </div>
         );
       case "Property":
@@ -238,6 +241,7 @@ const ProductDetails = () => {
             >
               <FaCartPlus /> Add to Cart
             </button>
+            <p className={styles.productDescription}>{product.description}</p>
           </div>
         );
       default:

@@ -145,23 +145,28 @@ const ProductDetails = () => {
             >
               <FaCartPlus /> Add to Cart
             </button>
-            <h3>Select Size:</h3>
-            <div className={styles.sizeOptions}>
-              {product.Size?.map((size: string, index: number) => (
-                <button
-                  key={index}
-                  className={`${styles.sizeButton} ${
-                    size === selectedSize ? styles.selectedSizeButton : ""
-                  }`}
-                  onClick={() => setSelectedSize(size)}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
+            {product.Size && product.Size.length > 0 && (
+              <>
+                <h3>Select Size:</h3>
+                <div className={styles.sizeOptions}>
+                  {product.Size?.map((size: string, index: number) => (
+                    <button
+                      key={index}
+                      className={`${styles.sizeButton} ${
+                        size === selectedSize ? styles.selectedSizeButton : ""
+                      }`}
+                      onClick={() => setSelectedSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
             <p className={styles.productDescription}>{product.description}</p>
           </div>
         );
+      case "PKR0":
       case "Bike":
       case "Vehicle":
         return (
@@ -284,7 +289,7 @@ const ProductDetails = () => {
             <h1 className={styles.productName}>{product.name}</h1>
             <p className={styles.productPrice}>
               {" "}
-              Rs. {formatPrice(product.price)}
+              Rs. {product.price != "" ? formatPrice(product.price) : "0.00"}
             </p>
             {/* <p className={styles.productDescription}>{product.description}</p> */}
             <div className={styles.buttonGroup}>
@@ -330,6 +335,18 @@ const ProductDetails = () => {
               </div>
             )}
           </div>
+          {product.type === "PKR0" && (
+            <div className={styles.productInfo}>
+              <h2>Note*</h2>
+              <p>
+                This is a <b>free product</b> only for those{" "}
+                <b>unable to pay</b> the costly prices for new products. If you
+                are <b>capable and blessed</b> then please <b>allow others</b>{" "}
+                to be able to access the <b>luxury of life</b> for sake of
+                humanity
+              </p>
+            </div>
+          )}
         </div>
         {product.type === "Mobiles" && (
           <div className={styles.specificationsContainer}>

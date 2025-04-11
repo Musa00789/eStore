@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Categories.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FaFreeCodeCamp } from "react-icons/fa6";
 
 const Categories = ({ products }: { products: any[] }) => {
   const navigate = useNavigate();
@@ -24,6 +25,16 @@ const Categories = ({ products }: { products: any[] }) => {
     <div>
       <h1 className={styles.bodyHeading}>All Categories</h1>
       <div className={styles.categoriesContainer}>
+        <div
+          className={styles.category}
+          onClick={() => filterAndNavigate("PKR0")}
+        >
+          <FaFreeCodeCamp className={styles.productImageCategory} />
+          {/* <img className={styles.productImageCategory} src="/Property.svg" /> */}
+          <div className={styles.productDetails}>
+            <h3 className={styles.productName}>PKR 0 Products</h3>
+          </div>
+        </div>
         <div
           className={styles.category}
           onClick={() => filterAndNavigate("Mobiles")}

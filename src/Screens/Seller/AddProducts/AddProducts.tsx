@@ -16,47 +16,177 @@ import { v4 as uuidv4 } from "uuid";
 import Loader from "../../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 
-// to do :
-// on form submission loader needs to be added
-
-const AddProducts = () => {
+const AddProducts: React.FC = () => {
   const navigate = useNavigate();
+
+  // ─── State ───────────────────────────────────────────────────────────────
   const [file, setFile] = useState<File[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editProductId, setEditProductId] = useState<string | null>(null);
+
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+
   const [type, setType] = useState("");
   const [size, setSize] = useState("");
   const [quantity, setQuantity] = useState("");
   const [model, setModel] = useState("");
   const [brand, setBrand] = useState("");
   const [waranty, setWaranty] = useState("");
+  const [condition, setCondition] = useState("");
+  const [company, setCompany] = useState("");
+  const [milage, setMilage] = useState("");
+  const [kmDriven, setKmDriven] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
+  const [locationUrl, setLocationUrl] = useState("");
+
   const [products, setProducts] = useState<any[]>([]);
   const [sellerId, setSellerId] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
   const [loading, setLoading] = useState(false);
-  const [locationUrl, setLocationUrl] = useState("");
 
+  // ─── Effects ─────────────────────────────────────────────────────────────
   useEffect(() => {
     setSellerId(auth.currentUser?.uid || "");
     getProducts();
   }, [selectedTypeFilter]);
 
-  const openForm = () => {
-    setIsFormVisible(true);
+  // ─── Fetch / CRUD ─────────────────────────────────────────────────────────
+
+  const getProducts = async () => {
+    setLoading(true);
+    try {
+      const uId = auth.currentUser?.uid;
+      if (!uId) {
+        navigate("/login");
+        return;
+      }
+
+      const colRef = collection(firestore, "Products");
+      const q = selectedTypeFilter
+        ? query(
+            colRef,
+            where("sellerId", "==", uId),
+            where("type", "==", selectedTypeFilter)
+          )
+        : query(colRef, where("sellerId", "==", uId));
+
+      const snap = await getDocs(q);
+      const arr: any[] = [];
+      snap.forEach((d) => arr.push({ id: d.id, ...d.data() }));
+      // sort newest first
+      arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      setProducts(arr);
+    } catch (err) {
+      console.error("Fetch products failed:", err);
+      alert("Unable to load products.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const handleAddProduct = async () => {
+    setLoading(true);
+    try {
+      const productId = isEditMode && editProductId ? editProductId : uuidv4();
+
+      // 1) upload new files, if any
+      let downloadUrls: string[] = [];
+      if (file.length > 0) {
+        const uploadTasks = file.map((f) => {
+          const storageRef = ref(storage, `products/${productId}/${f.name}`);
+          const uploadTask = uploadBytesResumable(storageRef, f);
+          return new Promise<string>((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              (snap) => {
+                const prog = (snap.bytesTransferred / snap.totalBytes) * 100;
+                setUploadProgress(prog);
+              },
+              reject,
+              async () => {
+                const url = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(url);
+              }
+            );
+          });
+        });
+        downloadUrls = await Promise.all(uploadTasks);
+      } else if (isEditMode && editProductId) {
+        // 2) retain existing images if editing and no new files
+        const existing = products.find((p) => p.id === editProductId);
+        downloadUrls = existing?.images || [];
+      }
+
+      const uId = auth.currentUser?.uid;
+      if (!uId) throw new Error("Not authenticated");
+
+      // 3) assemble payload
+      const productData: any = {
+        id: productId,
+        sellerId: uId,
+        name: productName,
+        price: productPrice,
+        description: productDescription,
+        images: downloadUrls,
+        type,
+        clicks: 0,
+        views: 0,
+        purchases: 0,
+        timestamp: Date.now(),
+        ...(type === "Fashion" && { size, quantity }),
+        ...(type === "Electronics" && { quantity }),
+        ...(type === "Property" && { locationUrl }),
+        ...((type === "Vehicle" || type === "Bike") && {
+          company,
+          milage,
+          kmDriven,
+          condition,
+          vehicleModel,
+        }),
+        ...(type === "Mobiles" && { quantity, model, brand, waranty }),
+      };
+
+      await setDoc(doc(firestore, "Products", productId), productData);
+      await getProducts();
+      closeForm();
+    } catch (err) {
+      console.error("Add/update failed:", err);
+      alert("Unable to save product.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    const confirmDelete = window.confirm("Delete this product?");
+    if (!confirmDelete) return;
+
+    setLoading(true);
+    try {
+      const uId = auth.currentUser?.uid;
+      if (!uId) throw new Error("Not authenticated");
+      await deleteDoc(doc(firestore, "Products", productId));
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Unable to delete product.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ─── Form Helpers ────────────────────────────────────────────────────────
+  const openForm = () => setIsFormVisible(true);
   const closeForm = () => {
     setIsFormVisible(false);
     setIsEditMode(false);
     setEditProductId(null);
     resetForm();
   };
-
   const resetForm = () => {
     setFile([]);
     setProductName("");
@@ -65,197 +195,61 @@ const AddProducts = () => {
     setType("");
     setSize("");
     setQuantity("");
+    setModel("");
+    setBrand("");
+    setWaranty("");
+    setCondition("");
+    setCompany("");
+    setMilage("");
+    setKmDriven("");
+    setVehicleModel("");
+    setLocationUrl("");
     setUploadProgress(0);
   };
-
-  const handleFileChange = (e: any) => {
-    const selectedFiles: any = Array.from(e.target.files);
-    setFile(selectedFiles);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFile(e.target.files ? Array.from(e.target.files) : []);
   };
-
-  const handleAddProduct = async () => {
-    setLoading(true);
-    try {
-      const productId = isEditMode && editProductId ? editProductId : uuidv4();
-      const downloadUrls: string[] = [];
-      const uAuth = auth.currentUser?.uid;
-
-      for (const selectedFile of file) {
-        const storageRef = ref(
-          storage,
-          `products/${productId}/${selectedFile.name}`
-        );
-
-        const uploadTask = uploadBytesResumable(storageRef, selectedFile);
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadProgress(progress);
-          },
-          (error) => {
-            console.error("Error uploading file:", error);
-          },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              downloadUrls.push(downloadURL);
-              if (downloadUrls.length === file.length) {
-                const productData: any = {
-                  id: productId,
-                  sellerId: sellerId,
-                  name: productName.toLowerCase(),
-                  price: productPrice,
-                  description: productDescription,
-                  images: downloadUrls,
-                  type,
-                  clicks: 0,
-                  views: 0,
-                  purchases: 0,
-                  ...(type === "Fashion" && { size, quantity }),
-                  ...(type === "Electronics" && { quantity }),
-                  ...(type === "Property" && { locationUrl }),
-                  ...(type === "Mobiles" && {
-                    quantity,
-                    model,
-                    brand,
-                    waranty,
-                  }),
-                };
-
-                if (!uAuth) {
-                  alert("User is not authenticated");
-                  navigate("/login");
-                  throw new Error("User is not authenticated");
-                }
-                const productRef = doc(firestore, "Products", productId);
-                setDoc(productRef, productData).then(() => {
-                  getProducts();
-                  closeForm();
-                });
-              }
-            });
-          }
-        );
-      }
-    } catch (error) {
-      console.error("Error adding/updating product:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // const getProducts = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const uAuth = auth.currentUser?.uid;
-  //     if (!uAuth) {
-  //       alert("User is not authenticated");
-  //       navigate("/login");
-  //       throw new Error("User is not authenticated");
-  //     }
-  //     const productsCollectionRef = collection(firestore, "Products");
-  //     const productsQuery = selectedTypeFilter
-  //       ? query(productsCollectionRef, where("type", "==", selectedTypeFilter))
-  //       : query(productsCollectionRef);
-
-  //     const querySnapshot = await getDocs(productsQuery);
-  //     const productsArray: any[] = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const data = doc.data();
-  //       productsArray.push({ ...data, id: doc.id });
-  //     });
-  //     setProducts(productsArray);
-  //   } catch (error) {
-  //     console.error("Error fetching products:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const getProducts = async () => {
-    setLoading(true);
-    try {
-      const uAuth = auth.currentUser?.uid;
-      if (!uAuth) {
-        alert("User is not authenticated");
-        navigate("/login");
-        return;
-      }
-
-      const productsCollectionRef = collection(firestore, "Products");
-      const productsQuery = selectedTypeFilter
-        ? query(
-            productsCollectionRef,
-            where("sellerId", "==", uAuth), // Filter by sellerId
-            where("type", "==", selectedTypeFilter) // Additional type filter
-          )
-        : query(productsCollectionRef, where("sellerId", "==", uAuth)); // Filter only by sellerId
-
-      const querySnapshot = await getDocs(productsQuery);
-      const productsArray: any[] = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        productsArray.push({ ...data, id: doc.id });
-      });
-      setProducts(productsArray);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEditProduct = (product: any) => {
+  const handleEditProduct = (p: any) => {
     setIsEditMode(true);
-    setEditProductId(product.id);
-    setProductName(product.name);
-    setProductPrice(product.price);
-    setProductDescription(product.description);
-    setType(product.type);
-    setSize(product.size || "");
-    setQuantity(product.quantity || "");
-    setLocationUrl(product.locationUrl || "");
+    setEditProductId(p.id);
+    setProductName(p.name);
+    setProductPrice(p.price);
+    setProductDescription(p.description);
+    setType(p.type);
+    setSize(p.size || "");
+    setQuantity(p.quantity || "");
+    setLocationUrl(p.locationUrl || "");
     setFile([]);
     openForm();
   };
 
-  const handleDeleteProduct = async (productId: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-    if (!confirmDelete) return;
-
-    try {
-      const uAuth = auth.currentUser?.uid;
-      if (!uAuth) {
-        alert("User is not authenticated");
-        navigate("/login");
-        throw new Error("User is not authenticated");
-      }
-      const productRef = doc(firestore, "Products", productId);
-      await deleteDoc(productRef);
-      setProducts((prevProducts) =>
-        prevProducts.filter((p) => p.id !== productId)
-      );
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
-  };
-
+  // ─── Render ─────────────────────────────────────────────────────────────
   return (
-    <div>
+    <div className={styles.container}>
+      {/* GLOBAL LOADER OVERLAY */}
+      {loading && (
+        <div className={styles.loaderOverlay}>
+          <Loader />
+        </div>
+      )}
+
+      {/* ACTION BAR */}
       <div className={styles.actionsContainer}>
-        <button className={styles.addProductBtn} onClick={openForm}>
-          <FaCartShopping />
-          <FaPlus /> Add Products
+        <button
+          className={styles.addProductBtn}
+          onClick={openForm}
+          disabled={loading}
+        >
+          <FaCartShopping /> <FaPlus /> Add Products
         </button>
         <select
           value={selectedTypeFilter}
           onChange={(e) => setSelectedTypeFilter(e.target.value)}
           className={styles.filterDropdown}
+          disabled={loading}
         >
           <option value="">All Products</option>
+          <option value="PKR0">Product For Free</option>
           <option value="Mobiles">Mobiles</option>
           <option value="Fashion">Fashion</option>
           <option value="Electronics">Electronics</option>
@@ -265,49 +259,49 @@ const AddProducts = () => {
           <option value="Furniture">Furniture</option>
         </select>
       </div>
-      <h1 className={styles.leadHeadings}>
-        My Products
-        <FaCartShopping />
-      </h1>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div
-          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-        >
-          {products.map((product) => (
-            <div key={product.id} className={styles.productCard}>
-              <img
-                className={styles.productImage}
-                src={product.images[0]}
-                alt={product.name}
-              />
-              <div className={styles.productDetails}>
-                <h3 className={styles.productName}>{product.name}</h3>
-                <p className={styles.productDescription}>
-                  {product.description}
-                </p>
-                <p className={styles.productPrice}>Rs. {product.price}</p>
-              </div>
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                <button
-                  className={styles.handlersBtn}
-                  onClick={() => handleEditProduct(product)}
-                >
-                  <FaPencil />
-                </button>
-                <button
-                  className={styles.handlersBtn}
-                  onClick={() => handleDeleteProduct(product.id)}
-                >
-                  <FaTrashCan />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
+      {/* PRODUCT GRID */}
+      <h1 className={styles.leadHeadings}>
+        My Products <FaCartShopping />
+      </h1>
+      <div className={styles.productGrid}>
+        {products.map((p) => (
+          <div key={p.id} className={styles.productCard}>
+            <img
+              src={p.images[0]}
+              alt={p.name}
+              className={styles.productImage}
+            />
+            <div className={styles.productDetails}>
+              <h3 className={styles.productName}>{p.name}</h3>
+              <p className={styles.productDescription}>
+                {p.description.length > 20
+                  ? `${p.description.slice(0, 20)}…`
+                  : p.description}
+              </p>
+              <p className={styles.productPrice}>Rs. {p.price}</p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <button
+                className={styles.handlersBtn}
+                onClick={() => handleEditProduct(p)}
+                disabled={loading}
+              >
+                <FaPencil />
+              </button>
+              <button
+                className={styles.handlersBtn}
+                onClick={() => handleDeleteProduct(p.id)}
+                disabled={loading}
+              >
+                <FaTrashCan />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ADD / EDIT FORM */}
       {isFormVisible && (
         <div className={styles.glassBackground}>
           <div className={styles.addProductForm}>
@@ -315,36 +309,41 @@ const AddProducts = () => {
               &times;
             </span>
             <h4>{isEditMode ? "Edit Product" : "Add Product"}</h4>
+
+            {/* IMAGE INPUT */}
             <label>Choose Image</label>
-            <input type="file" multiple onChange={handleFileChange} />
+            <input
+              type="file"
+              multiple
+              onChange={handleFileChange}
+              disabled={loading}
+            />
+
+            {/* BASIC FIELDS */}
             <label>Product Name</label>
             <input
               type="text"
               value={productName}
-              required
               onChange={(e) => setProductName(e.target.value)}
+              disabled={loading}
             />
-            <label>Product Price</label>
-            <input
-              type="number"
-              value={productPrice}
-              required
-              onChange={(e) => setProductPrice(e.target.value)}
-            />
+
             <label>Product Description</label>
             <input
               type="text"
               value={productDescription}
-              required
               onChange={(e) => setProductDescription(e.target.value)}
+              disabled={loading}
             />
+
             <label>Category</label>
             <select
               value={type}
-              required
               onChange={(e) => setType(e.target.value)}
+              disabled={loading}
             >
               <option value="">Select a category</option>
+              <option value="PKR0">Product For Free</option>
               <option value="Mobiles">Mobiles</option>
               <option value="Fashion">Fashion</option>
               <option value="Electronics">Electronics</option>
@@ -354,39 +353,65 @@ const AddProducts = () => {
               <option value="Furniture">Furniture</option>
             </select>
 
+            <label>Product Price</label>
+            <input
+              type="number"
+              value={productPrice}
+              onChange={(e) => setProductPrice(e.target.value)}
+              disabled={loading || type === "PKR0"}
+            />
+
+            {/* TYPE‑SPECIFIC FIELDS */}
+            {type === "PKR0" && (
+              <>
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  disabled={loading}
+                />
+                <label>Brand</label>
+                <input
+                  type="text"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  disabled={loading}
+                />
+              </>
+            )}
             {type === "Mobiles" && (
               <>
                 <label>Quantity</label>
                 <input
                   type="number"
                   value={quantity}
-                  required
                   onChange={(e) => setQuantity(e.target.value)}
+                  disabled={loading}
                 />
                 <label>Model</label>
                 <input
                   type="text"
                   value={model}
-                  required
                   onChange={(e) => setModel(e.target.value)}
+                  disabled={loading}
                 />
                 <label>Brand</label>
                 <input
                   type="text"
                   value={brand}
-                  required
                   onChange={(e) => setBrand(e.target.value)}
+                  disabled={loading}
                 />
                 <label>Waranty</label>
                 <input
                   type="number"
                   value={waranty}
-                  required
                   onChange={(e) => setWaranty(e.target.value)}
+                  disabled={loading}
                 />
               </>
             )}
-
             {type === "Fashion" && (
               <>
                 <label>Size</label>
@@ -394,12 +419,15 @@ const AddProducts = () => {
                   type="text"
                   value={size}
                   onChange={(e) => setSize(e.target.value)}
+                  disabled={loading}
+                  placeholder="Leave empty if not clothing"
                 />
                 <label>Quantity</label>
                 <input
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
+                  disabled={loading}
                 />
               </>
             )}
@@ -410,6 +438,7 @@ const AddProducts = () => {
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
+                  disabled={loading}
                 />
               </>
             )}
@@ -420,16 +449,67 @@ const AddProducts = () => {
                   type="text"
                   value={locationUrl}
                   onChange={(e) => setLocationUrl(e.target.value)}
+                  disabled={loading}
                 />
               </>
             )}
+            {(type === "Vehicle" || type === "Bike") && (
+              <>
+                <label>Company</label>
+                <input
+                  type="text"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  disabled={loading}
+                />
+                <label>Milage</label>
+                <input
+                  type="text"
+                  value={milage}
+                  onChange={(e) => setMilage(e.target.value)}
+                  disabled={loading}
+                />
+                <label>Km's Driven</label>
+                <input
+                  type="text"
+                  value={kmDriven}
+                  onChange={(e) => setKmDriven(e.target.value)}
+                  disabled={loading}
+                />
+                <label>Model</label>
+                <input
+                  type="text"
+                  value={vehicleModel}
+                  onChange={(e) => setVehicleModel(e.target.value)}
+                  disabled={loading}
+                />
+                <label>Condition</label>
+                <select
+                  value={condition}
+                  onChange={(e) => setCondition(e.target.value)}
+                  disabled={loading}
+                >
+                  <option value="">Select one</option>
+                  <option value="Excellent">Excellent</option>
+                  <option value="Good">Good</option>
+                  <option value="Average">Average</option>
+                  <option value="Old">Old</option>
+                </select>
+              </>
+            )}
+
             <button
               className={styles.addProductBtn}
-              onClick={() => {
-                handleAddProduct();
-              }}
+              onClick={handleAddProduct}
+              disabled={loading}
             >
-              {isEditMode ? "Update Product" : "Add Product"}
+              {loading
+                ? isEditMode
+                  ? "Updating..."
+                  : "Saving..."
+                : isEditMode
+                ? "Update Product"
+                : "Add Product"}
             </button>
           </div>
         </div>

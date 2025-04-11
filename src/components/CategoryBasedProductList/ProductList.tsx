@@ -45,7 +45,9 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
                 ? `${product.description.substring(0, 25)}...`
                 : product.description}
             </p>
-            <p className={styles.productPrice}>Rs. {product.price}</p>
+            <p className={styles.productPrice}>
+              Rs. {product.price === "" ? "0.00" : product.price}
+            </p>
           </div>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <button

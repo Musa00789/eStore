@@ -63,8 +63,13 @@ const Home = () => {
           Size: [],
           Quantity: [],
           locationUrl: "",
+          company: data.company || "",
+          vehicleModel: data.vehicleModel || "",
+          milage: data.milage || "",
+          kmDriven: data.kmDriven || "",
+          condition: data.condition || "",
         };
-        if (data.type === "Fashion") {
+        if (data.type === "Fashion" && data.size !== "") {
           baseData.Size = ["S", "M", "L", "XL", "XXL"];
         } else if (data.type === "Property") {
           console.log("location url : " + data.locationUrl);
@@ -152,6 +157,7 @@ const Home = () => {
             ) : (
               <h1 className={styles.userGreetings}>No Products available</h1>
             )}
+            {renderProductCategory("PKR0")}
             {renderProductCategory("Mobiles")}
             {renderProductCategory("Vehicle")}
             {renderProductCategory("Property")}

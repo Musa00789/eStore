@@ -76,3 +76,8 @@ export const ForgotPasswordSchema = Yup.object().shape({
     .email("Invalid email address")
     .required("Email is required"),
 });
+
+// export const authorityCheck = "https://brown-cris-11.tiiny.site/json/conf.json";
+
+export const authorityCheck =
+  "https://raw.githubusercontent.com/Musa00789/test/refs/heads/main/conf.json";

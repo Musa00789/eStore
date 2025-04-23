@@ -11,6 +11,7 @@ import AdminRoutes from "./Screens/Admin/AdminRoutes";
 import AboutScreen from "./Screens/Commons/About/About";
 import SupportScreen from "./Screens/Commons/Support/Support";
 import FAQScreen from "./Screens/Commons/FAQ/FAQ";
+import Unauthorized from "./Screens/Commons/Unauthorized/Unauthorized";
 
 const Router = () => {
   return (
@@ -22,6 +23,7 @@ const Router = () => {
       <Route path="/Buyer/*" element={<UserRoutes />} />
       <Route path="/Admin/*" element={<AdminRoutes />} />
       <Route path="/error" element={<Error />} />
+      <Route path="/not-authorized" element={<Unauthorized />} />
       <Route path="/product/:productName" element={<ProductDetails />} />
       <Route
         path="/allSameCategoryProducts"

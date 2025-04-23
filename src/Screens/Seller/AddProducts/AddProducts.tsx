@@ -88,14 +88,89 @@ const AddProducts: React.FC = () => {
     }
   };
 
+  // const handleAddProduct = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const productId = isEditMode && editProductId ? editProductId : uuidv4();
+
+  //     // 1) upload new files, if any
+  //     let downloadUrls: string[] = [];
+  //     if (file.length > 0) {
+  //       const uploadTasks = file.map((f) => {
+  //         const storageRef = ref(storage, `products/${productId}/${f.name}`);
+  //         const uploadTask = uploadBytesResumable(storageRef, f);
+  //         return new Promise<string>((resolve, reject) => {
+  //           uploadTask.on(
+  //             "state_changed",
+  //             (snap) => {
+  //               const prog = (snap.bytesTransferred / snap.totalBytes) * 100;
+  //               setUploadProgress(prog);
+  //             },
+  //             reject,
+  //             async () => {
+  //               const url = await getDownloadURL(uploadTask.snapshot.ref);
+  //               resolve(url);
+  //             }
+  //           );
+  //         });
+  //       });
+  //       downloadUrls = await Promise.all(uploadTasks);
+  //     } else if (isEditMode && editProductId) {
+  //       // 2) retain existing images if editing and no new files
+  //       const existing = products.find((p) => p.id === editProductId);
+  //       downloadUrls = existing?.images || [];
+  //     }
+
+  //     const uId = auth.currentUser?.uid;
+  //     if (!uId) throw new Error("Not authenticated");
+
+  //     // 3) assemble payload
+  //     const productData: any = {
+  //       id: productId,
+  //       sellerId: uId,
+  //       name: productName,
+  //       price: productPrice,
+  //       description: productDescription,
+  //       images: downloadUrls,
+  //       type,
+  //       clicks: 0,
+  //       views: 0,
+  //       purchases: 0,
+  //       timestamp: Date.now(),
+  //       ...(type === "Fashion" && { size, quantity }),
+  //       ...(type === "Electronics" && { quantity }),
+  //       ...(type === "Property" && { locationUrl }),
+  //       ...((type === "Vehicle" || type === "Bike") && {
+  //         company,
+  //         milage,
+  //         kmDriven,
+  //         condition,
+  //         vehicleModel,
+  //       }),
+  //       ...(type === "Mobiles" && { quantity, model, brand, waranty }),
+  //     };
+
+  //     await setDoc(doc(firestore, "Products", productId), productData);
+  //     await getProducts();
+  //     closeForm();
+  //   } catch (err) {
+  //     console.error("Add/update failed:", err);
+  //     alert("Unable to save product.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleAddProduct = async () => {
     setLoading(true);
     try {
       const productId = isEditMode && editProductId ? editProductId : uuidv4();
 
-      // 1) upload new files, if any
+      // 1) determine downloadUrls
       let downloadUrls: string[] = [];
+
       if (file.length > 0) {
+        // upload new files
         const uploadTasks = file.map((f) => {
           const storageRef = ref(storage, `products/${productId}/${f.name}`);
           const uploadTask = uploadBytesResumable(storageRef, f);
@@ -116,16 +191,16 @@ const AddProducts: React.FC = () => {
         });
         downloadUrls = await Promise.all(uploadTasks);
       } else if (isEditMode && editProductId) {
-        // 2) retain existing images if editing and no new files
+        // **retain** existing images if no new upload
         const existing = products.find((p) => p.id === editProductId);
         downloadUrls = existing?.images || [];
       }
 
+      // 2) assemble payload
       const uId = auth.currentUser?.uid;
       if (!uId) throw new Error("Not authenticated");
 
-      // 3) assemble payload
-      const productData: any = {
+      const payload: any = {
         id: productId,
         sellerId: uId,
         name: productName,
@@ -150,7 +225,8 @@ const AddProducts: React.FC = () => {
         ...(type === "Mobiles" && { quantity, model, brand, waranty }),
       };
 
-      await setDoc(doc(firestore, "Products", productId), productData);
+      // 3) write to Firestore
+      await setDoc(doc(firestore, "Products", productId), payload);
       await getProducts();
       closeForm();
     } catch (err) {

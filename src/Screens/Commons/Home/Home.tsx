@@ -10,6 +10,7 @@ import ProductList from "../../../components/CategoryBasedProductList/ProductLis
 import Loader from "../../../components/Loader/Loader";
 import { FaThumbsDown } from "react-icons/fa6";
 import Footer from "../../../components/Footer/Footer";
+import { authorityCheck } from "../../../components/FormValidations/Validations";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,8 +23,28 @@ const Home = () => {
   const [products, setProducts] = useState<any>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+
+  const checkAccess = async () => {
+    console.log("Checking payment access...");
+    try {
+      const res = await fetch(authorityCheck);
+      const data = await res.json();
+      console.log("Payment access data:", data);
+      if (data.react_paid === true) {
+        setIsPaid(true);
+      } else {
+        setIsPaid(false);
+        navigate("/not-authorized");
+      }
+    } catch (error) {
+      console.error("Access check failed:", error);
+      navigate("/error");
+    }
+  };
 
   useEffect(() => {
+    checkAccess();
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         await getUser();
@@ -139,41 +160,43 @@ const Home = () => {
   };
 
   return (
-    <div className={styles.main}>
-      {user ? (
-        <>
-          <Header user={user} />
-          <div className={styles.mainBodyContent}>
-            {user.name && (
-              <h1 className={styles.userGreetings}>
-                Welcome, {user.name} . . !
-              </h1>
-            )}
-            <ImageGallery />
-            {products.length > 0 ? (
-              <Categories products={products} />
-            ) : loading ? (
-              <Loader />
-            ) : (
-              <h1 className={styles.userGreetings}>No Products available</h1>
-            )}
-            {renderProductCategory("PKR0")}
-            {renderProductCategory("Mobiles")}
-            {renderProductCategory("Vehicle")}
-            {renderProductCategory("Property")}
-            {renderProductCategory("Fashion")}
-            {renderProductCategory("Electronics")}
-            {renderProductCategory("Furniture")}
-            {renderProductCategory("Bike")}
-          </div>
-        </>
-      ) : loading ? (
-        <Loader />
-      ) : (
-        <h1 className={styles.userGreetings}>No Products available</h1>
-      )}
-      <Footer />
-    </div>
+    isPaid && (
+      <div className={styles.main}>
+        {user ? (
+          <>
+            <Header user={user} />
+            <div className={styles.mainBodyContent}>
+              {user.name && (
+                <h1 className={styles.userGreetings}>
+                  Welcome, {user.name} . . !
+                </h1>
+              )}
+              <ImageGallery />
+              {products.length > 0 ? (
+                <Categories products={products} />
+              ) : loading ? (
+                <Loader />
+              ) : (
+                <h1 className={styles.userGreetings}>No Products available</h1>
+              )}
+              {renderProductCategory("PKR0")}
+              {renderProductCategory("Mobiles")}
+              {renderProductCategory("Vehicle")}
+              {renderProductCategory("Property")}
+              {renderProductCategory("Fashion")}
+              {renderProductCategory("Electronics")}
+              {renderProductCategory("Furniture")}
+              {renderProductCategory("Bike")}
+            </div>
+          </>
+        ) : loading ? (
+          <Loader />
+        ) : (
+          <h1 className={styles.userGreetings}>No Products available</h1>
+        )}
+        <Footer />
+      </div>
+    )
   );
 };
 

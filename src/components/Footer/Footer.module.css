@@ -44,6 +44,10 @@
 
 .links li {
   margin: 5px 0;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .links a {

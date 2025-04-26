@@ -4,16 +4,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { doc, updateDoc, increment, getDoc } from "@firebase/firestore";
 import { auth, firestore } from "../../../firebase";
 import {
+  FaCarSide,
   FaCartPlus,
   FaCreditCard,
   FaMessage,
+  FaPercent,
   FaPhone,
+  FaRoad,
+  FaShop,
   FaTruck,
 } from "react-icons/fa6";
 import Header from "../../../components/Header/Header";
 import Loader from "../../../components/Loader/Loader";
 import { addToCart } from "../../../components/addToCart";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaPercentage, FaTachometerAlt } from "react-icons/fa";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import Footer from "../../../components/Footer/Footer";
 
@@ -30,6 +34,7 @@ const ProductDetails = () => {
   });
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     console.log("Product Details:", product);
@@ -177,12 +182,14 @@ const ProductDetails = () => {
             >
               Contact Seller
             </button>
-            <button
-              className={styles.viewDetailsButton}
-              onClick={() => navigate("/vehicle-details", { state: product })}
-            >
-              View Details
-            </button>
+            {product.type !== "PKR0" && (
+              <button
+                className={styles.viewDetailsButton}
+                onClick={() => setShowDetails((prev) => !prev)}
+              >
+                {showDetails ? "Hide Details" : "View Details"}
+              </button>
+            )}
             <p className={styles.productDescription}>{product.description}</p>
           </div>
         );
@@ -222,12 +229,12 @@ const ProductDetails = () => {
             >
               Contact Seller
             </button>
-            <button
+            {/* <button
               className={styles.getQuotesButton}
               onClick={handleGetQuotes}
             >
               Get Quotes
-            </button>
+            </button> */}
             <p className={styles.productDescription}>{product.description}</p>
           </div>
         );
@@ -337,7 +344,9 @@ const ProductDetails = () => {
           </div>
           {product.type === "PKR0" && (
             <div className={styles.productInfo}>
-              <h2>Note*</h2>
+              <h2>
+                <b>Note*</b>
+              </h2>
               <p>
                 This is a <b>free product</b> only for those{" "}
                 <b>unable to pay</b> the costly prices for new products. If you
@@ -345,9 +354,58 @@ const ProductDetails = () => {
                 to be able to access the <b>luxury of life</b> for sake of
                 humanity
               </p>
+              <h4>
+                <b>Information:</b>
+              </h4>
+              <p>
+                This product can only be purchased directly from the seller by{" "}
+                <b>P2P</b> means.
+              </p>
             </div>
           )}
         </div>
+
+        {product.type === "Vehicle" ||
+          (product.type === "Bike" && showDetails && (
+            <div className={styles.specificationsContainer}>
+              <h2>Vehicle Specifications</h2>
+              <table className={styles.specificationsTable}>
+                <tbody>
+                  <tr>
+                    <td>
+                      <FaShop /> Make
+                    </td>
+                    <td>{product.company}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <FaCarSide /> Model
+                    </td>
+                    <td>{product.vehicleModel}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <FaTachometerAlt /> Km's Driven
+                    </td>
+                    <td>{product.kmDriven}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <FaRoad /> Mileage
+                    </td>
+                    <td>{product.milage}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <FaInfoCircle /> Condition
+                    </td>
+                    <td>{product.condition}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          ))}
+
         {product.type === "Mobiles" && (
           <div className={styles.specificationsContainer}>
             <h2>Specifications</h2>

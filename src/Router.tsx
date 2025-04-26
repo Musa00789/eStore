@@ -24,6 +24,7 @@ const Router = () => {
       <Route path="/Admin/*" element={<AdminRoutes />} />
       <Route path="/error" element={<Error />} />
       <Route path="/not-authorized" element={<Unauthorized />} />
+      {/* <Route path="/product/:productName/vehicle-detail" element={<VehicleDetails />} /> */}
       <Route path="/product/:productName" element={<ProductDetails />} />
       <Route
         path="/allSameCategoryProducts"

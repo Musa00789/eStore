@@ -59,6 +59,7 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
                 width:
                   product.type === "Property" ||
                   product.type === "Bike" ||
+                  product.type === "PKR0" ||
                   product.type === "Vehicle" ||
                   product.type === "Furniture"
                     ? "200px" // Full width if Add to Cart is hidden
@@ -72,6 +73,7 @@ const ProductList = ({ products, searchQuery, productType }: any) => {
             {!(
               product.type === "Property" ||
               product.type === "Bike" ||
+              product.type === "PKR0" ||
               product.type === "Vehicle" ||
               product.type === "Furniture"
             ) && (

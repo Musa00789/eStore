@@ -294,6 +294,14 @@ const AddProducts: React.FC = () => {
     setType(p.type);
     setSize(p.size || "");
     setQuantity(p.quantity || "");
+    setModel(p.model || "");
+    setBrand(p.brand || "");
+    setWaranty(p.waranty || "");
+    setCondition(p.condition || "");
+    setCompany(p.company || "");
+    setMilage(p.milage || "");
+    setKmDriven(p.kmDriven || "");
+    setVehicleModel(p.vehicleModel || "");
     setLocationUrl(p.locationUrl || "");
     setFile([]);
     openForm();
@@ -396,46 +404,48 @@ const AddProducts: React.FC = () => {
             />
 
             {/* BASIC FIELDS */}
-            <label>Product Name</label>
-            <input
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              disabled={loading}
-            />
+            <div className={styles.formGrid}>
+              <label>Product Name</label>
+              <input
+                type="text"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                disabled={loading}
+              />
 
-            <label>Product Description</label>
-            <input
-              type="text"
-              value={productDescription}
-              onChange={(e) => setProductDescription(e.target.value)}
-              disabled={loading}
-            />
+              <label>Product Description</label>
+              <input
+                type="text"
+                value={productDescription}
+                onChange={(e) => setProductDescription(e.target.value)}
+                disabled={loading}
+              />
 
-            <label>Category</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              disabled={loading}
-            >
-              <option value="">Select a category</option>
-              <option value="PKR0">Product For Free</option>
-              <option value="Mobiles">Mobiles</option>
-              <option value="Fashion">Fashion</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Vehicle">Vehicle</option>
-              <option value="Bike">Bike</option>
-              <option value="Property">Property</option>
-              <option value="Furniture">Furniture</option>
-            </select>
+              <label>Category</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">Select a category</option>
+                <option value="PKR0">Product For Free</option>
+                <option value="Mobiles">Mobiles</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Vehicle">Vehicle</option>
+                <option value="Bike">Bike</option>
+                <option value="Property">Property</option>
+                <option value="Furniture">Furniture</option>
+              </select>
 
-            <label>Product Price</label>
-            <input
-              type="number"
-              value={productPrice}
-              onChange={(e) => setProductPrice(e.target.value)}
-              disabled={loading || type === "PKR0"}
-            />
+              <label>Product Price</label>
+              <input
+                type="number"
+                value={productPrice}
+                onChange={(e) => setProductPrice(e.target.value)}
+                disabled={loading || type === "PKR0"}
+              />
+            </div>
 
             {/* TYPE‑SPECIFIC FIELDS */}
             {type === "PKR0" && (
@@ -488,91 +498,93 @@ const AddProducts: React.FC = () => {
                 />
               </>
             )}
-            {type === "Fashion" && (
-              <>
-                <label>Size</label>
-                <input
-                  type="text"
-                  value={size}
-                  onChange={(e) => setSize(e.target.value)}
-                  disabled={loading}
-                  placeholder="Leave empty if not clothing"
-                />
-                <label>Quantity</label>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  disabled={loading}
-                />
-              </>
-            )}
-            {type === "Electronics" && (
-              <>
-                <label>Quantity</label>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  disabled={loading}
-                />
-              </>
-            )}
-            {type === "Property" && (
-              <>
-                <label>Location Url</label>
-                <input
-                  type="text"
-                  value={locationUrl}
-                  onChange={(e) => setLocationUrl(e.target.value)}
-                  disabled={loading}
-                />
-              </>
-            )}
-            {(type === "Vehicle" || type === "Bike") && (
-              <>
-                <label>Company</label>
-                <input
-                  type="text"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  disabled={loading}
-                />
-                <label>Milage</label>
-                <input
-                  type="text"
-                  value={milage}
-                  onChange={(e) => setMilage(e.target.value)}
-                  disabled={loading}
-                />
-                <label>Km's Driven</label>
-                <input
-                  type="text"
-                  value={kmDriven}
-                  onChange={(e) => setKmDriven(e.target.value)}
-                  disabled={loading}
-                />
-                <label>Model</label>
-                <input
-                  type="text"
-                  value={vehicleModel}
-                  onChange={(e) => setVehicleModel(e.target.value)}
-                  disabled={loading}
-                />
-                <label>Condition</label>
-                <select
-                  value={condition}
-                  onChange={(e) => setCondition(e.target.value)}
-                  disabled={loading}
-                >
-                  <option value="">Select one</option>
-                  <option value="Excellent">Excellent</option>
-                  <option value="Good">Good</option>
-                  <option value="Average">Average</option>
-                  <option value="Old">Old</option>
-                </select>
-              </>
-            )}
+            <div className={styles.formGrid}>
+              {type === "Fashion" && (
+                <>
+                  <label>Size</label>
+                  <input
+                    type="text"
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                    disabled={loading}
+                    placeholder="Leave empty if not clothing"
+                  />
+                  <label>Quantity</label>
+                  <input
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    disabled={loading}
+                  />
+                </>
+              )}
+              {type === "Electronics" && (
+                <>
+                  <label>Quantity</label>
+                  <input
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    disabled={loading}
+                  />
+                </>
+              )}
+              {type === "Property" && (
+                <>
+                  <label>Location Url</label>
+                  <input
+                    type="text"
+                    value={locationUrl}
+                    onChange={(e) => setLocationUrl(e.target.value)}
+                    disabled={loading}
+                  />
+                </>
+              )}
+              {(type === "Vehicle" || type === "Bike") && (
+                <>
+                  <label>Company</label>
+                  <input
+                    type="text"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    disabled={loading}
+                  />
+                  <label>Milage</label>
+                  <input
+                    type="text"
+                    value={milage}
+                    onChange={(e) => setMilage(e.target.value)}
+                    disabled={loading}
+                  />
+                  <label>Km's Driven</label>
+                  <input
+                    type="text"
+                    value={kmDriven}
+                    onChange={(e) => setKmDriven(e.target.value)}
+                    disabled={loading}
+                  />
+                  <label>Model</label>
+                  <input
+                    type="text"
+                    value={vehicleModel}
+                    onChange={(e) => setVehicleModel(e.target.value)}
+                    disabled={loading}
+                  />
+                  <label>Condition</label>
+                  <select
+                    value={condition}
+                    onChange={(e) => setCondition(e.target.value)}
+                    disabled={loading}
+                  >
+                    <option value="">Select one</option>
+                    <option value="Excellent">Excellent</option>
+                    <option value="Good">Good</option>
+                    <option value="Average">Average</option>
+                    <option value="Old">Old</option>
+                  </select>
+                </>
+              )}
+            </div>
 
             <button
               className={styles.addProductBtn}

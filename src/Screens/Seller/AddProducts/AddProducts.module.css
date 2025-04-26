@@ -95,6 +95,13 @@
   align-items: center;
   backdrop-filter: blur(10px);
   z-index: 1000;
+  overflow-y: auto;
+}
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px; /* space between fields */
+  align-items: start;
 }
 
 .addProductForm {
@@ -105,10 +112,10 @@
   max-width: 500px;
   width: 100%;
 
-  height: auto;
+  max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
-
+  scroll-behavior: smooth;
   text-align: center;
   position: relative;
 }

@@ -110,15 +110,15 @@ const Cart = () => {
   const handleCheckout = async (item: any) => {
     try {
       if (auth.currentUser?.uid) {
-        const orderRef = doc(
-          firestore,
-          "Users",
-          auth.currentUser.uid,
-          "Orders",
-          item.cartId
-        );
-        await setDoc(orderRef, item); // Move to Orders collection
-        await removeFromCart(item); // Remove from cart
+        // const orderRef = doc(
+        //   firestore,
+        //   "Users",
+        //   auth.currentUser.uid,
+        //   "Orders",
+        //   item.cartId
+        // );
+        // await setDoc(orderRef, item); // Move to Orders collection
+        // await removeFromCart(item); // Remove from cart
         navigate("/Buyer/checkout", { state: item });
       }
     } catch (error) {

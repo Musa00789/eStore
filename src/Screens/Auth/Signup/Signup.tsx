@@ -25,6 +25,9 @@ const Signup = () => {
         phone: values.phone,
         email: values.email,
         status: values.status,
+        totalEarned: 0,
+        TotalWithdrawn: 0,
+        createdAt: new Date().toISOString(),
       });
 
       console.log("User registered successfully");

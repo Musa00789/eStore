@@ -39,12 +39,16 @@
   font-weight: bold;
   margin-top: 10px;
   color: #555;
+  text-decoration: underline;
 }
 
 .userData {
   font-size: 0.9rem;
   color: #333;
   margin: 5px 0;
+  border: 1px solid #ddd;
+  padding: 3px;
+  border-radius: 5px;
 }
 
 .inputField {

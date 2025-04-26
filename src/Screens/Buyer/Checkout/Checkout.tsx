@@ -104,50 +104,70 @@ const Checkout: React.FC = () => {
           validationSchema={CheckOutValidationSchema}
           onSubmit={async (values, { setSubmitting }) => {
             setCardError(null);
+            try {
+              if (values.paymentMethod === "Stripe") {
+                if (!stripe || !elements) {
+                  throw new Error(
+                    "Payment system not ready. Please try again shortly."
+                  );
+                }
+                // Create PaymentIntent
+                const resp = await fetch("http://localhost:4242/pay", {
+                  method: "POST",
+                  mode: "cors",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ amount: values.totalAmount }),
+                });
+                if (!resp.ok) {
+                  const text = await resp.text();
+                  throw new Error(`Payment initialization failed: ${text}`);
+                }
 
-            if (values.paymentMethod === "Stripe") {
-              if (!stripe || !elements) {
-                setCardError("Payment system not ready.");
-                setSubmitting(false);
-                return;
+                const orderRef = doc(
+                  firestore,
+                  "Users",
+                  auth.currentUser!.uid,
+                  "Orders",
+                  item.cartId
+                );
+                await setDoc(orderRef, item);
+
+                // Update user totals
+                const userRef = doc(firestore, "Users", auth.currentUser!.uid);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                  const userData = userSnap.data();
+                  await setDoc(userRef, {
+                    ...userData,
+                    totalEarned:
+                      (userData.totalEarned || 0) + Number(item.price),
+                  });
+                }
+
+                await removeFromCart(item);
+                alert("Payment successful—order placed!");
               }
-              const resp = await fetch("http://localhost:4242/pay", {
-                method: "POST",
-                mode: "cors",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  amount: values.totalAmount,
-                }),
-              });
 
-              const orderRef = doc(
-                firestore,
-                "Users",
-                auth.currentUser?.uid || "",
-                "Orders",
-                item.cartId
-              );
-              await setDoc(orderRef, item);
-              await removeFromCart(item);
-              alert("Order placed successfully!");
-              setSubmitting(false);
-              navigate("/");
-            }
+              if (values.paymentMethod === "COD") {
+                const orderRef = doc(
+                  firestore,
+                  "Users",
+                  auth.currentUser!.uid,
+                  "Orders",
+                  item.cartId
+                );
+                await setDoc(orderRef, item);
+                await removeFromCart(item);
+                alert("Order placed successfully! Pay on delivery.");
+              }
 
-            if (values.paymentMethod === "COD") {
-              const orderRef = doc(
-                firestore,
-                "Users",
-                auth.currentUser?.uid || "",
-                "Orders",
-                item.cartId
-              );
-              await setDoc(orderRef, item);
-              await removeFromCart(item);
-              alert("Order placed successfully!");
-              setSubmitting(false);
               navigate("/");
+            } catch (err: any) {
+              console.error("Checkout error:", err);
+              setCardError(err.message || "An unexpected error occurred.");
+            } finally {
+              setSubmitting(false);
             }
           }}
         >

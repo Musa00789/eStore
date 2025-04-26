@@ -104,8 +104,15 @@ const Profile = () => {
           ) : (
             <p className={styles.userData}>{userData.phone}</p>
           )}
-
-          <h2 className={styles.dataTitle}>Status:</h2>
+          <h2 className={styles.dataTitle}>Current Balance:</h2>
+          <p className={styles.userData}>
+            {userData.totalEarned - userData.totalWithdrawn}
+          </p>
+          <h2 className={styles.dataTitle}>Total Earned:</h2>
+          <p className={styles.userData}>{userData.totalEarned}</p>
+          <h2 className={styles.dataTitle}>Total Withdrawn:</h2>
+          <p className={styles.userData}>{userData.totalWithdrawn}</p>
+          <h2 className={styles.dataTitle}>Role:</h2>
           {isEditing ? (
             <input
               type="text"
